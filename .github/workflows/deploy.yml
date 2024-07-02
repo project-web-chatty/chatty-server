@@ -1,0 +1,55 @@
+name: Deploy to ec2 instance [Backend]
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # dynamic var substitution
+      - name: Set application-deploy.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-deploy.yml
+        env:
+          spring.datasource.url: ${{ secrets.DEPLOY_MYSQL_URL }}
+          spring.datasource.username: ${{ secrets.DEPLOY_MYSQL_USERNAME }}
+          spring.datasource.password: ${{ secrets.DEPLOY_MYSQL_PASSWORD }}
+          spring.data.mongodb.uri: ${{secrets.DEPLOY_MONGODB_URL }}
+
+
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/project_backend:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/project_backend:latest
+
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.LIVE_SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/path/to/remote
+            sudo docker-compose down
+            sudo docker-compose pull
+            sudo docker-compose up -d
