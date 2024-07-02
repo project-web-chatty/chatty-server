@@ -23,7 +23,10 @@ jobs:
           spring.datasource.username: ${{ secrets.DEPLOY_MYSQL_USERNAME }}
           spring.datasource.password: ${{ secrets.DEPLOY_MYSQL_PASSWORD }}
           spring.data.mongodb.uri: ${{secrets.DEPLOY_MONGODB_URL }}
-
+          spring.rabbitmq.host: ${{secrets.DEPLOY_RABBITMQ_HOST}}
+          spring.rabbitmq.port: ${{secrets.DEPLOY_RABBITMQ_PORT}}
+          spring.rabbitmq.username: ${{secrets.DEPLOY_RABBITMQ_USERNAME}}
+          spring.rabbitmq.password: ${{secrets.DEPLOY_RABBITMQ_PASSWORD}}
 
 
       - name: Log in to Docker Hub
