@@ -16,7 +16,7 @@ spring:
       uri: ${LOCAL_MONGODB_URL}
 
   rabbitmq:
-    host: ${LOCAL_RABBITMQ_HOST} # default host is localhost
-    port: ${LOCAL_RABBITMQ_PORT}  # default port is 5672
-    username: ${LOCAL_RABBITMQ_USERNAME} # default username is a 'guest'
-    password: ${LOCAL_RABBITMQ_PASSWORD} # default password is a 'guest'
+    host: ${LOCAL_RABBITMQ_HOST}
+    port: ${LOCAL_RABBITMQ_PORT}
+    username: ${LOCAL_RABBITMQ_USERNAME}
+    password: ${LOCAL_RABBITMQ_PASSWORD}
