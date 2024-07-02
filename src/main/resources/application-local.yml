@@ -1,0 +1,22 @@
+# environment variables must be in .env file of root directory
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${LOCAL_MYSQL_URL}
+    username: ${LOCAL_MYSQL_USERNAME}
+    password: ${LOCAL_MYSQL_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # according to our dev environment
+
+  data:
+    mongodb:
+      uri: ${LOCAL_MONGODB_URL}
+
+  rabbitmq:
+    host: ${LOCAL_RABBITMQ_HOST} # default host is localhost
+    port: ${LOCAL_RABBITMQ_PORT}  # default port is 5672
+    username: ${LOCAL_RABBITMQ_USERNAME} # default username is a 'guest'
+    password: ${LOCAL_RABBITMQ_PASSWORD} # default password is a 'guest'

@@ -1,0 +1,19 @@
+# environment variables must be in 'secrets' of github
+spring:
+  datasource:
+    url: ${DEPLOY_MYSQL_URL}
+    username: ${DEPLOY_MYSQL_USERNAME}
+    password: ${DEPLOY_MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # according to our rds environment
+
+  data:
+    mongodb:
+      uri: ${DEPLOY_MONGODB_URL}
+
+  rabbitmq:
+    host: ${DEPLOY_RABBITMQ_HOST}
+    port: ${DEPLOY_RABBITMQ_PORT}  # default port is 5672
+    username: ${DEPLOY_RABBITMQ_USERNAME}
+    password: ${DEPLOY_RABBITMQ_PASSWORD}
