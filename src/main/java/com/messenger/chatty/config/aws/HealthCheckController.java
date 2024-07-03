@@ -1,4 +1,4 @@
-package com.messenger.chatty.connect;
+package com.messenger.chatty.config.aws;
 
 
 import org.springframework.http.HttpStatus;

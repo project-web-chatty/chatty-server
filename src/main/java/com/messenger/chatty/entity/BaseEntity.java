@@ -1,0 +1,33 @@
+package com.messenger.chatty.entity;
+
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@MappedSuperclass
+public abstract class BaseEntity {
+
+    @Column(updatable = false, name = "created_date")
+    protected LocalDateTime createdDate;
+
+    @Column(name = "modified_date")
+    protected LocalDateTime lastModifiedDate;
+
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastModifiedDate = LocalDateTime.now();
+    }
+}
