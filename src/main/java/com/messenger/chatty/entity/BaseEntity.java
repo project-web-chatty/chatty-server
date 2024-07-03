@@ -11,7 +11,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @MappedSuperclass
 public abstract class BaseEntity {
 
