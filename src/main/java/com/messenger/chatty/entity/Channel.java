@@ -30,7 +30,7 @@ public class Channel extends BaseEntity{
 
     @Builder.Default
     @OneToMany(mappedBy = "channel",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ChannelMember> channelMembers = new ArrayList<>();
+    private List<ChannelJoin> channelJoins = new ArrayList<>();
 
 
     // use this when you generate new channel
@@ -45,7 +45,7 @@ public class Channel extends BaseEntity{
     }
 
     public List<Member> getMembers(){
-        return channelMembers.stream().map(ChannelMember::getMember).collect(Collectors.toList());
+        return channelJoins.stream().map(ChannelJoin::getMember).collect(Collectors.toList());
     }
 
 

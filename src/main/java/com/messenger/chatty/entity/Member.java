@@ -45,11 +45,11 @@ public class Member extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ChannelMember> channelMembers = new ArrayList<>();
+    private List<ChannelJoin> channelJoins = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<WorkspaceMember> workspaceMembers = new ArrayList<>();
+    private List<WorkspaceJoin> workspaceJoins = new ArrayList<>();
 
 
     // use this when you generate new member
@@ -68,15 +68,15 @@ public class Member extends BaseEntity {
 
 
     public void joinWorkspace(Workspace workspace){
-        WorkspaceMember workspaceMember = new WorkspaceMember();
-        workspaceMember.setWorkspace(workspace);
-        workspaceMember.setMember(this);
+        WorkspaceJoin workspaceJoin = new WorkspaceJoin();
+        workspaceJoin.setWorkspace(workspace);
+        workspaceJoin.setMember(this);
     }
 
     public void joinChannel(Channel channel){
-        ChannelMember channelMember = new ChannelMember();
-        channelMember.setChannel(channel);
-        channelMember.setMember(this);
+        ChannelJoin channelJoin = new ChannelJoin();
+        channelJoin.setChannel(channel);
+        channelJoin.setMember(this);
     }
 
 
