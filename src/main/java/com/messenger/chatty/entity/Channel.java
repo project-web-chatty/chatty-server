@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -40,7 +39,7 @@ public class Channel extends BaseEntity{
         return channel;
     }
 
-    protected void setWorkspace(Workspace workspace){
+    protected void linkWorkspace(Workspace workspace){
        this.workspace = workspace;
     }
 

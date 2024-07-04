@@ -26,18 +26,18 @@ public class ChannelJoin extends BaseEntity {
     private Member member;
 
     public ChannelJoin(Channel channel , Member member){
-        setChannel(channel);
-        setMember(member);
+        linkChannel(channel);
+        linkMember(member);
     }
 
     //relation-method
-    protected void setChannel(Channel channel) {
+    protected void linkChannel(Channel channel) {
         this.channel = channel;
         channel.getChannelJoins().add(this);
     }
 
     //relation-method
-    protected void setMember(Member member){
+    protected void linkMember(Member member){
         this.member =member;
         member.getChannelJoins().add(this);
     }
