@@ -7,16 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 
-@DataJpaTest
+@SpringBootTest
 @ActiveProfiles("test")
 public class ChannelRepositoryTest {
 
     @Autowired
     private ChannelRepository channelRepository;
-
     @Autowired
     private DataCleaner cleaner;
 
@@ -25,7 +25,8 @@ public class ChannelRepositoryTest {
 
     }
     @AfterEach
-    public void tearDown(){
+    public void clear(){
+        cleaner.clear();
     }
 
     @Test
