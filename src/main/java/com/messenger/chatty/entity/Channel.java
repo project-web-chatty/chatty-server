@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "channels") // reserved word in mysql issue
+@Table(name = "channels")
 public class Channel extends BaseEntity{
 
     @Id
