@@ -1,7 +1,6 @@
 package com.messenger.chatty.repository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.messenger.chatty.config.DataCleaner;
 import com.messenger.chatty.entity.Member;
 import org.assertj.core.api.Assertions;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
-
 import java.util.List;
 
 @SpringBootTest
@@ -58,10 +56,7 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("저장된 멤버 수를 확인")
     public void testMembersCount(){
-        List<Member> members = memberRepository.findAll();
-
-        Assertions.assertThat(members).hasSize(2);
-
+         Assertions.assertThat(memberRepository.findAll()).hasSize(2);
     }
 
 
@@ -87,8 +82,8 @@ public class MemberRepositoryTest {
         suhyeon.changeNickname("한국최고수현");
         memberRepository.save(suhyeon);
 
-        Member member = memberRepository.findById(suhyeon.getId()).get();
-        Assertions.assertThat(member.getNickname()).isEqualTo("한국최고수현");
+        Assertions.assertThat(memberRepository.findById(suhyeon.getId()).get().getNickname())
+                .isEqualTo("한국최고수현");
     }
 
     @Test
