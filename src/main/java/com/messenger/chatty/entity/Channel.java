@@ -44,9 +44,7 @@ public class Channel extends BaseEntity{
        this.workspace = workspace;
     }
 
-    public List<Member> getMembers(){
-        return channelJoins.stream().map(ChannelJoin::getMember).collect(Collectors.toList());
-    }
+
 
 
     public void changeName(String name){
