@@ -54,9 +54,6 @@ public class Workspace extends BaseEntity{
         channel.setWorkspace(this);
     }
 
-    public List<Member> getAllMembers(){
-        return workspaceJoins.stream().map(WorkspaceJoin::getMember).collect(Collectors.toList());
-    }
 
 
 }
