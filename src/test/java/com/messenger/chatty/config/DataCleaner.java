@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Profile("test")
 public class DataCleaner {
     private static final String FOREIGN_KEY_CHECK_FORMAT = "SET FOREIGN_KEY_CHECKS %d";
     private static final String TRUNCATE_FORMAT = "TRUNCATE TABLE %s";
