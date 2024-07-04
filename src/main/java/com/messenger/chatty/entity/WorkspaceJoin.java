@@ -27,13 +27,13 @@ public class WorkspaceJoin extends BaseEntity{
     private Workspace workspace;
 
     //relation-method
-    protected void setMember(Member member){
+    protected void linkMember(Member member){
         this.member = member;
         member.getWorkspaceJoins().add(this);
     }
 
     //relation-method
-    protected void setWorkspace(Workspace workspace){
+    protected void linkWorkspace(Workspace workspace){
         this.workspace =workspace;
         workspace.getWorkspaceJoins().add(this);
     }
