@@ -67,13 +67,13 @@ public class Member extends BaseEntity {
     }
 
 
-    public void enterWorkspace(Workspace workspace){
+    public void enterIntoWorkspace(Workspace workspace){
         WorkspaceJoin workspaceJoin = new WorkspaceJoin();
         workspaceJoin.setWorkspace(workspace);
         workspaceJoin.setMember(this);
     }
 
-    public void enterChannel(Channel channel){
+    public void enterIntoChannel(Channel channel){
         ChannelJoin channelJoin = new ChannelJoin();
         channelJoin.setChannel(channel);
         channelJoin.setMember(this);

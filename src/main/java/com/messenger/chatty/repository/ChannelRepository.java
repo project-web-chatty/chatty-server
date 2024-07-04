@@ -13,12 +13,12 @@ public interface ChannelRepository extends JpaRepository<Channel,Long> {
 
     List<Channel> findByWorkspace(Workspace workspace);
 
-    // search channel in the workspace as a channelName
+    // search channel in the specific workspace as a channelName
     Channel findByWorkspaceAndName(Workspace workspace,String name);
 
 
 
-    // search channels that member joins at in the specific workspace
+    // search channels that a member joins at in the specific workspace
     @Query("SELECT cj.channel FROM ChannelJoin cj WHERE cj.member.id = :memberId " +
             "AND cj.channel.workspace.id = :workspaceId")
     List<Channel> findByWorkspaceIdAndMemberId(  @Param("workspaceId") Long workspaceId,@Param("memberId") Long memberId

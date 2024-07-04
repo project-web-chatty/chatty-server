@@ -52,8 +52,8 @@ public class TempBusinessLogicTest {
         memberRepository.save(eunji);
 
         // 멤버의 워크스페이스 참여
-        suhyeon.enterWorkspace(toss);
-        eunji.enterWorkspace(toss);
+        suhyeon.enterIntoWorkspace(toss);
+        eunji.enterIntoWorkspace(toss);
 
         // 워크스페이스에 채널 등록
         Channel channel1 = Channel.createChannel("일반", toss);
@@ -61,9 +61,9 @@ public class TempBusinessLogicTest {
         Channel channel3 = Channel.createChannel("프론트엔드", toss);// 그대로 추가
 
         // 채널에 멤버 등록
-        suhyeon.enterChannel(channel1);
-        suhyeon.enterChannel(channel2);
-        eunji.enterChannel(channel1);
+        suhyeon.enterIntoChannel(channel1);
+        suhyeon.enterIntoChannel(channel2);
+        eunji.enterIntoChannel(channel1);
 
 
     }
@@ -81,6 +81,8 @@ public class TempBusinessLogicTest {
         Workspace tossTeam = workspaceRepository.findByName("toss team");
 
         List<Channel> channels = tossTeam.getChannels();
+
+        //then
         Assertions.assertThat(channels).hasSize(3);
 
 
@@ -92,40 +94,44 @@ public class TempBusinessLogicTest {
         Workspace tossTeam = workspaceRepository.findByName("toss team");
         Channel defautChannel = channelRepository.findByWorkspaceAndName(tossTeam, "일반");
 
-        // 채널을 이름으로 검색
+        // then
         Assertions.assertThat(defautChannel).isNotNull();
 
 
     }
 
     @Test
-    @DisplayName("멤버가 속한 워크스페이스 리스트 가져오기")
+    @DisplayName("특정 멤버가 속한 워크스페이스 리스트 가져오기")
     public void testFindWorkspacesByMemberId(){
         Member suhyeon = memberRepository.findByName("suhyeon");
        List<Workspace> workspaces = workspaceRepository.findWorkspacesByMemberId(suhyeon.getId());
 
+       // then
        // 수현이 현재 속한 워크스페이스는 하나임
         Assertions.assertThat(workspaces).hasSize(1);
 
     }
     @Test
-    @DisplayName("워크스페이스 내의 멤버 리스트 가져오기")
+    @DisplayName("특정 워크스페이스 내의 멤버 리스트 가져오기")
     public void testFindMembersByWorkspaceId(){
         Workspace tossTeam = workspaceRepository.findByName("toss team");
         List<Member> members = memberRepository.findMembersByWorkspaceId(tossTeam.getId());
 
+        // then
         // 워크스페이스 내에는 두명이 있음
         Assertions.assertThat(members).hasSize(2);
 
     }
 
     @Test
-    @DisplayName("채널 내의 멤버들 리스트 가져오기")
+    @DisplayName("특정 채널 내의 멤버들 리스트 가져오기")
     public void testFindMembersByChannelId() {
         Workspace tossTeam = workspaceRepository.findByName("toss team");
         Channel defaultChannel = channelRepository.findByWorkspaceAndName(tossTeam, "일반");
         List<Member> members = memberRepository.findByChannelId(defaultChannel.getId());
 
+
+        // then
         // 일반 채널에는 두명이 있음
         Assertions.assertThat(members).hasSize(2);
 
@@ -141,6 +147,7 @@ public class TempBusinessLogicTest {
         List<Channel> channelsOfSuhyeonInTossTeam = channelRepository.findByWorkspaceIdAndMemberId(tossTeam.getId(), suhyeon.getId());
         List<Channel> channelsOfEunjiInTossTeam = channelRepository.findByWorkspaceIdAndMemberId(tossTeam.getId(), eunji.getId());
 
+        //then
         // 수현과 은지는 각각 토스 워크스페이스 내에서 2개, 1개의 채널에 속함
         Assertions.assertThat(channelsOfSuhyeonInTossTeam).hasSize(2);
         Assertions.assertThat(channelsOfEunjiInTossTeam).hasSize(1);
