@@ -49,7 +49,6 @@ public class MemberRepositoryTest {
     }
     @AfterEach
     public void clear(){
-        memberRepository.deleteAll();
         cleaner.clear();
     }
 
@@ -92,9 +91,18 @@ public class MemberRepositoryTest {
         Assertions.assertThat(member.getNickname()).isEqualTo("한국최고수현");
     }
 
+    @Test
+    @DisplayName("멤버 삭제")
+    public void testRemoveMember(){
+        Member member = memberRepository.findByUsername("sh020119");
+        memberRepository.deleteById(member.getId());
+        Assertions.assertThat(memberRepository.findAll()).hasSize(1);
+    }
+
+
 
     @Test
-    @DisplayName("유저네임이 중복될 시에 exception 발생 확인")
+    @DisplayName("유저네임이 중복될 시 exception")
     public void testUniquenessOfUsername(){
         Member newMember = Member.builder()
                 .username("sh020119") // not unique
@@ -115,7 +123,7 @@ public class MemberRepositoryTest {
 
 
     @Test
-    @DisplayName("nullable=false 인 몇 가지 필드에 대한 exception 발생 확인")
+    @DisplayName("nullable=false 인 필드 누락시 exception")
     public void testNotNullableFields(){
         // password is null
         Member emptyPasswordMember = Member.builder()
@@ -146,6 +154,7 @@ public class MemberRepositoryTest {
         });
 
     }
+
 
 
 
