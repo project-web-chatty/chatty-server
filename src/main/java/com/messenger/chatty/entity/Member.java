@@ -2,7 +2,6 @@ package com.messenger.chatty.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class Member extends BaseEntity {
 
 
     // use this when you generate new member
-    public static Member CreateMember(String username, String email,String password,String role,String name,String nickname,String introduction,String profile_img){
+    public static Member createMember(String username, String email, String password, String role, String name, String nickname, String introduction, String profile_img){
         return Member.builder()
                 .username(username)
                 .email(email)

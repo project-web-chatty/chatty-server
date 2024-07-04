@@ -33,7 +33,7 @@ public class ChannelMember extends BaseEntity {
     //relation-method
     protected void setChannel(Channel channel) {
         this.channel = channel;
-        channel.getChannelMember().add(this);
+        channel.getChannelMembers().add(this);
     }
 
     //relation-method

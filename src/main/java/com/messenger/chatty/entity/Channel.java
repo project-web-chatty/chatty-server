@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -29,7 +30,7 @@ public class Channel extends BaseEntity{
 
     @Builder.Default
     @OneToMany(mappedBy = "channel",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ChannelMember> channelMember = new ArrayList<>();
+    private List<ChannelMember> channelMembers = new ArrayList<>();
 
 
     // use this when you generate new channel
@@ -42,6 +43,11 @@ public class Channel extends BaseEntity{
     protected void setWorkspace(Workspace workspace){
        this.workspace = workspace;
     }
+
+    public List<Member> getMembers(){
+        return channelMembers.stream().map(ChannelMember::getMember).collect(Collectors.toList());
+    }
+
 
     public void changeName(String name){
         this.name = name;
