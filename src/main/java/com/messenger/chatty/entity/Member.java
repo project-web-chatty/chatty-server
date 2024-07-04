@@ -74,9 +74,7 @@ public class Member extends BaseEntity {
     }
 
     public void enterIntoChannel(Channel channel){
-        ChannelJoin channelJoin = new ChannelJoin();
-        channelJoin.linkChannel(channel);
-        channelJoin.linkMember(this);
+        ChannelJoin channelJoin = new ChannelJoin(channel,this);
     }
 
 
