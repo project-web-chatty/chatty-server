@@ -23,3 +23,8 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test --console=plain
+
+      - name: Discord pullRequest notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
