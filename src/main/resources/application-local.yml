@@ -9,7 +9,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # according to our dev environment
+      ddl-auto: update # according to our dev environment
 
   data:
     mongodb:

@@ -3,7 +3,6 @@ package com.messenger.chatty.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.jdbc.Work;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class Workspace extends BaseEntity{
     @Builder.Default
     // @Column(nullable = false)
     @OneToMany(mappedBy = "workspace",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<WorkspaceMember> workspaceMembers = new ArrayList<>();
+    private List<WorkspaceJoin> workspaceJoins = new ArrayList<>();
 
 
     @Builder.Default
@@ -56,7 +55,7 @@ public class Workspace extends BaseEntity{
     }
 
     public List<Member> getAllMembers(){
-        return workspaceMembers.stream().map(WorkspaceMember::getMember).collect(Collectors.toList());
+        return workspaceJoins.stream().map(WorkspaceJoin::getMember).collect(Collectors.toList());
     }
 
 
