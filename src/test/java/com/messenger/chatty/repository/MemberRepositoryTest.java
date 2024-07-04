@@ -48,7 +48,7 @@ public class MemberRepositoryTest {
 
     }
     @AfterEach
-    public void tearDown(){
+    public void clear(){
         memberRepository.deleteAll();
         cleaner.clear();
     }
@@ -117,6 +117,33 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("nullable=false 인 몇 가지 필드에 대한 exception 발생 확인")
     public void testNotNullableFields(){
+        // password is null
+        Member emptyPasswordMember = Member.builder()
+                .username("sh020119")
+                .email("new@naver.com")
+                .name("new")
+                .nickname("new")
+                .introduction("new")
+                .profile_img("http://img.example.com").build();
+        // email is null
+        Member emptyEmailMember = Member.builder()
+                .username("sh020119")
+                .email("new@naver.com")
+                .name("new")
+                .nickname("new")
+                .introduction("new")
+                .profile_img("http://img.example.com").build();
+
+
+        assertThrows(DataIntegrityViolationException.class,()->{
+            memberRepository.save(emptyPasswordMember);
+
+        });
+
+        assertThrows(DataIntegrityViolationException.class,()->{
+            memberRepository.save(emptyEmailMember);
+
+        });
 
     }
 
