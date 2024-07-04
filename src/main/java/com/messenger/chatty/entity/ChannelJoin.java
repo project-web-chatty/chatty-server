@@ -25,7 +25,7 @@ public class ChannelJoin extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public ChannelJoin(Channel channel , Member member){
+    protected ChannelJoin(Channel channel , Member member){
         linkChannel(channel);
         linkMember(member);
     }
