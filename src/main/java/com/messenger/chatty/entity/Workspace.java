@@ -7,6 +7,7 @@ import org.hibernate.jdbc.Work;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -53,5 +54,10 @@ public class Workspace extends BaseEntity{
         channels.add(channel);
         channel.setWorkspace(this);
     }
+
+    public List<Member> getAllMembers(){
+        return workspaceMembers.stream().map(WorkspaceMember::getMember).collect(Collectors.toList());
+    }
+
 
 }

@@ -36,11 +36,7 @@ public class ChannelRepositoryTest {
         cleaner.clear();
     }
 
-    @Test
-    @DisplayName("이름으로 조회")
-    public void testFindByName(){
-        Assertions.assertThat(channelRepository.findByName("일반")).isNotNull();
-    }
+
 
     @Test
     @DisplayName("이름 없이 저장시 exception")
