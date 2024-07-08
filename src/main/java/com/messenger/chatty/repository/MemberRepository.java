@@ -7,15 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member,Long> {
 
-    Member findByUsername(String username);
-    Member findByEmail(String email);
+    Optional<Member> findByUsername(String username);
+    Optional<Member> findByEmail(String email);
 
-    Member findByNickname(String nickname);
+    Optional<Member> findByNickname(String nickname);
 
-    Member findByName(String name);
+    Optional<Member> findByName(String name);
 
     boolean existsByUsername(String username);
 

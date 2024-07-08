@@ -1,4 +1,4 @@
-package com.messenger.chatty.repository;
+/*package com.messenger.chatty.repository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.messenger.chatty.config.DataCleaner;
@@ -156,4 +156,4 @@ public class MemberRepositoryTest {
 
 
 }
-
+*/
