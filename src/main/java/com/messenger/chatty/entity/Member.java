@@ -1,6 +1,7 @@
 package com.messenger.chatty.entity;
 
 
+import com.messenger.chatty.dto.MemberJoinRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +23,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private String email;
 
 
@@ -53,16 +54,14 @@ public class Member extends BaseEntity {
 
 
     // use this when you generate new member
-    public static Member createMember(String username, String email, String password, String role, String name, String nickname, String introduction, String profile_img){
+    public static Member from(MemberJoinRequestDTO memberJoinRequestDTO){
         return Member.builder()
-                .username(username)
-                .email(email)
-                .password(password)
-                .role(role)
-                .name(name)
-                .nickname(nickname)
-                .introduction(introduction)
-                .profile_img(profile_img)
+                .username(memberJoinRequestDTO.getUsername())
+                .password(memberJoinRequestDTO.getPassword())
+                .role("USER")
+                .name(memberJoinRequestDTO.getName())
+                .nickname(memberJoinRequestDTO.getNickname())
+                .introduction(memberJoinRequestDTO.getIntroduction())
                 .build();
     }
 
