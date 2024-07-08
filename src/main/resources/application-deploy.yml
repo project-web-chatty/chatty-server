@@ -6,7 +6,7 @@ spring:
     password: ${DEPLOY_MYSQL_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create-drop # according to our rds environment
+      ddl-auto: create # according to our rds environment
 
   data:
     mongodb:

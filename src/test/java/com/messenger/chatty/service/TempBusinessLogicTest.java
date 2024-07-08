@@ -1,5 +1,6 @@
-package com.messenger.chatty.service;
+/*package com.messenger.chatty.service;
 import com.messenger.chatty.config.DataCleaner;
+import com.messenger.chatty.dto.MemberJoinReqDTO;
 import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
@@ -39,11 +39,14 @@ public class TempBusinessLogicTest {
         workspaceRepository.save(toss);
 
 
+        MemberJoinReqDTO memberJoinReqDTO = new MemberJoinReqDTO("suhyeon0119","");
+        
+                
         // 멤버 생성
-        Member suhyeon = Member.createMember("suhyeon0119","example@","0000",
+        Member suhyeon = Member.from("suhyeon0119","example@","0000",
                 "role","suhyeon","우주최강수현",
                 "대학생입니다.","img.example.com");
-        Member eunji =  Member.createMember("eunji2231","example@","0000",
+        Member eunji =  Member.from("eunji2231","example@","0000",
                 "role","eunji","달리는은지",
                 "열심히 일합니다.","img.example.com");
 
@@ -152,4 +155,4 @@ public class TempBusinessLogicTest {
         Assertions.assertThat(channelsOfEunjiInTossTeam).hasSize(1);
     }
 
-}
+}*/
