@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class WorkspaceResponseDto extends BaseResDTO{
+public class WorkspaceResponseDto extends BaseResDto {
 
     private Long id;
     private String name;

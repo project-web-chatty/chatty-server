@@ -1,15 +1,12 @@
 package com.messenger.chatty.controller;
 
 
-import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
-import com.messenger.chatty.dto.response.MemberResponseDTO;
+import com.messenger.chatty.dto.response.MemberProfileResponseDto;
 import com.messenger.chatty.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +21,7 @@ public class adminAuthController {
 
 
     @GetMapping("/members")
-    public List<MemberResponseDTO> getAllMemberList(){
+    public List<MemberProfileResponseDto> getAllMemberList(){
 
         return memberService.getAllMemberList();
 
