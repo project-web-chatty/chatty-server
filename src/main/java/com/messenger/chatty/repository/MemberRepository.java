@@ -1,6 +1,7 @@
 package com.messenger.chatty.repository;
 
 import com.messenger.chatty.entity.Member;
+import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,8 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     Member findByName(String name);
 
     boolean existsByUsername(String username);
+
+    @NonNull List<Member> findAll();
 
     @Query("SELECT wj.member FROM WorkspaceJoin wj WHERE wj.workspace.id = :workspaceId")
     List<Member> findMembersByWorkspaceId(@Param("workspaceId") Long workspaceId);

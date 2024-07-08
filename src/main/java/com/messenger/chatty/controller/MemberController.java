@@ -1,15 +1,12 @@
 package com.messenger.chatty.controller;
 
 
-import com.messenger.chatty.dto.MemberJoinRequestDTO;
+import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
 import com.messenger.chatty.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -18,12 +15,15 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody final MemberJoinRequestDTO memberJoinRequestDTO){
+    public ResponseEntity<Void> signup(@Valid @RequestBody final MemberJoinRequestDTO memberJoinRequestDTO){
        // validateJoinRequest(memberJoinReqDTO);
         memberService.signup(memberJoinRequestDTO);
         return ResponseEntity.ok().build();
 
     }
+
+
+
 
 
 

@@ -1,12 +1,13 @@
-package com.messenger.chatty.dto;
+package com.messenger.chatty.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
 public class MemberJoinRequestDTO {
     @NotBlank
     private String username;

@@ -1,7 +1,7 @@
 package com.messenger.chatty.entity;
 
 
-import com.messenger.chatty.dto.MemberJoinRequestDTO;
+import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
