@@ -1,15 +1,12 @@
-package com.messenger.chatty.dto;
+package com.messenger.chatty.dto.response;
 
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Getter // response dto should include getter
 public class ErrorResponseDTO {
     // private int errorCode;
-    private String message ;
+    private final String message ;
 
     private ErrorResponseDTO(String msg){
         message = msg;

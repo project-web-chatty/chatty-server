@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity // (debug = true) it should not be included in deployment ver
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
