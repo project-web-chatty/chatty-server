@@ -2,11 +2,14 @@ package com.messenger.chatty.controller;
 
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
+import com.messenger.chatty.dto.response.MemberResponseDTO;
 import com.messenger.chatty.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -21,6 +24,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
 
     }
+
+    /*
+    @GetMapping("/{memberId}")
+    public List<MemberResponseDTO> getMemberList(@PathVariable Long memberId){
+        // authentication logic should be included
+
+        return ResponseEntity.ok().build();
+    }*/
 
 
 
