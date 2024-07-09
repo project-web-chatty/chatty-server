@@ -11,8 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-public class MyProfileProfileResponseDto extends MemberProfileResponseDto {
-    private List<String> myWorkspaces;
-
+public class MyProfileResponseDto extends MemberProfileResponseDto {
+    private List<WorkspaceResponseDto> myWorkspaces;
 
 }

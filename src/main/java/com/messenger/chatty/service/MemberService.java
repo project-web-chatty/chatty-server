@@ -3,7 +3,7 @@ package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
 import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.MyProfileProfileResponseDto;
+import com.messenger.chatty.dto.response.MyProfileResponseDto;
 import com.messenger.chatty.exception.custom.DuplicateUsernameException;
 
 import java.util.List;
@@ -16,5 +16,5 @@ public interface MemberService {
 
     MemberProfileResponseDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException;
 
-    MyProfileProfileResponseDto findMyProfileByUsername(String username) throws NoSuchElementException;
+    MyProfileResponseDto findMyProfileByUsername(String username) throws NoSuchElementException;
 }

@@ -3,7 +3,7 @@ package com.messenger.chatty.controller;
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
 import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.MyProfileProfileResponseDto;
+import com.messenger.chatty.dto.response.MyProfileResponseDto;
 import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticatedException;
 import com.messenger.chatty.service.MemberService;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public MyProfileProfileResponseDto findMyProfile(){
+    public MyProfileResponseDto findMyProfile(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // security should be constructed at the front filters;
         // basically, authorization will be carried out in front of this controller
