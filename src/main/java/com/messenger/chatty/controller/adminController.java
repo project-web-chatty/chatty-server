@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/admin") // for the admin of this web service
 @RequiredArgsConstructor
 @RestController
-public class adminAuthController {
+public class adminController {
     private final MemberService memberService;
     private final WorkspaceService workspaceService;
     private final ChannelService channelService;
