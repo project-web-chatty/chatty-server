@@ -1,6 +1,7 @@
 package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 
@@ -18,6 +19,10 @@ public interface WorkspaceService {
     void deleteWorkspaceProfile(String targetWorkspaceName);
 
     WorkspaceBriefDto  getWorkspaceBriefProfile(String workspaceName);
+
+    List<MemberBriefDto> getMembersOfWorkspace(String workspaceName);
+
+    void enterIntoWorkspace(String workspaceName, String targetUsername);
 
 
 }

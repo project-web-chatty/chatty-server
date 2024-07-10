@@ -9,13 +9,13 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class MemberBriefDto extends BaseResDto {
 
-    private Long id;
-    private String username;
-    private String email;
-    private String role;
-    private String profile_img;
-    private String name;
-    private String nickname;
-    private String introduction;
+    protected Long id;
+    protected String username;
+    protected String email;
+    protected String role;
+    protected String profile_img;
+    protected String name;
+    protected String nickname;
+    protected String introduction;
 
 }

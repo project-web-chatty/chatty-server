@@ -2,6 +2,7 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.entity.Channel;
@@ -59,6 +60,38 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Workspace workspace = workspaceRepository.findByName(workspaceName)
                 .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
         return  CustomConverter.convertWorkspaceToBriefDto(workspace);
+    }
+
+    @Override
+    public List<MemberBriefDto> getMembersOfWorkspace(String workspaceName) {
+        Workspace workspace = workspaceRepository.findByName(workspaceName)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+
+        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
+        return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
+
+    }
+
+    @Override
+    public void enterIntoWorkspace(String workspaceName, String targetUsername) {
+        // 멤버를 추가 시, 워크 스페이스 내의 모든 채널에 해당 멤버가 속해야 함
+        Workspace workspace = workspaceRepository.findByName(workspaceName)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+        List<Channel> channels = channelRepository.findByWorkspace(workspace);
+
+        Member member = memberRepository.findByUsername(targetUsername)
+                .orElseThrow(()-> new NoSuchElementException("there is no member which name is " + targetUsername));
+
+        List<Long> memberIdListOfWorkspace = memberRepository.findMembersByWorkspaceId(workspace.getId()).stream().map(Member::getId).toList();
+
+        if(memberIdListOfWorkspace.contains(member.getId()))
+            throw new IllegalStateException("member already is in the workspace "+workspaceName);
+
+
+        channels.forEach(member::enterIntoChannel);
+
+
+
     }
 
 

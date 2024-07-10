@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class MyProfileDto extends MemberBriefDto {
-    private List<WorkspaceBriefDto> myWorkspaces;
+    protected List<WorkspaceBriefDto> myWorkspaces;
 
 
 }

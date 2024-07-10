@@ -30,10 +30,20 @@ public class CustomConverter {
                 .build();
     }
     public static MyProfileDto convertMemberToDto(Member member,List<Workspace> workspaceList){
-        MyProfileDto myProfileDto = (MyProfileDto) convertMemberToBriefDto(member);
-        List<WorkspaceBriefDto> workspaceBriefDtoList = workspaceList.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
-        myProfileDto.setMyWorkspaces(workspaceBriefDtoList);
-        return myProfileDto;
+        List<WorkspaceBriefDto> workspaceBriefDtoList = workspaceList.stream()
+                .map(CustomConverter::convertWorkspaceToBriefDto).toList();
+        return MyProfileDto.builder().id(member.getId())
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .name(member.getName())
+                .role(member.getRole())
+                .profile_img(member.getProfile_img())
+                .nickname(member.getNickname())
+                .introduction(member.getIntroduction())
+                .createdDate(member.getCreatedDate())
+                .lastModifiedDate(member.getLastModifiedDate())
+                .myWorkspaces(workspaceBriefDtoList)
+                .build();
     }
 
     public static ChannelBriefDto convertChannelToBriefDto(Channel channel){
@@ -55,13 +65,23 @@ public class CustomConverter {
     }
 
     public static WorkspaceResponseDto convertWorkspaceToDto(Workspace workspace, List<Channel> channelList, List<Member> memberList ) {
-        WorkspaceResponseDto workspaceResponseDto = (WorkspaceResponseDto) convertWorkspaceToBriefDto(workspace);
+
         List<ChannelBriefDto> channelBriefList = channelList.stream().map(CustomConverter::convertChannelToBriefDto).toList();
         List<MemberBriefDto> memberBriefLst = memberList.stream().map(CustomConverter::convertMemberToBriefDto).toList();
-        workspaceResponseDto.setChannels(channelBriefList);
-        workspaceResponseDto.setMembers(memberBriefLst);
-        return workspaceResponseDto;
+
+        return WorkspaceResponseDto.builder()
+                .id(workspace.getId())
+                .name(workspace.getName())
+                .description(workspace.getDescription())
+                .profile_img(workspace.getProfile_img())
+                .createdDate(workspace.getCreatedDate())
+                .lastModifiedDate(workspace.getLastModifiedDate())
+                .channels(channelBriefList)
+                .members(memberBriefLst)
+                .build();
     }
+
+
 
 
 
