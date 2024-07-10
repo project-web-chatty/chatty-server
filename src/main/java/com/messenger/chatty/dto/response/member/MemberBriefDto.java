@@ -1,10 +1,13 @@
-package com.messenger.chatty.dto.response;
+package com.messenger.chatty.dto.response.member;
+import com.messenger.chatty.dto.response.BaseResDto;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+
+// 공개될 수 있는 멤버 정보
 @Getter
 @SuperBuilder
-public class MemberProfileResponseDto extends BaseResDto {
+public class MemberBriefDto extends BaseResDto {
 
     private Long id;
     private String username;

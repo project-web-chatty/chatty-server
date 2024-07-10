@@ -1,4 +1,5 @@
-package com.messenger.chatty.dto.response;
+package com.messenger.chatty.dto.response.member;
+import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-public class MyProfileResponseDto extends MemberProfileResponseDto {
-    private List<WorkspaceResponseDto> myWorkspaces;
+public class MyProfileDto extends MemberBriefDto {
+    private List<WorkspaceBriefDto> myWorkspaces;
+
 
 }

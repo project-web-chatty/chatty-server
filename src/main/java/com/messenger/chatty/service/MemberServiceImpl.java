@@ -3,15 +3,15 @@ package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
-import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.MyProfileResponseDto;
-import com.messenger.chatty.dto.response.WorkspaceResponseDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
+import com.messenger.chatty.dto.response.member.MyProfileDto;
+import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
-import com.messenger.chatty.util.DtoConverter;
+import com.messenger.chatty.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,51 +30,53 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder bcrptPasswordEncoder;
 
     @Override
-    public void signup(MemberJoinRequestDto memberJoinRequestDTO){
+    public MemberBriefDto signup(MemberJoinRequestDto memberJoinRequestDTO){
 
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
             throw new DuplicatedNameException("duplicated username : "+memberJoinRequestDTO.getUsername());
 
         memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
-        memberRepository.save(Member.from(memberJoinRequestDTO));
+        Member me = Member.from(memberJoinRequestDTO);
+        memberRepository.save(me);
+        return CustomConverter.convertMemberToBriefDto(me);
     }
 
     @Override
-    public List<MemberProfileResponseDto> getAllMemberList() {
+    public List<MemberBriefDto> getAllMemberList() {
         List<Member> memberList = memberRepository.findAll();
-        return memberList.stream().map(DtoConverter::convertMemberToDto).toList();
+        return memberList.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
     }
 
     @Override
-    public MemberProfileResponseDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException {
+    public MemberBriefDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberId));
-        return  DtoConverter.convertMemberToDto(member);
+        return  CustomConverter.convertMemberToBriefDto(member);
     }
 
     @Override
-    public MyProfileResponseDto findMyProfileByUsername(String username) throws NoSuchElementException {
+    public MyProfileDto findMyProfileByUsername(String username) throws NoSuchElementException {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
-        List<WorkspaceResponseDto> workspaceReslist = myWorkspaces.stream().map(DtoConverter::convertWorkspaceToDto).toList();
+        List<WorkspaceBriefDto> workspaceReslist = myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
 
         // downCasting is dangerous so refactor it later
-        MyProfileResponseDto myProfileResponseDto = (MyProfileResponseDto) DtoConverter.convertMemberToDto(me);
+        MyProfileDto myProfileResponseDto = (MyProfileDto) CustomConverter.convertMemberToBriefDto(me);
         myProfileResponseDto.setMyWorkspaces(workspaceReslist);
         return myProfileResponseDto;
     }
 
     @Override
-    public void updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto){
+    public MyProfileDto updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto){
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
 
         updateRequestDto.getName().ifPresent(me::changeName);
         updateRequestDto.getNickname().ifPresent(me::changeNickname);
         updateRequestDto.getIntroduction().ifPresent(me::changeIntroduction);
-
+        return CustomConverter.conv
     }
 
     @Override

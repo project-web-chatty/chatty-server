@@ -23,4 +23,7 @@ public interface WorkspaceRepository extends JpaRepository<Workspace,Long> {
     @Query("SELECT wj.workspace FROM WorkspaceJoin wj WHERE wj.member.id = :memberId")
     List<Workspace> findWorkspacesByMemberId(@Param("memberId") Long memberId);
 
+
+
+
 }

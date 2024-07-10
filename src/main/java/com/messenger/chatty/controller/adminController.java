@@ -1,8 +1,8 @@
 package com.messenger.chatty.controller;
 
 
-import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.WorkspaceResponseDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
+import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
@@ -21,7 +21,7 @@ public class adminController {
 
 
     @GetMapping("/members")
-    public List<MemberProfileResponseDto> getAllMemberList(){
+    public List<MemberBriefDto> getAllMemberList(){
 
         return memberService.getAllMemberList();
 
