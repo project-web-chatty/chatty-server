@@ -38,4 +38,10 @@ public class WorkspaceController {
         WorkspaceResponseDto workspaceResponseDto = workspaceService.getWorkspaceProfile(workspaceName);
         return ResponseEntity.ok().body(workspaceResponseDto);
     }
+    @PutMapping("/{workspaceName}")
+    public ResponseEntity<WorkspaceResponseDto> getWorkspaceProfile
+            (@PathVariable String workspaceName) {
+        WorkspaceResponseDto workspaceResponseDto = workspaceService.getWorkspaceProfile(workspaceName);
+        return ResponseEntity.ok().body(workspaceResponseDto);
+    }
 }
