@@ -3,6 +3,7 @@ package com.messenger.chatty.controller;
 
 import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
@@ -21,11 +22,11 @@ public class WorkspaceController {
 
 
     @PostMapping
-    public ResponseEntity<WorkspaceResponseDto> generateWorkspace(@AuthenticatedUsername String username,
-            @Valid @RequestBody WorkspaceGenerateRequestDto workspaceGenerateRequestDto
+    public ResponseEntity<WorkspaceBriefDto> generateWorkspace(@AuthenticatedUsername String username,
+                                                               @Valid @RequestBody WorkspaceGenerateRequestDto workspaceGenerateRequestDto
             ) {
-        WorkspaceResponseDto workspaceResponseDto = workspaceService.generateWorkspace(workspaceGenerateRequestDto, username);
-        return ResponseEntity.ok().body(workspaceResponseDto);
+        WorkspaceBriefDto workspaceBriefDto = workspaceService.generateWorkspace(workspaceGenerateRequestDto, username);
+        return ResponseEntity.ok().body(workspaceBriefDto);
     }
 
 

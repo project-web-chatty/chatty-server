@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -30,15 +31,15 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder bcrptPasswordEncoder;
 
     @Override
-    public MemberBriefDto signup(MemberJoinRequestDto memberJoinRequestDTO){
+    public MyProfileDto signup(MemberJoinRequestDto memberJoinRequestDTO){
 
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
-            throw new DuplicatedNameException("duplicated username : "+memberJoinRequestDTO.getUsername());
+            throw new DuplicatedNameException("duplicated username : "+ memberJoinRequestDTO.getUsername());
 
         memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
         Member me = Member.from(memberJoinRequestDTO);
         memberRepository.save(me);
-        return CustomConverter.convertMemberToBriefDto(me);
+        return CustomConverter.convertMemberToDto(me, Collections.emptyList());
     }
 
     @Override
@@ -49,23 +50,19 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberBriefDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException {
+    public MemberBriefDto findMemberProfileByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberId));
         return  CustomConverter.convertMemberToBriefDto(member);
     }
 
     @Override
-    public MyProfileDto findMyProfileByUsername(String username) throws NoSuchElementException {
+    public MyProfileDto findMyProfileByUsername(String username) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
-        List<WorkspaceBriefDto> workspaceReslist = myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
 
-        // downCasting is dangerous so refactor it later
-        MyProfileDto myProfileResponseDto = (MyProfileDto) CustomConverter.convertMemberToBriefDto(me);
-        myProfileResponseDto.setMyWorkspaces(workspaceReslist);
-        return myProfileResponseDto;
+        return CustomConverter.convertMemberToDto(me,myWorkspaces);
     }
 
     @Override
@@ -76,7 +73,11 @@ public class MemberServiceImpl implements MemberService{
         updateRequestDto.getName().ifPresent(me::changeName);
         updateRequestDto.getNickname().ifPresent(me::changeNickname);
         updateRequestDto.getIntroduction().ifPresent(me::changeIntroduction);
-        return CustomConverter.conv
+
+        memberRepository.save(me);
+        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
+
+        return CustomConverter.convertMemberToDto(me,myWorkspaces);
     }
 
     @Override
