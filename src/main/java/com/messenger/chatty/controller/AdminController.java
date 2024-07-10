@@ -3,7 +3,6 @@ package com.messenger.chatty.controller;
 
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
-import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
@@ -15,10 +14,10 @@ import java.util.List;
 @RequestMapping("/api/admin") // for the admin of this web service
 @RequiredArgsConstructor
 @RestController
-public class adminController {
+public class AdminController {
     private final MemberService memberService;
     private final WorkspaceService workspaceService;
-    private final ChannelService channelService;
+ //   private final ChannelService channelService;
 
 
     @GetMapping("/members")

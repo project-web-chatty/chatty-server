@@ -19,7 +19,7 @@ public interface MemberService {
 
     MyProfileDto findMyProfileByUsername(String username) throws NoSuchElementException;
 
-    MyProfileDto updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto);
+    MyProfileDto updateMyProfile(String target, String name,String nickname,String introduction);
 
     void deleteMeByUsername(String username);
     void deleteMeById(Long id);

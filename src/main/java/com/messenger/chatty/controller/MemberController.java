@@ -28,29 +28,12 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}")
-    public MemberBriefDto getMemberProfile(@PathVariable Long memberId){
+    public MemberBriefDto getMemberBriefProfile(@PathVariable Long memberId){
         return memberService.findMemberProfileByMemberId(memberId);
     }
 
 
-    @GetMapping("/me")
-    public MyProfileDto getMyProfile(@AuthenticatedUsername String username) {
-        return memberService.findMyProfileByUsername(username);
-    }
-    @PutMapping("/me")
-    public ResponseEntity<MemberBriefDto> changeMyProfile(@AuthenticatedUsername String username ,
-                                                  @RequestBody MemberProfileUpdateRequestDto updateRequestDTO) {
-        MyProfileDto myProfileDto = memberService.updateMyProfile(username, updateRequestDTO);
-        return ResponseEntity.ok().body(myProfileDto);
-    }
 
-
-    // 수정 필요
-    @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteMeInThisWebService(@AuthenticatedUsername String username) {
-        memberService.deleteMeByUsername(username);
-        return ResponseEntity.ok().build();
-    }
 
 
 }

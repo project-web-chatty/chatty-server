@@ -66,13 +66,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MyProfileDto updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto){
-        Member me = memberRepository.findByUsername(username)
+    public MyProfileDto updateMyProfile(String targetUsername, String name,String nickname,String introduction){
+
+        Member me = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
 
-        updateRequestDto.getName().ifPresent(me::changeName);
-        updateRequestDto.getNickname().ifPresent(me::changeNickname);
-        updateRequestDto.getIntroduction().ifPresent(me::changeIntroduction);
+        if(name !=null) me.changeName(name);
+        if(nickname !=null) me.changeNickname(nickname);
+        if(introduction !=null) me.changeIntroduction(introduction);
 
         memberRepository.save(me);
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());

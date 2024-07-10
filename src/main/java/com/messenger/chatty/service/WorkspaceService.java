@@ -14,4 +14,6 @@ public interface WorkspaceService {
     WorkspaceResponseDto getWorkspaceProfile(String workspaceName);
 
     WorkspaceBriefDto  getWorkspaceBriefProfile(String workspaceName);
+
+
 }
