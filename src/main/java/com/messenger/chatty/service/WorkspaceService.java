@@ -13,6 +13,10 @@ public interface WorkspaceService {
                        String username);
     WorkspaceResponseDto getWorkspaceProfile(String workspaceName);
 
+    WorkspaceBriefDto updateWorkspaceProfile(String targetWorkspaceName,String profile_img,String description);
+
+    void deleteWorkspaceProfile(String targetWorkspaceName);
+
     WorkspaceBriefDto  getWorkspaceBriefProfile(String workspaceName);
 
 

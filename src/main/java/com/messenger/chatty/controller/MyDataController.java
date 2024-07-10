@@ -1,7 +1,6 @@
 package com.messenger.chatty.controller;
 
 import com.messenger.chatty.config.web.AuthenticatedUsername;
-import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.service.MemberService;
@@ -9,8 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RequestMapping("/api/me")
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ public class MyDataController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteMeInThisWebService(@AuthenticatedUsername String username) {
+    public ResponseEntity<Void> deleteMe(@AuthenticatedUsername String username) {
         memberService.deleteMeByUsername(username);
         return ResponseEntity.ok().build();
     }

@@ -67,6 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         return workspaceList.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
     };
 
+
     @Override
     public WorkspaceBriefDto generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String username) {
         if(workspaceRepository.existsByName(generateRequestDto.getName()))
@@ -85,9 +86,31 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(announce);
         channelRepository.save(talk);
         member.enterIntoChannel(announce);
-        channelRepository.save(talk);
+        member.enterIntoChannel(talk);
+
 
         return CustomConverter.convertWorkspaceToBriefDto(workspace);
+    }
+
+    @Override
+    public WorkspaceBriefDto updateWorkspaceProfile(String targetWorkspaceName, String profile_img, String description) {
+        Workspace workspace = workspaceRepository.findByName(targetWorkspaceName).orElseThrow(()->new NoSuchElementException("there is no workspace which name is " + targetWorkspaceName));
+
+
+        // 이미지 업로드 기능은 차후 구현
+        if(profile_img !=null) workspace.changeProfile_img(profile_img);
+        if(description !=null) workspace.changeDescription(description);
+        Workspace saved = workspaceRepository.save(workspace);
+
+        return CustomConverter.convertWorkspaceToBriefDto(saved);
+
+    }
+
+    @Override
+    public void deleteWorkspaceProfile(String targetWorkspaceName){
+        Workspace workspace = workspaceRepository.findByName(targetWorkspaceName)
+                .orElseThrow(()->new NoSuchElementException("there is no workspace which name is " + targetWorkspaceName));
+        workspaceRepository.delete(workspace);
     }
 
 

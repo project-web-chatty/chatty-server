@@ -2,10 +2,8 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
-import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
-import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
@@ -69,14 +67,15 @@ public class MemberServiceImpl implements MemberService{
     public MyProfileDto updateMyProfile(String targetUsername, String name,String nickname,String introduction){
 
         Member me = memberRepository.findByUsername(targetUsername)
-                .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
+                .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + targetUsername));
 
+        // 이미지 업로드 기능은 차후 구현
         if(name !=null) me.changeName(name);
         if(nickname !=null) me.changeNickname(nickname);
         if(introduction !=null) me.changeIntroduction(introduction);
 
-        memberRepository.save(me);
-        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
+        Member saved = memberRepository.save(me);
+        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(saved.getId());
 
         return CustomConverter.convertMemberToDto(me,myWorkspaces);
     }
