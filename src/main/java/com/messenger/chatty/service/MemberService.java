@@ -22,4 +22,6 @@ public interface MemberService {
 
     void deleteMeByUsername(String username);
     void deleteMeById(Long id);
+
+    // List<MemberBriefDto> getMembersOfWorkspace(String workspaceName);
 }

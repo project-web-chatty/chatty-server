@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChannelRepository extends JpaRepository<Channel,Long> {
 
@@ -14,9 +15,10 @@ public interface ChannelRepository extends JpaRepository<Channel,Long> {
     List<Channel> findByWorkspace(Workspace workspace);
 
     // search channel in the specific workspace as a channelName
-    Channel findByWorkspaceAndName(Workspace workspace,String name);
+    Optional<Channel> findByWorkspaceAndName(Workspace workspace, String name);
 
 
+    boolean existsByName(String name);
 
     // search channels that a member joins at in the specific workspace
     @Query("SELECT cj.channel FROM ChannelJoin cj WHERE cj.member.id = :memberId " +

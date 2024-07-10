@@ -3,8 +3,11 @@ package com.messenger.chatty.controller;
 
 import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
+import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
 import jakarta.validation.Valid;
@@ -13,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/api/workspace")
 @RequiredArgsConstructor
 @RestController
 public class WorkspaceController {
-    private final MemberService memberService;
+    private final ChannelService channelService;
     private final WorkspaceService workspaceService;
 
 
@@ -50,5 +55,27 @@ public class WorkspaceController {
              ) {
         WorkspaceBriefDto workspaceBriefDto = workspaceService.updateWorkspaceProfile(workspaceName, profile_img, description);
         return ResponseEntity.ok().body(workspaceBriefDto);
+    }
+
+    @GetMapping("/{workspaceName}/channels")
+    public ResponseEntity<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable String workspaceName ){
+        return ResponseEntity.ok().body(channelService.getChannelsOfWorkspace(workspaceName));
+    }
+
+    @PostMapping("/{workspaceName}/channels")
+    public ResponseEntity<ChannelBriefDto> addChannelToWorkspace(@PathVariable String workspaceName
+            , @RequestParam(required = true) @Size(min = 1,max = 15) String channelName  ){
+
+        return ResponseEntity.ok().body(channelService.createChannelToWorkspace(workspaceName, channelName));
+    }
+    @GetMapping("/{workspaceName}/members")
+    public ResponseEntity<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable String workspaceName ){
+        return ResponseEntity.ok().body(workspaceService.getMembersOfWorkspace(workspaceName));
+    }
+    @PostMapping("/{workspaceName}/members")
+    public ResponseEntity<ChannelBriefDto> enterIntoWorkspace(@PathVariable String workspaceName,
+                                                              @AuthenticatedUsername String username ){
+        workspaceService.enterIntoWorkspace(workspaceName, username);
+        return ResponseEntity.ok().build();
     }
 }
