@@ -2,7 +2,6 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
-import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;

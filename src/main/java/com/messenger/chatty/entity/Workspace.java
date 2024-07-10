@@ -54,6 +54,13 @@ public class Workspace extends BaseEntity{
         channel.linkWorkspace(this);
     }
 
+    public void changeDescription(String description){
+        this.description = description;
+    }
+    public void changeProfile_img(String profile_img){
+        this.profile_img = profile_img;
+    }
+
 
 
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Optional;
-
+/*
 
 @Getter
 @Setter
@@ -13,3 +13,4 @@ public class MemberProfileUpdateRequestDto {
     private Optional<String> nickname;
     private Optional<String> introduction;
 }
+*/
