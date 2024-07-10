@@ -19,7 +19,6 @@ public class MemberController {
     private final MemberService memberService;
 
 
-
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
        // validateJoinRequest(memberJoinReqDTO);
@@ -54,8 +53,6 @@ public class MemberController {
         memberService.deleteMeByUsername(username);
         return ResponseEntity.ok().build();
     }
-
-
 
 
 }
