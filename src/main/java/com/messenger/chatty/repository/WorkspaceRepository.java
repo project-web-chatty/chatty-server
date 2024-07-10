@@ -8,11 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkspaceRepository extends JpaRepository<Workspace,Long> {
 
     //search workspace by name
-    Workspace findByName(String name);
+    Optional<Workspace> findByName(String name);
+
+    boolean existsByName(String name);
 
     @NonNull List<Workspace> findAll();
 

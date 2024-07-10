@@ -2,13 +2,10 @@ package com.messenger.chatty.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-public class MemberJoinRequestDTO {
+public class MemberJoinRequestDto {
     @NotBlank
     private String username;
     @NotBlank
@@ -22,7 +19,7 @@ public class MemberJoinRequestDTO {
 
     private String introduction;
 
-    public void changePassword(String encodedPassword){
+    public void encodePassword(String encodedPassword){
         this.password =encodedPassword;
     }
 }

@@ -1,20 +1,44 @@
 package com.messenger.chatty.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import java.util.Date;
+
+/*
+according to the basic structure of the defaultErrorAttribute
+
+* {
+    "timestamp": "Tue Jul 09 22:34:07 KST 2024",
+    "status": 400,
+    "path": "/api/test/workspace/su",
+    "errorDetail": "NO_SUCH_ELEMENT",
+    "message": "there is no member whose username is su"
+}
+* */
 
 
 @Getter // response dto should include getter
 public class ErrorResponse {
-    private final String errorType;
-    private final String message ;
+    private final String timestamp;
+    private final int status;
+    private final String path;
+    private final String errorDetail; // enum to string
+    private final String message;
 
-    private ErrorResponse(String errorType, String message){
-        this.errorType = errorType;
+
+    private ErrorResponse(HttpServletRequest request , int status, String errorDetail, String message){
+        this.timestamp = new Date().toString();
+        this.status = status;
+        this.path = request.getRequestURI();
+        this.errorDetail = errorDetail;
         this.message = message;
     }
 
-    public static ErrorResponse from(ErrorType type, String msg){
-        return new ErrorResponse(type.toString() ,msg);
+    public static ErrorResponse from(HttpServletRequest request , HttpStatus status, ErrorDetail detail, String message){
+        return new ErrorResponse(request, status.value(), detail.toString(), message);
     }
+
 
 }

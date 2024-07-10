@@ -1,6 +1,7 @@
 package com.messenger.chatty.entity;
 
 
+import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,10 +39,10 @@ public class Workspace extends BaseEntity{
 
 
     // use this when you generate new workspace
-    public static Workspace createWorkspace(String name, String profile_img,String description){
-        return Workspace.builder().name(name)
-                .profile_img(profile_img)
-                .description(description)
+    public static Workspace generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto){
+        return Workspace.builder().name(generateRequestDto.getName())
+                .profile_img(generateRequestDto.getProfile_img())
+                .description(generateRequestDto.getDescription())
                 .build();
 
     }

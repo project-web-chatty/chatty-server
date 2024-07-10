@@ -1,7 +1,7 @@
 package com.messenger.chatty.entity;
 
 
-import com.messenger.chatty.dto.request.MemberJoinRequestDTO;
+import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
 
 
     // use this when you generate new member
-    public static Member from(MemberJoinRequestDTO memberJoinRequestDTO){
+    public static Member from(MemberJoinRequestDto memberJoinRequestDTO){
         return Member.builder()
                 .username(memberJoinRequestDTO.getUsername())
                 .password(memberJoinRequestDTO.getPassword())
