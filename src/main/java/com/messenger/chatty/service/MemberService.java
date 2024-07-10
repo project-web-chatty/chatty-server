@@ -3,8 +3,8 @@ package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
-import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.MyProfileResponseDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
+import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 
 import java.util.List;
@@ -12,14 +12,14 @@ import java.util.NoSuchElementException;
 
 public interface MemberService {
 
-    void signup(MemberJoinRequestDto memberJoinRequestDTO) throws DuplicatedNameException;
-    List<MemberProfileResponseDto> getAllMemberList();
+    MyProfileDto signup(MemberJoinRequestDto memberJoinRequestDTO) throws DuplicatedNameException;
+    List<MemberBriefDto> getAllMemberList();
 
-    MemberProfileResponseDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException;
+    MemberBriefDto findMemberProfileByMemberId(Long memberId) throws NoSuchElementException;
 
-    MyProfileResponseDto findMyProfileByUsername(String username) throws NoSuchElementException;
+    MyProfileDto findMyProfileByUsername(String username) throws NoSuchElementException;
 
-    void updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto);
+    MyProfileDto updateMyProfile(String username, MemberProfileUpdateRequestDto updateRequestDto);
 
     void deleteMeByUsername(String username);
     void deleteMeById(Long id);

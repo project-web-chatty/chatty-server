@@ -4,8 +4,8 @@ package com.messenger.chatty.controller;
 import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.request.MemberProfileUpdateRequestDto;
-import com.messenger.chatty.dto.response.MemberProfileResponseDto;
-import com.messenger.chatty.dto.response.MyProfileResponseDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
+import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,30 +20,28 @@ public class MemberController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
+    public ResponseEntity<MemberBriefDto> signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
        // validateJoinRequest(memberJoinReqDTO);
-        memberService.signup(memberJoinRequestDTO);
-        return ResponseEntity.ok().build();
+        MemberBriefDto me = memberService.signup(memberJoinRequestDTO);
+        return ResponseEntity.ok().body(me);
 
     }
 
     @GetMapping("/{memberId}")
-    public MemberProfileResponseDto getMemberProfile(@PathVariable Long memberId){
-        // authentication logic should be included
-
+    public MemberBriefDto getMemberProfile(@PathVariable Long memberId){
         return memberService.findMemberProfileByMemberId(memberId);
     }
 
 
     @GetMapping("/me")
-    public MyProfileResponseDto getMyProfile(@AuthenticatedUsername String username) {
+    public MyProfileDto getMyProfile(@AuthenticatedUsername String username) {
         return memberService.findMyProfileByUsername(username);
     }
     @PutMapping("/me")
-    public ResponseEntity<Void> changeMyProfile(@AuthenticatedUsername String username ,
+    public ResponseEntity<MemberBriefDto> changeMyProfile(@AuthenticatedUsername String username ,
                                                   @RequestBody MemberProfileUpdateRequestDto updateRequestDTO) {
-        memberService.updateMyProfile(username,updateRequestDTO);
-        return ResponseEntity.ok().build();
+        MyProfileDto myProfileDto = memberService.updateMyProfile(username, updateRequestDTO);
+        return ResponseEntity.ok().body(myProfileDto);
     }
 
 
