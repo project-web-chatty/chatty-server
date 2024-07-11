@@ -60,7 +60,7 @@ public class Workspace extends BaseEntity{
     public void changeProfile_img(String profile_img){
         this.profile_img = profile_img;
     }
-    public void changeInvitationCode(String code){this.invitationCode = code};
+    public void changeInvitationCode(String code){this.invitationCode = code;}
 
 
 }
