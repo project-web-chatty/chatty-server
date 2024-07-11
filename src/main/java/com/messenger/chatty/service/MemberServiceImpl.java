@@ -2,11 +2,15 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
+import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
+import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
+import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
 import com.messenger.chatty.util.CustomConverter;
@@ -26,6 +30,7 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final ChannelRepository channelRepository;
     private final PasswordEncoder bcrptPasswordEncoder;
 
     @Override
@@ -48,14 +53,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberBriefDto findMemberProfileByMemberId(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberId));
+    public MemberBriefDto getMemberProfileByMemberId(String memberName) {
+        Member member = memberRepository.findByUsername(memberName)
+                .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberName));
         return  CustomConverter.convertMemberToBriefDto(member);
     }
 
     @Override
-    public MyProfileDto findMyProfileByUsername(String username) {
+    public MyProfileDto getMyProfileByUsername(String username) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
@@ -84,7 +89,7 @@ public class MemberServiceImpl implements MemberService{
     public void deleteMeByUsername(String username){
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
-        memberRepository.delete(me);
+        memberRepository.deleteByUsername(username);
     }
 
     @Override
@@ -92,5 +97,22 @@ public class MemberServiceImpl implements MemberService{
         Member me = memberRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose id is " + id));
         memberRepository.delete(me);
+    }
+
+    @Override
+    public List<WorkspaceBriefDto> getMyWorkspaces(String username) {
+        Member me = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
+        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
+        return myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
+    }
+
+    @Override
+    public List<ChannelBriefDto> getMyChannels(String username, String workspaceName) {
+        Member me = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + username));
+        Workspace workspace = workspaceRepository.findByName(workspaceName).orElseThrow(() -> new NoSuchElementException("dsffds"));
+        List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
+        return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 }
