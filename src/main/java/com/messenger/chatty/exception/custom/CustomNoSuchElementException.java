@@ -1,7 +1,4 @@
 package com.messenger.chatty.exception.custom;
-
-import lombok.NoArgsConstructor;
-
 import java.util.NoSuchElementException;
 
 public class CustomNoSuchElementException extends NoSuchElementException {
