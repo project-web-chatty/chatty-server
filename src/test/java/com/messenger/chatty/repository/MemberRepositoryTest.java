@@ -1,4 +1,4 @@
-/*package com.messenger.chatty.repository;
+package com.messenger.chatty.repository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.messenger.chatty.config.DataCleaner;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 public class MemberRepositoryTest {
@@ -61,10 +60,10 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("필드별로 find 하는 메서드 확인")
     public void testFindMethods(){
-        Member memByUsername = memberRepository.findByUsername("sh020119");
-        Member memByEmail = memberRepository.findByEmail("sh020119@naver.com");
-        Member memByNickname = memberRepository.findByNickname("우주최강수현");
-        Member memByName = memberRepository.findByName("오수현");
+        Member memByUsername = memberRepository.findByUsername("sh020119").orElseThrow();
+        Member memByEmail = memberRepository.findByEmail("sh020119@naver.com").orElseThrow();
+        Member memByNickname = memberRepository.findByNickname("우주최강수현").orElseThrow();
+        Member memByName = memberRepository.findByName("오수현").orElseThrow();
 
 
         Assertions.assertThat(memByUsername.getId()).isEqualTo(memByEmail.getId());
@@ -76,7 +75,7 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("멤버 필드 수정")
     public void testChangeField(){
-        Member suhyeon  = memberRepository.findByUsername("sh020119");
+        Member suhyeon  = memberRepository.findByUsername("sh020119").orElseThrow();
         suhyeon.changeNickname("한국최고수현");
         memberRepository.save(suhyeon);
 
@@ -87,7 +86,7 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("멤버 삭제")
     public void testRemoveMember(){
-        Member member = memberRepository.findByUsername("sh020119");
+        Member member = memberRepository.findByUsername("sh020119").orElseThrow();
         memberRepository.deleteById(member.getId());
         Assertions.assertThat(memberRepository.findAll()).hasSize(1);
     }
@@ -152,8 +151,4 @@ public class MemberRepositoryTest {
 
 
 
-
-
-
 }
-*/
