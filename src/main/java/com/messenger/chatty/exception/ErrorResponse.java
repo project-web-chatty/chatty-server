@@ -28,16 +28,16 @@ public class ErrorResponse {
     private final String message;
 
 
-    private ErrorResponse(HttpServletRequest request , int status, String errorDetail, String message){
+    private ErrorResponse(String errorPath , int status, String errorDetail, String message){
         this.timestamp = new Date().toString();
         this.status = status;
-        this.path = request.getRequestURI();
+        this.path = errorPath;
         this.errorDetail = errorDetail;
         this.message = message;
     }
 
-    public static ErrorResponse from(HttpServletRequest request , HttpStatus status, ErrorDetail detail, String message){
-        return new ErrorResponse(request, status.value(), detail.toString(), message);
+    public static ErrorResponse from(String errorPath, HttpStatus status, ErrorDetail detail, String message){
+        return new ErrorResponse(errorPath, status.value(), detail.toString(), message);
     }
 
 
