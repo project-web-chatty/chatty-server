@@ -37,7 +37,7 @@ public class ChannelServiceImpl implements ChannelService{
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
 
-        // channel's name must be unique in the same workspace
+        // 채널은 같은 워크스페이스 내에서는 이름이 동일하지 않아야 한다.
         if(channelRepository.findByWorkspaceAndName(workspace,channelName).isPresent())
             throw new DuplicatedNameException(channelName,"채널이름");
 
@@ -46,8 +46,7 @@ public class ChannelServiceImpl implements ChannelService{
         // 만들어진 채널에 현재 워크스페이스에 있는 모든 멤버를 채널에 등록
         memberRepository.findMembersByWorkspaceId(workspace.getId())
                 .forEach(member -> {
-                    System.out.println("enter executed");
-                    ChannelJoin channelJoin = new ChannelJoin(channel,member);
+                    ChannelJoin channelJoin = ChannelJoin.from(channel,member);
                     channelJoinRepository.save(channelJoin);
                 });
 
