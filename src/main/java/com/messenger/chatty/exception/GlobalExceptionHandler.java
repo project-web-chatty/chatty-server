@@ -2,6 +2,7 @@ package com.messenger.chatty.exception;
 
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
+import com.messenger.chatty.exception.custom.PasswordInEqualityException;
 import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -66,7 +67,13 @@ public class GlobalExceptionHandler {
                         ,ErrorDetail.INVALID_CODE
                         ,ex.getMessage() ));
     }
-
+    @ExceptionHandler({PasswordInEqualityException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidSignupRequest(HttpServletRequest request, PasswordInEqualityException ex) {
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.from(request,HttpStatus.BAD_REQUEST
+                        ,ErrorDetail.PASSWORD_INEQUALITY
+                        ,ex.getMessage() ));
+    }
 
 
 }

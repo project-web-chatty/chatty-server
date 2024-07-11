@@ -57,13 +57,14 @@ public class Member extends BaseEntity {
 
     // use this when you generate new member
     public static Member from(MemberJoinRequestDto memberJoinRequestDTO){
+        String username = memberJoinRequestDTO.getUsername();
         return Member.builder()
-                .username(memberJoinRequestDTO.getUsername())
-                .password(memberJoinRequestDTO.getPassword())
+                .username(username)
+                .password(memberJoinRequestDTO.getPassword1())
                 .role("USER")
-                .name(memberJoinRequestDTO.getName())
-                .nickname(memberJoinRequestDTO.getNickname())
-                .introduction(memberJoinRequestDTO.getIntroduction())
+                .name(username)
+                .nickname(username)
+                .introduction(username +" 님의 소개글입니다.")
                 .build();
     }
 
