@@ -24,9 +24,9 @@ public class MemberController {
 
     }
 
-    @GetMapping("/{memberId}")
-    public MemberBriefDto getMemberBriefProfile(@PathVariable Long memberId){
-        return memberService.findMemberProfileByMemberId(memberId);
+    @GetMapping("/{memberName}")
+    public MemberBriefDto getMemberBriefProfile(@PathVariable String memberName){
+        return memberService.getMemberProfileByMemberId(memberName);
     }
 
 

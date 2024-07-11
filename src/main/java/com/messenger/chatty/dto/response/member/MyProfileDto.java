@@ -2,6 +2,7 @@ package com.messenger.chatty.dto.response.member;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
+@ToString
 public class MyProfileDto extends MemberBriefDto {
     protected List<WorkspaceBriefDto> myWorkspaces;
 

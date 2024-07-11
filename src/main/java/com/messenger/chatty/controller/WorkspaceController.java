@@ -28,7 +28,7 @@ public class WorkspaceController {
 
     // 워크 스페이스 생성
     @PostMapping
-    public ResponseEntity<WorkspaceBriefDto> createWorkspace(@AuthenticatedUsername String username,
+    public ResponseEntity<WorkspaceBriefDto> createWorkspace(@RequestParam String username,
                                                              @Valid @RequestBody WorkspaceGenerateRequestDto workspaceGenerateRequestDto
             ) {
         WorkspaceBriefDto workspaceBriefDto = workspaceService.generateWorkspace(workspaceGenerateRequestDto, username);
@@ -59,7 +59,7 @@ public class WorkspaceController {
 
     @GetMapping("/{workspaceName}/channels")
     public ResponseEntity<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable String workspaceName ){
-        return ResponseEntity.ok().body(channelService.getChannelsOfWorkspace(workspaceName));
+        return ResponseEntity.ok().body(workspaceService.getChannelsOfWorkspace(workspaceName));
     }
 
     @PostMapping("/{workspaceName}/channels")
@@ -68,14 +68,26 @@ public class WorkspaceController {
 
         return ResponseEntity.ok().body(channelService.createChannelToWorkspace(workspaceName, channelName));
     }
+
+    // 채널 삭제 api 만들기
+  /*  @DeleteMapping("/{workspaceName}/channels/{channelId}")
+    public ResponseEntity<ChannelBriefDto> deleteChannelToWorkspace(@PathVariable String workspaceName
+           @PathVariable Long channelId  ){
+
+        return ResponseEntity.ok().body(channelService.createChannelToWorkspace(workspaceName, channelName));
+    }*/
+
+
     @GetMapping("/{workspaceName}/members")
     public ResponseEntity<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable String workspaceName ){
         return ResponseEntity.ok().body(workspaceService.getMembersOfWorkspace(workspaceName));
     }
     @PostMapping("/{workspaceName}/members")
     public ResponseEntity<ChannelBriefDto> enterIntoWorkspace(@PathVariable String workspaceName,
-                                                              @AuthenticatedUsername String username ){
+                                                              @RequestParam String username ){
         workspaceService.enterIntoWorkspace(workspaceName, username);
         return ResponseEntity.ok().build();
     }
+
+
 }

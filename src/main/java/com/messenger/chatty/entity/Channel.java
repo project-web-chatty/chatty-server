@@ -27,6 +27,7 @@ public class Channel extends BaseEntity{
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
+
     @Builder.Default
     @OneToMany(mappedBy = "channel",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ChannelJoin> channelJoins = new ArrayList<>();

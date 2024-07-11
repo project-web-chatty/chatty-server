@@ -41,12 +41,14 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column // (nullable = false)
     private String introduction;
+
 
     @Builder.Default
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ChannelJoin> channelJoins = new ArrayList<>();
+
 
     @Builder.Default
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -72,10 +74,10 @@ public class Member extends BaseEntity {
         workspaceJoin.linkMember(this);
     }
 
-    public void enterIntoChannel(Channel channel){
+   /* public void enterIntoChannel(Channel channel){
         ChannelJoin channelJoin = new ChannelJoin(channel,this);
     }
-
+*/
 
     public void changeEmail(String email){
         this.email = email;
