@@ -26,6 +26,7 @@ public class Workspace extends BaseEntity{
     private String profile_img;
     private String description;
 
+    private String invitationCode;
 
     @Builder.Default
     // @Column(nullable = false)
@@ -59,7 +60,7 @@ public class Workspace extends BaseEntity{
     public void changeProfile_img(String profile_img){
         this.profile_img = profile_img;
     }
-
+    public void changeInvitationCode(String code){this.invitationCode = code};
 
 
 }

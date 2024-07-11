@@ -81,32 +81,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
 
-    @Override
-    public void enterIntoWorkspace(Long workspaceId, String targetUsername) {
-        // 멤버를 추가 시, 워크 스페이스 내의 모든 채널에 해당 멤버가 속해야 함
-        Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
-        List<Channel> channels = channelRepository.findByWorkspace(workspace);
 
-        Member member = memberRepository.findByUsername(targetUsername)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",targetUsername,"회원"));
-
-        List<Long> memberIdListOfWorkspace = memberRepository.
-                findMembersByWorkspaceId(workspace.getId()).stream().map(Member::getId).toList();
-
-        if(memberIdListOfWorkspace.contains(member.getId()))
-            throw new DuplicatedNameException("이미 존재하는 회원입니다.");
-
-        member.enterIntoWorkspace(workspace);
-
-        channels.forEach((channel)->{
-            ChannelJoin channelJoin = ChannelJoin.from(channel,member);
-            channelJoinRepository.save(channelJoin);
-        });
-
-
-
-    }
 
 
     public List<WorkspaceBriefDto> getAllWorkspaceList() {

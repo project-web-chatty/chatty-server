@@ -17,7 +17,8 @@ public interface WorkspaceRepository extends JpaRepository<Workspace,Long> {
 
     boolean existsByName(String name);
 
-    @NonNull List<Workspace> findAll();
+
+    Optional<Workspace> findByInvitationCode(String invitationCode);
 
     // search workspaces member joins at
     @Query("SELECT wj.workspace FROM WorkspaceJoin wj WHERE wj.member.id = :memberId")
