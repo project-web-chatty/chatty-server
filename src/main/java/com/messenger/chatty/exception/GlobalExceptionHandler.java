@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
 
     // it will be called when NOT Authenticated member is caught at controller level
-    // it is a NOT expected exception
+    // it is a NOT EXPECTED!!
     @ExceptionHandler(UnexpectedNotAuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedNotAuthenticatedException(HttpServletRequest request, UnexpectedNotAuthenticationException ex) {
         return ResponseEntity.badRequest()

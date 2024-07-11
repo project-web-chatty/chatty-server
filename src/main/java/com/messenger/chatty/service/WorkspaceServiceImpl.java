@@ -1,6 +1,4 @@
 package com.messenger.chatty.service;
-
-
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
@@ -102,7 +100,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         member.enterIntoWorkspace(workspace);
 
         channels.forEach((channel)->{
-            ChannelJoin channelJoin = new ChannelJoin(channel,member);
+            ChannelJoin channelJoin = ChannelJoin.from(channel,member);
             channelJoinRepository.save(channelJoin);
         });
 
@@ -137,11 +135,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(announce);
         channelRepository.save(talk);
 
-        ChannelJoin channelJoin1 = new ChannelJoin(announce,member);
-        channelJoinRepository.save(channelJoin1);
+        ChannelJoin announceJoin = ChannelJoin.from(announce,member);
+        channelJoinRepository.save(announceJoin);
 
-        ChannelJoin channelJoin2 = new ChannelJoin(talk,member);
-        channelJoinRepository.save(channelJoin2);
+        ChannelJoin talkJoin = ChannelJoin.from(talk,member);
+        channelJoinRepository.save(talkJoin);
 
 
         return CustomConverter.convertWorkspaceToBriefDto(workspace);

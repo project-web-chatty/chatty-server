@@ -74,10 +74,7 @@ public class Member extends BaseEntity {
         workspaceJoin.linkMember(this);
     }
 
-   /* public void enterIntoChannel(Channel channel){
-        ChannelJoin channelJoin = new ChannelJoin(channel,this);
-    }
-*/
+
 
     public void changeEmail(String email){
         this.email = email;

@@ -1,5 +1,4 @@
 package com.messenger.chatty.config.web;
-import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticationException;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
