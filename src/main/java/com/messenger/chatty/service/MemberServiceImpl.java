@@ -2,6 +2,7 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
@@ -53,9 +54,9 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberBriefDto getMemberProfileByMemberId(String memberName) {
-        Member member = memberRepository.findByUsername(memberName)
-                .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberName));
+    public MemberBriefDto getMemberProfileByMemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("there is no member whose member_id is " + memberId));
         return  CustomConverter.convertMemberToBriefDto(member);
     }
 
@@ -69,10 +70,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MyProfileDto updateMyProfile(String targetUsername, String name,String nickname,String introduction){
+    public MyProfileDto updateMyProfile(String targetUsername, MemberUpdateRequestDto memberUpdateRequestDto){
 
         Member me = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + targetUsername));
+
+        String name = memberUpdateRequestDto.getName();
+        String nickname = memberUpdateRequestDto.getNickname();
+        String introduction = memberUpdateRequestDto.getIntroduction();
 
         // 이미지 업로드 기능은 차후 구현
         if(name !=null) me.changeName(name);

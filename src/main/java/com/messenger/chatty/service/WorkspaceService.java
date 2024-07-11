@@ -1,6 +1,7 @@
 package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
@@ -13,19 +14,19 @@ public interface WorkspaceService {
     WorkspaceBriefDto generateWorkspace(
                       WorkspaceGenerateRequestDto workspaceGenerateRequestDto,
                        String creator);
-    WorkspaceResponseDto getWorkspaceProfile(String workspaceName);
+    WorkspaceResponseDto getWorkspaceProfile(Long workspaceId);
 
-    WorkspaceBriefDto updateWorkspaceProfile(String targetWorkspaceName,String profile_img,String description);
+    WorkspaceBriefDto updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto requestDto);
 
-    void deleteWorkspace(String targetWorkspaceName);
+    void deleteWorkspace(Long workspaceId);
 
-    WorkspaceBriefDto  getWorkspaceBriefProfile(String workspaceName);
+    WorkspaceBriefDto  getWorkspaceBriefProfile(Long workspaceId);
 
-    List<MemberBriefDto> getMembersOfWorkspace(String workspaceName);
+    List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId);
 
-    List<ChannelBriefDto> getChannelsOfWorkspace(String workspaceName);
+    List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
-    void enterIntoWorkspace(String workspaceName, String targetUsername);
+    void enterIntoWorkspace(Long workspaceId, String targetUsername);
 
 
 

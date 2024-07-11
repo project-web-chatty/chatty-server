@@ -9,7 +9,6 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
 public class MemberJoinRequestDto {
     @NotBlank
     private String username;

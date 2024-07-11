@@ -41,7 +41,6 @@ public class Workspace extends BaseEntity{
     // use this when you generate new workspace
     public static Workspace generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto){
         return Workspace.builder().name(generateRequestDto.getName())
-                .profile_img(generateRequestDto.getProfile_img())
                 .description(generateRequestDto.getDescription())
                 .build();
 
