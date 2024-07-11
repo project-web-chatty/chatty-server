@@ -13,6 +13,7 @@ import com.messenger.chatty.repository.ChannelJoinRepository;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
+import com.messenger.chatty.security.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,21 +32,9 @@ public class InviteServiceImpl implements InviteService {
     private final ChannelRepository channelRepository;
     private final MemberRepository memberRepository;
     private final ChannelJoinRepository channelJoinRepository;
+    private final InvitationCodeGenerator invitationCodeGenerator;
 
 
-    // 보안 값이므로 나중에 로컬과 배포를 분리하여 환경 변수 설정하기
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    private static final int CODE_LENGTH = 8;
-    private final SecureRandom random = new SecureRandom();
-
-    private String generateInviteCode() {
-        StringBuilder code = new StringBuilder(CODE_LENGTH);
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-        }
-        return code.toString();
-    }
 
     @Override
     public String getNewInvitationCode(Long workspaceId) {
@@ -58,7 +47,7 @@ public class InviteServiceImpl implements InviteService {
     public String setInvitationCode(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("아이디", workspaceId, "워크스페이스"));
-        String newCode = generateInviteCode();
+        String newCode = invitationCodeGenerator.generateInviteCode();
         workspace.changeInvitationCode(newCode);
         workspaceRepository.save(workspace);
         return newCode;
