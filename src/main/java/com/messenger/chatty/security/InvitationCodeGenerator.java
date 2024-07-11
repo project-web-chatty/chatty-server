@@ -1,9 +1,5 @@
 package com.messenger.chatty.security;
-
-
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
 
 @Component
