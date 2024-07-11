@@ -15,18 +15,19 @@ import org.springframework.web.bind.annotation.*;
 public class InviteController {
     private final InviteService inviteService;
 
-    @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
+    @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
     @GetMapping("/{workspaceId}")
-    public String getNewInvitationCode(Long workspaceId){
+    public String getNewInvitationCode(@PathVariable  Long workspaceId){
 
         return inviteService.getNewInvitationCode(workspaceId);
 
     }
-    @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
-    @PostMapping("/{workspaceId}")
-    public String setInvitationCOde(Long workspaceId){
 
-        return inviteService.getNewInvitationCode(workspaceId);
+    @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
+    @PostMapping("/{workspaceId}")
+    public String generateInvitationCode(@PathVariable Long workspaceId){
+
+        return inviteService.setInvitationCode(workspaceId);
 
     }
 
@@ -36,7 +37,7 @@ public class InviteController {
                     "웹서버 측은 이 엔드포인트 단으로 곧바로 요청을 보낸다. 앞 필터에서 먼저 리프레시 토큰으로 로그인 여부를 확인하고 " +
                     "로그인 되어 있다면 이후 로직을 시행, 로그인 되어 있지 않으면 로그인페이지로 리다이렉팅 시킨다.")
     // 로그인 되었다고 가정
-    @PostMapping("/{code}")
+    @PostMapping("/accept/{code}")
     public WorkspaceResponseDto acceptInvitationAndEnterToWorkspace(@PathVariable String code,@RequestParam String username){
         return inviteService.acceptInvitationAndEnterToWorkspace(username, code);
     }
