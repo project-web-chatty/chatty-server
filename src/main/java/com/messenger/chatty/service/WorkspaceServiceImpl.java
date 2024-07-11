@@ -16,6 +16,7 @@ import com.messenger.chatty.repository.ChannelJoinRepository;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
+import com.messenger.chatty.security.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
     private final ChannelJoinRepository channelJoinRepository;
+    private final InvitationCodeGenerator invitationCodeGenerator;
 
     // 워크스페이스 내에서 수행되는 멤버쉽과 관련된 인가 권한 검증은 시큐리티의 커스텀 필터를 URL에 맞게 구현
     // 특정 멤버가 특정 워크스페이스에 대한 해당 메서드에 대해 권한이 있는가 에 대한 validation
@@ -99,20 +101,22 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Member member = memberRepository.findByUsername(creatorUsername)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",creatorUsername,"회원"));
 
-        // 워크스페이스 생성 후 저장
+        // 워크스페이스 생성 후 초대코드와 같이 저장
         Workspace workspace = Workspace.generateWorkspace(generateRequestDto);
+        String code = invitationCodeGenerator.generateInviteCode();
+        workspace.changeInvitationCode(code);
         workspaceRepository.save(workspace);
 
+        // 생성한 멤버는 곧바로 워크스페이스에 들어간다
         member.enterIntoWorkspace(workspace);
+
+        // 기본 채널 announce와 talk를 생성
         Channel announce = Channel.createChannel("announce",workspace);
         Channel talk = Channel.createChannel("talk",workspace);
-
         channelRepository.save(announce);
         channelRepository.save(talk);
-
         ChannelJoin announceJoin = ChannelJoin.from(announce,member);
         channelJoinRepository.save(announceJoin);
-
         ChannelJoin talkJoin = ChannelJoin.from(talk,member);
         channelJoinRepository.save(talkJoin);
 
