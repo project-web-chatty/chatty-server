@@ -41,11 +41,18 @@ public class MemberServiceImpl implements MemberService{
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
             throw new DuplicatedNameException(memberJoinRequestDTO.getUsername(),"username");
 
+
+
+
         memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
         Member me = Member.from(memberJoinRequestDTO);
         memberRepository.save(me);
         return CustomConverter.convertMemberToDto(me, Collections.emptyList());
     }
+
+
+
+
 
     @Override
     public List<MemberBriefDto> getAllMemberList() {
@@ -121,5 +128,11 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomNoSuchElementException("이름",workspaceName,"워크스페이스"));
         List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
+    }
+
+    @Override
+    public void checkDuplicatedUsername(String username) {
+        if(memberRepository.existsByUsername(username))
+            throw new DuplicatedNameException(username,"username");
     }
 }
