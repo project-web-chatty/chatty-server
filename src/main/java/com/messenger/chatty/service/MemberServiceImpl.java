@@ -12,6 +12,7 @@ import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
+import com.messenger.chatty.exception.custom.PasswordInEqualityException;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -41,10 +42,11 @@ public class MemberServiceImpl implements MemberService{
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
             throw new DuplicatedNameException(memberJoinRequestDTO.getUsername(),"username");
 
+        if(!memberJoinRequestDTO.getPassword1().equals(memberJoinRequestDTO.getPassword2()))
+            throw new PasswordInEqualityException("패스워드가 같지 않습니다.");
 
 
-
-        memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
+        memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword1()));
         Member me = Member.from(memberJoinRequestDTO);
         memberRepository.save(me);
         return CustomConverter.convertMemberToDto(me, Collections.emptyList());
