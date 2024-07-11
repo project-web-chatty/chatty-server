@@ -52,9 +52,6 @@ public class ChannelServiceImpl implements ChannelService{
 
 
         Channel savedChannel = channelRepository.save(channel);
-
-
-
         return CustomConverter.convertChannelToBriefDto(savedChannel);
     }
 
@@ -74,6 +71,10 @@ public class ChannelServiceImpl implements ChannelService{
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
-
-
+    @Override
+    public void deleteChannelInWorkspace(Long channelId) {
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new CustomNoSuchElementException("채널ID", channelId, "채널"));
+        channelRepository.delete(channel);
+    }
 }

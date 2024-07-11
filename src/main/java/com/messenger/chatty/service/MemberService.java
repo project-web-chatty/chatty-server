@@ -27,4 +27,6 @@ public interface MemberService {
     List<WorkspaceBriefDto> getMyWorkspaces(String username);
     List<ChannelBriefDto> getMyChannels(String username, String workspaceName);
 
+    void checkDuplicatedUsername(String username);
+
 }

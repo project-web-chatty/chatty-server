@@ -20,7 +20,7 @@ public class MemberController {
 
 
     @Operation(summary = "회원가입하기(일반)")
-    @PostMapping
+    @PostMapping("/signup")
     public MemberBriefDto signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
         return memberService.signup(memberJoinRequestDTO);
     }
@@ -31,6 +31,12 @@ public class MemberController {
         return memberService.getMemberProfileByMemberId(memberId);
     }
 
+    @Operation(summary = "username(아이디) 중복 검사하기")
+    @PostMapping("/check/username")
+    public ResponseEntity<Void> checkDuplicatedUsername(@RequestParam String username){
+        memberService.checkDuplicatedUsername(username);
+        return ResponseEntity.ok().build();
+    }
 
 
 

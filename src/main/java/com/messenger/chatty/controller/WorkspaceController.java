@@ -72,13 +72,14 @@ public class WorkspaceController {
         return channelService.createChannelToWorkspace(workspaceId, requestDto);
     }
 
-    // 채널 삭제 api 만들기
-  /*  @DeleteMapping("/{workspaceName}/channels/{channelId}")
-    public ResponseEntity<ChannelBriefDto> deleteChannelToWorkspace(@PathVariable String workspaceName
-           @PathVariable Long channelId  ){
+    @Operation(summary = "특정 채널 삭제하기")
+    @DeleteMapping("/channels/{channelId}")
+    public ResponseEntity<Void> deleteChannelToWorkspace(
+                                                                    @PathVariable Long channelId  ){
+        channelService.deleteChannelInWorkspace(channelId);
 
-        return ResponseEntity.ok().body(channelService.createChannelToWorkspace(workspaceName, channelName));
-    }*/
+        return ResponseEntity.ok().build();
+    }
 
 
 
