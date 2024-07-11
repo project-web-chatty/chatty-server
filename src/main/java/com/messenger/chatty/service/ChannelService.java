@@ -8,6 +8,7 @@ import java.util.List;
 public interface ChannelService {
 
     ChannelBriefDto createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto);
+    List<ChannelBriefDto> getAllChannels();
 
     List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long workspaceId, String username);
 

@@ -51,11 +51,16 @@ public class ChannelServiceImpl implements ChannelService{
                 });
 
 
-        Channel saved = channelRepository.save(channel);
+        Channel savedChannel = channelRepository.save(channel);
 
 
 
-        return CustomConverter.convertChannelToBriefDto(saved);
+        return CustomConverter.convertChannelToBriefDto(savedChannel);
+    }
+
+    @Override
+    public List<ChannelBriefDto> getAllChannels() {
+        return channelRepository.findAll().stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
     @Override
