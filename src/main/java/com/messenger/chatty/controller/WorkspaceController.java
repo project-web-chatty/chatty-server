@@ -81,13 +81,8 @@ public class WorkspaceController {
     }*/
 
 
-    @Operation(summary = "워크스페이스에 참여하기")
-    @PostMapping("/{workspaceId}/members")
-    public ResponseEntity<Void> enterIntoWorkspace(@PathVariable Long workspaceId,
-                                                              @RequestParam String username ){
-        workspaceService.enterIntoWorkspace(workspaceId, username);
-        return ResponseEntity.ok().build();
-    }
+
+
 
 
 }

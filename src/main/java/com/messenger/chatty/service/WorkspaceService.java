@@ -26,8 +26,6 @@ public interface WorkspaceService {
 
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
-    void enterIntoWorkspace(Long workspaceId, String targetUsername);
-
 
 
 
