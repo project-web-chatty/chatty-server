@@ -2,7 +2,9 @@ package com.messenger.chatty.controller;
 
 
 import com.messenger.chatty.config.web.AuthenticatedUsername;
+import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
@@ -28,45 +30,33 @@ public class WorkspaceController {
 
     // 워크 스페이스 생성
     @PostMapping
-    public ResponseEntity<WorkspaceBriefDto> createWorkspace(@RequestParam String username,
-                                                             @Valid @RequestBody WorkspaceGenerateRequestDto workspaceGenerateRequestDto
-            ) {
-        WorkspaceBriefDto workspaceBriefDto = workspaceService.generateWorkspace(workspaceGenerateRequestDto, username);
-        return ResponseEntity.ok().body(workspaceBriefDto);
+    public WorkspaceBriefDto createWorkspace(@RequestParam String username,
+                                             @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
+        return  workspaceService.generateWorkspace(requestDto, username);
     }
 
-
-    // 워크 스페이스 정보 가져오기
-    // 채널 목록, 멤버 목록을 포함한 워크스페이스 정보를 가져온다
-    // 워크스페이스 내 멤버만 인가되는 요청들에 대해서는 앞의 필터에서 인가를 구현한다.
-    @GetMapping("/{workspaceName}")
-    public ResponseEntity<WorkspaceResponseDto> getWorkspaceProfile
-            (@PathVariable String workspaceName) {
-        WorkspaceResponseDto workspaceResponseDto = workspaceService.getWorkspaceProfile(workspaceName);
-        return ResponseEntity.ok().body(workspaceResponseDto);
+    @GetMapping("/{workspaceId}")
+    public WorkspaceResponseDto getWorkspaceProfile(@PathVariable Long workspaceId) {
+        return workspaceService.getWorkspaceProfile(workspaceId);
     }
 
-    // 워크 스페이스 정보 수정하기
-    @PutMapping("/{workspaceName}")
-    public ResponseEntity<WorkspaceBriefDto> updateWorkspaceProfile
-            (@PathVariable String workspaceName ,
-             @RequestParam(name = "profile_img", required = false)  String profile_img,
-             @RequestParam(name = "description", required = false) @Size(max = 500)  String  description
+    @PutMapping("/{workspaceId}")
+    public WorkspaceBriefDto updateWorkspaceProfile
+            (@PathVariable Long workspaceId , @RequestBody WorkspaceUpdateRequestDto requestDto
              ) {
-        WorkspaceBriefDto workspaceBriefDto = workspaceService.updateWorkspaceProfile(workspaceName, profile_img, description);
-        return ResponseEntity.ok().body(workspaceBriefDto);
+        return workspaceService.updateWorkspaceProfile(workspaceId, requestDto);
     }
 
-    @GetMapping("/{workspaceName}/channels")
-    public ResponseEntity<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable String workspaceName ){
-        return ResponseEntity.ok().body(workspaceService.getChannelsOfWorkspace(workspaceName));
+    @GetMapping("/{workspaceId}/channels")
+    public List<ChannelBriefDto> getChannelsOfWorkspace(@PathVariable Long workspaceId ){
+        return workspaceService.getChannelsOfWorkspace(workspaceId);
     }
 
-    @PostMapping("/{workspaceName}/channels")
-    public ResponseEntity<ChannelBriefDto> addChannelToWorkspace(@PathVariable String workspaceName
-            , @RequestParam(required = true) @Size(min = 1,max = 15) String channelName  ){
+    @PostMapping("/{workspaceId}/channels")
+    public ChannelBriefDto addChannelToWorkspace(@PathVariable Long workspaceId,
+            @RequestBody @Valid ChannelGenerateRequestDto requestDto ){
 
-        return ResponseEntity.ok().body(channelService.createChannelToWorkspace(workspaceName, channelName));
+        return channelService.createChannelToWorkspace(workspaceId, requestDto);
     }
 
     // 채널 삭제 api 만들기
@@ -78,16 +68,15 @@ public class WorkspaceController {
     }*/
 
 
-    @GetMapping("/{workspaceName}/members")
-    public ResponseEntity<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable String workspaceName ){
-        return ResponseEntity.ok().body(workspaceService.getMembersOfWorkspace(workspaceName));
+    @GetMapping("/{workspaceId}/members")
+    public List<MemberBriefDto> getMembersOfWorkspace(@PathVariable Long workspaceId ){
+        return workspaceService.getMembersOfWorkspace(workspaceId);
     }
-    @PostMapping("/{workspaceName}/members")
-    public ResponseEntity<ChannelBriefDto> enterIntoWorkspace(@PathVariable String workspaceName,
+    @PostMapping("/{workspaceId}/members")
+    public ResponseEntity<Void> enterIntoWorkspace(@PathVariable Long workspaceId,
                                                               @RequestParam String username ){
-        workspaceService.enterIntoWorkspace(workspaceName, username);
-        return ResponseEntity.ok().build();
-    }
+        workspaceService.enterIntoWorkspace(workspaceId, username);
+        return ResponseEntity.ok().build();    }
 
 
 }

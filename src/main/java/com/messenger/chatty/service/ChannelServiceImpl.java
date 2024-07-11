@@ -1,6 +1,7 @@
 package com.messenger.chatty.service;
 
 
+import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.ChannelJoin;
@@ -29,11 +30,12 @@ public class ChannelServiceImpl implements ChannelService{
     private final ChannelJoinRepository channelJoinRepository;
 
     @Override
-    public ChannelBriefDto createChannelToWorkspace(String targetWorkspaceName, String channelName) {
+    public ChannelBriefDto createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
 
+        String channelName = requestDto.getName();
 
-        Workspace workspace = workspaceRepository.findByName(targetWorkspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + targetWorkspaceName));
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
 
         // channel's name must be unique in the same workspace
         if(channelRepository.findByWorkspaceAndName(workspace,channelName).isPresent())

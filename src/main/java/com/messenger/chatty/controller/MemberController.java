@@ -16,17 +16,14 @@ public class MemberController {
     private final MemberService memberService;
 
 
-    @PostMapping("/signup")
-    public ResponseEntity<MemberBriefDto> signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
-
-        MemberBriefDto me = memberService.signup(memberJoinRequestDTO);
-        return ResponseEntity.ok().body(me);
-
+    @PostMapping
+    public MemberBriefDto signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
+        return memberService.signup(memberJoinRequestDTO);
     }
 
-    @GetMapping("/{memberName}")
-    public MemberBriefDto getMemberBriefProfile(@PathVariable String memberName){
-        return memberService.getMemberProfileByMemberId(memberName);
+    @GetMapping("/{memberId}")
+    public MemberBriefDto getMemberBriefProfile(@PathVariable Long memberId){
+        return memberService.getMemberProfileByMemberId(memberId);
     }
 
 

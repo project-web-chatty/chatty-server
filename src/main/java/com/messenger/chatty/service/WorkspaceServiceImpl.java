@@ -2,6 +2,7 @@ package com.messenger.chatty.service;
 
 
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
@@ -35,9 +36,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final ChannelJoinRepository channelJoinRepository;
 
     // 워크스페이스 내에서 수행되는 멤버쉽과 관련된 인가 권한 검증은 시큐리티의 커스텀 필터를 URL에 맞게 구현
-    // "특정 멤버가 특정 워크스페이스에 대한 해당 메서드에 대해 권한이 있는가?" 에 대한 validation
+    // 특정 멤버가 특정 워크스페이스에 대한 해당 메서드에 대해 권한이 있는가 에 대한 validation
     // 필터에서 이 메서드를 호출하여 검증 수행
-    // (비효율적인 것 같으면 서비스 단에서 검증하기)
     public void validateAuthorization(){
         //  추후 로직 작성
          throw new UnAuthorizedMemberException("incomplete");
@@ -45,11 +45,10 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
-    public WorkspaceResponseDto getWorkspaceProfile(String workspaceName) {
+    public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
         // 앞의 필터에서 인가 권한에 대하여 검증되었다고 가정하므로 여기서 인가 validation 할 필요 x
-
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
 
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
@@ -59,25 +58,25 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
-    public WorkspaceBriefDto getWorkspaceBriefProfile(String workspaceName) {
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+    public WorkspaceBriefDto getWorkspaceBriefProfile(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
         return  CustomConverter.convertWorkspaceToBriefDto(workspace);
     }
 
     @Override
-    public List<MemberBriefDto> getMembersOfWorkspace(String workspaceName) {
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+    public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
 
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
     }
     @Override
-    public List<ChannelBriefDto> getChannelsOfWorkspace(String workspaceName) {
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+    public List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is "));
 
         return  channelRepository.findByWorkspace(workspace)
                 .stream().map(CustomConverter::convertChannelToBriefDto).toList();
@@ -85,10 +84,10 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
-    public void enterIntoWorkspace(String workspaceName, String targetUsername) {
+    public void enterIntoWorkspace(Long workspaceId, String targetUsername) {
         // 멤버를 추가 시, 워크 스페이스 내의 모든 채널에 해당 멤버가 속해야 함
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " + workspaceName));
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
 
         Member member = memberRepository.findByUsername(targetUsername)
@@ -97,7 +96,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         List<Long> memberIdListOfWorkspace = memberRepository.findMembersByWorkspaceId(workspace.getId()).stream().map(Member::getId).toList();
 
         if(memberIdListOfWorkspace.contains(member.getId()))
-            throw new IllegalStateException("member already is in the workspace "+workspaceName);
+            throw new IllegalStateException("member already is in the workspace "+ workspaceId);
 
         member.enterIntoWorkspace(workspace);
 
@@ -118,12 +117,12 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
-    public WorkspaceBriefDto generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String creator) {
+    public WorkspaceBriefDto generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String creatorUsername) {
         if(workspaceRepository.existsByName(generateRequestDto.getName()))
             throw new DuplicatedNameException("duplicated workspaceName : "+ generateRequestDto.getName());
 
         // 멤버 조회
-        Member member = memberRepository.findByUsername(creator).orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + creator));
+        Member member = memberRepository.findByUsername(creatorUsername).orElseThrow(() -> new NoSuchElementException("there is no member whose username is " + creatorUsername));
 
         // 워크스페이스 생성 후 저장
         Workspace workspace = Workspace.generateWorkspace(generateRequestDto);
@@ -147,13 +146,12 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
-    public WorkspaceBriefDto updateWorkspaceProfile(String targetWorkspaceName, String profile_img, String description) {
-        Workspace workspace = workspaceRepository.findByName(targetWorkspaceName).orElseThrow(()->new NoSuchElementException("there is no workspace which name is " + targetWorkspaceName));
-
+    public WorkspaceBriefDto updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto updateRequestDto) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(()->new NoSuchElementException("there is no workspace which name is " ));
 
         // 이미지 업로드 기능은 차후 구현
-        if(profile_img !=null) workspace.changeProfile_img(profile_img);
-        if(description !=null) workspace.changeDescription(description);
+        // if(profile_img !=null) workspace.changeProfile_img(profile_img);
+        if(updateRequestDto.getDescription() !=null) workspace.changeDescription(updateRequestDto.getDescription());
         Workspace saved = workspaceRepository.save(workspace);
 
         return CustomConverter.convertWorkspaceToBriefDto(saved);
@@ -161,9 +159,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
-    public void deleteWorkspace(String targetWorkspaceName){
-        Workspace workspace = workspaceRepository.findByName(targetWorkspaceName)
-                .orElseThrow(()->new NoSuchElementException("there is no workspace which name is " + targetWorkspaceName));
+    public void deleteWorkspace(Long workspaceId){
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(()->new NoSuchElementException("there is no workspace which name is "));
         workspaceRepository.delete(workspace);
     }
 

@@ -1,17 +1,13 @@
 package com.messenger.chatty.dto.request;
 
-
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+
 
 @Getter
 @Setter
-@Builder
-public class WorkspaceGenerateRequestDto {
+public class ChannelGenerateRequestDto {
     @NotBlank
     private String name;
-    private String description;
 }

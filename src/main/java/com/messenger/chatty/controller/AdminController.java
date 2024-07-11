@@ -1,6 +1,7 @@
 package com.messenger.chatty.controller;
 
 
+import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.service.ChannelService;
@@ -28,13 +29,17 @@ public class AdminController {
 
     }
 
-
     @GetMapping("/workspaces")
     public List<WorkspaceBriefDto> getAllWorkspaceList(){
 
         return workspaceService.getAllWorkspaceList();
 
     }
+
+    /*@GetMapping("/channels")
+    public List<ChannelBriefDto> getAllChannelsList(){
+
+    }*/
 
 
 
