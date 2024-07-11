@@ -14,6 +14,5 @@ public class WorkspaceGenerateRequestDto {
     @NotBlank(message = "이름은 필수 입력 사항입니다.")
     @Size(min = 2,max = 15,message = "최소 2자에서 최대 20자까지 가능합니다.")
     private String name;
-
     private String description;
 }
