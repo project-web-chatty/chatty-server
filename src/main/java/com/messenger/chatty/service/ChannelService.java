@@ -9,6 +9,6 @@ public interface ChannelService {
 
     ChannelBriefDto createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto);
 
-    List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(String workspaceName, String username);
+    List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long workspaceId, String username);
 
 }

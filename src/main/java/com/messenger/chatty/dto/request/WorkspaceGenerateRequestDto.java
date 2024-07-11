@@ -9,7 +9,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 public class WorkspaceGenerateRequestDto {
     @NotBlank
     private String name;

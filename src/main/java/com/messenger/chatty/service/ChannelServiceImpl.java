@@ -8,6 +8,7 @@ import com.messenger.chatty.entity.ChannelJoin;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
+import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
 import com.messenger.chatty.repository.ChannelJoinRepository;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional
@@ -35,11 +35,11 @@ public class ChannelServiceImpl implements ChannelService{
         String channelName = requestDto.getName();
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new NoSuchElementException("there is no workspace which name is " ));
+                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
 
         // channel's name must be unique in the same workspace
         if(channelRepository.findByWorkspaceAndName(workspace,channelName).isPresent())
-            throw new DuplicatedNameException("duplicated channel name in the same workspace : " +channelName);
+            throw new DuplicatedNameException(channelName,"채널이름");
 
         Channel channel = Channel.createChannel(channelName, workspace);
 
@@ -60,9 +60,11 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(String workspaceName, String username) {
-        Workspace workspace = workspaceRepository.findByName(workspaceName).orElseThrow(() -> new NoSuchElementException("dsfsdfsfd"));
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("dfssfddfs"));
+    public List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long channelId, String username) {
+        Workspace workspace = workspaceRepository.findById(channelId)
+                .orElseThrow(() -> new CustomNoSuchElementException("id",channelId,"워크스페이스"));
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
 
         List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), member.getId());
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
