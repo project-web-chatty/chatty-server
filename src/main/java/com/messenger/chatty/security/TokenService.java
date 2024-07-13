@@ -6,6 +6,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.messenger.chatty.entity.TokenEntity;
+import com.messenger.chatty.repository.TokenRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +22,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-
-  // private final TokenRepository tokenRepository;
+  / private final TokenRepository tokenRepository;
  // private final UserService userService;
   @Value("${jwt-variables.KEY}")
   private String jwtKey ;
@@ -60,7 +61,9 @@ public class TokenService {
 
   public String generateAccessToken(String username,String role) {
     return JWT.create()
-        .withSubject(username).withClaim("role",role)
+        .withSubject(username)
+            .withClaim("role",role)
+            .withClaim("category","access")
         .withExpiresAt(
             new Date(
                 System.currentTimeMillis()
@@ -76,20 +79,25 @@ public class TokenService {
 
   }
 
- /* public String generateRefreshToken(String username) {
-    Instant expirationTime = Instant.now().plus(Duration.ofMinutes(refreshTokenExpiryDuration));
-    Token refreshToken = new Token();
-    refreshToken.setUsername(username);
-    refreshToken.setValid(true);
-    refreshToken.setExpiryDate(expirationTime);
-    refreshToken.setToken(UUID.randomUUID().toString());
-    refreshToken = tokenRepository.save(refreshToken);
-    return refreshToken.getToken();
+  public String generateRefreshToken(String username,String role) {
+    String refreshToken = JWT.create()
+            .withSubject(username)
+            .withClaim("role", role)
+            .withClaim("category","refresh")
+            .withExpiresAt(
+                    new Date(
+                            System.currentTimeMillis()
+                                    + Duration.ofMinutes(refreshTokenExpiryDuration).toMillis()))
+            .withIssuer(jwtIssuer)
+            .sign(Algorithm.HMAC256(jwtKey.getBytes()));
+    TokenEntity tokenEntity = TokenEntity.createTokenEntity(refreshToken, username);
+    tokenRepository.save(tokenEntity);
+    return refreshToken;
   }
 
   public void verifyRefreshToken(Token token) {
     if (token.getExpiryDate().isBefore(Instant.now())) {
       throw new RuntimeException("Token has expired and cannot be used!");
     }
-  }*/
+  }
 }

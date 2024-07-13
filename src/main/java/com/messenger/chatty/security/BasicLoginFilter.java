@@ -5,6 +5,7 @@ import com.messenger.chatty.dto.request.LoginRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,9 +56,12 @@ public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
 
-        String token = tokenService.generateAccessToken(username, role);
+        String accessToken = tokenService.generateAccessToken(username, role);
+        String refreshToken = tokenService.generateRefreshToken(username,role);
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addCookie(createCookie("refresh_token", refreshToken));
+        response.setStatus(HttpStatus.OK.value());
     }
 
     //로그인 실패시 실행하는 메소드
