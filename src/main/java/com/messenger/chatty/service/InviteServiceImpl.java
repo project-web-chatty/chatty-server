@@ -37,6 +37,7 @@ public class InviteServiceImpl implements InviteService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public String getNewInvitationCode(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("아이디", workspaceId, "워크스페이스"));

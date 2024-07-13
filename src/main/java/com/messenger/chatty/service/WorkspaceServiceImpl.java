@@ -45,6 +45,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
+    @Transactional(readOnly = true)
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
         // 앞의 필터에서 인가 권한에 대하여 검증되었다고 가정하므로 여기서 인가 validation 할 필요 x
         Workspace workspace = workspaceRepository.findById(workspaceId)
@@ -58,6 +59,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public WorkspaceBriefDto getWorkspaceBriefProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
@@ -65,6 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
@@ -74,6 +77,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     }
     @Override
+    @Transactional(readOnly = true)
     public List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
@@ -85,7 +89,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
 
-
+    @Override
+    @Transactional(readOnly = true)
     public List<WorkspaceBriefDto> getAllWorkspaceList() {
         List<Workspace> workspaceList = workspaceRepository.findAll();
         return workspaceList.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
