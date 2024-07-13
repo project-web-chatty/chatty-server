@@ -121,9 +121,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(announce);
         channelRepository.save(talk);
         ChannelJoin announceJoin = ChannelJoin.from(announce,member);
-        channelJoinRepository.save(announceJoin);
+      //  channelJoinRepository.save(announceJoin);
         ChannelJoin talkJoin = ChannelJoin.from(talk,member);
-        channelJoinRepository.save(talkJoin);
+      //  channelJoinRepository.save(talkJoin);
 
 
         return CustomConverter.convertWorkspaceToBriefDto(workspace);

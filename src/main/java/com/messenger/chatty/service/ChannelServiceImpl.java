@@ -61,17 +61,22 @@ public class ChannelServiceImpl implements ChannelService{
         return channelRepository.findAll().stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
+    /*
     @Override
     @Transactional(readOnly = true)
-    public List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long channelId, String username) {
-        Workspace workspace = workspaceRepository.findById(channelId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",channelId,"워크스페이스"));
+    public List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long workspaceId, String username) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
 
         List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), member.getId());
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
+
+     */
+
+
 
     @Override
     public void deleteChannelInWorkspace(Long channelId) {

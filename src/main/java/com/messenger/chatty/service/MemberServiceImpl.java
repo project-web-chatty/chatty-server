@@ -42,11 +42,8 @@ public class MemberServiceImpl implements MemberService{
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
             throw new DuplicatedNameException(memberJoinRequestDTO.getUsername(),"username");
 
-        if(!memberJoinRequestDTO.getPassword1().equals(memberJoinRequestDTO.getPassword2()))
-            throw new PasswordInEqualityException("패스워드가 같지 않습니다.");
 
-
-        memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword1()));
+        memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
         Member me = Member.from(memberJoinRequestDTO);
         memberRepository.save(me);
         return CustomConverter.convertMemberToDto(me, Collections.emptyList());
@@ -133,6 +130,7 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
         Workspace workspace = workspaceRepository.findByName(workspaceName)
                 .orElseThrow(() -> new CustomNoSuchElementException("이름",workspaceName,"워크스페이스"));
+
         List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
