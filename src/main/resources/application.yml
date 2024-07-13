@@ -14,3 +14,9 @@ spring:
           lob:
             non_contextual_creation: true
 
+
+jwt-variables:
+  EXPIRES_ACCESS_TOKEN_MINUTE: 60
+  EXPIRES_REFRESH_TOKEN_MINUTE: 60
+  ISSUER: webChatty
+  KEY: asdqweafsds123+K3yyy  #   Should only be handled in environment variables later

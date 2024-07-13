@@ -12,7 +12,6 @@ import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
-import com.messenger.chatty.exception.custom.PasswordInEqualityException;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -21,10 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional

@@ -10,7 +10,6 @@ import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class CustomConverter {
 
