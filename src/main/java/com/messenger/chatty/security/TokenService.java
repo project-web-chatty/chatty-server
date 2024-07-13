@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-  / private final TokenRepository tokenRepository;
+  private final TokenRepository tokenRepository;
  // private final UserService userService;
   @Value("${jwt-variables.KEY}")
   private String jwtKey ;
@@ -95,9 +95,10 @@ public class TokenService {
     return refreshToken;
   }
 
+  /*
   public void verifyRefreshToken(Token token) {
     if (token.getExpiryDate().isBefore(Instant.now())) {
       throw new RuntimeException("Token has expired and cannot be used!");
     }
-  }
+  }*/
 }

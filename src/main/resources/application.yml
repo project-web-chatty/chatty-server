@@ -16,7 +16,7 @@ spring:
 
 
 jwt-variables:
-  EXPIRES_ACCESS_TOKEN_MINUTE: 60
-  EXPIRES_REFRESH_TOKEN_MINUTE: 60
+  EXPIRES_ACCESS_TOKEN_MINUTE: 10
+  EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
   ISSUER: webChatty
   KEY: asdqweafsds123+K3yyy  #   Should only be handled in environment variables later

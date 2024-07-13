@@ -5,6 +5,7 @@ import com.messenger.chatty.dto.request.LoginRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,9 @@ import java.util.Iterator;
 public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+
+    @Value("${jwt-variables.EXPIRES_REFRESH_TOKEN_MINUTE}")
+    private long refreshTokenExpiryDuration;
 
     public BasicLoginFilter(AuthenticationManager authenticationManager,TokenService tokenService) {
         this.authenticationManager = authenticationManager;
@@ -60,7 +64,7 @@ public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
         String refreshToken = tokenService.generateRefreshToken(username,role);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(createCookie("refresh_token", refreshToken));
+        response.addCookie(CookieGenerator.createCookie("refresh_token", refreshToken,refreshTokenExpiryDuration));
         response.setStatus(HttpStatus.OK.value());
     }
 
