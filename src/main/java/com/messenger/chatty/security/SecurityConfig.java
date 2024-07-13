@@ -59,10 +59,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
 
-        httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration),tokenService), UsernamePasswordAuthenticationFilter.class);
-        // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        // add custom filters
+        httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration),tokenService), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JWTFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
-               //  implement auth later
 
 
         return httpSecurity.build();
