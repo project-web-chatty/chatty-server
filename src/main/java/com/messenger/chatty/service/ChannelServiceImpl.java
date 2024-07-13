@@ -56,11 +56,13 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChannelBriefDto> getAllChannels() {
         return channelRepository.findAll().stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long channelId, String username) {
         Workspace workspace = workspaceRepository.findById(channelId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",channelId,"워크스페이스"));

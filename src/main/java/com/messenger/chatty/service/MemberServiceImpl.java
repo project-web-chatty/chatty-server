@@ -57,6 +57,7 @@ public class MemberServiceImpl implements MemberService{
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberBriefDto> getAllMemberList() {
         List<Member> memberList = memberRepository.findAll();
         return memberList.stream().map(CustomConverter::convertMemberToBriefDto).toList();
@@ -64,6 +65,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberBriefDto getMemberProfileByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",memberId,"회원"));
@@ -71,6 +73,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MyProfileDto getMyProfileByUsername(String username) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
@@ -115,6 +118,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<WorkspaceBriefDto> getMyWorkspaces(String username) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
@@ -123,6 +127,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChannelBriefDto> getMyChannels(String username, String workspaceName) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
@@ -133,6 +138,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void checkDuplicatedUsername(String username) {
         if(memberRepository.existsByUsername(username))
             throw new DuplicatedNameException(username,"username");
