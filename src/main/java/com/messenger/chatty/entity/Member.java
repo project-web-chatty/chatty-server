@@ -60,7 +60,7 @@ public class Member extends BaseEntity {
         String username = memberJoinRequestDTO.getUsername();
         return Member.builder()
                 .username(username)
-                .password(memberJoinRequestDTO.getPassword1())
+                .password(memberJoinRequestDTO.getPassword())
                 .role("USER")
                 .name(username)
                 .nickname(username)
