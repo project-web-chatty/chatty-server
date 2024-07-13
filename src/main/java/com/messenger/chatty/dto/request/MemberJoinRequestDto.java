@@ -14,14 +14,10 @@ public class MemberJoinRequestDto {
 
 
     @NotBlank(message = "비밀번호는 필수 입력사항입니다.")
-    private String password1;
-
-    @NotBlank(message = "비밀번호는 필수 입력사항입니다.")
-    private String password2;
+    private String password;
 
 
     public void encodePassword(String encodedPassword){
-        this.password1 =encodedPassword;
-        this.password2 = encodedPassword;
+        this.password =encodedPassword;
     }
 }

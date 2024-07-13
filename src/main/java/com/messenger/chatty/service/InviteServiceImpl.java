@@ -50,7 +50,6 @@ public class InviteServiceImpl implements InviteService {
                 .orElseThrow(() -> new CustomNoSuchElementException("아이디", workspaceId, "워크스페이스"));
         String newCode = invitationCodeGenerator.generateInviteCode();
         workspace.changeInvitationCode(newCode);
-        workspaceRepository.save(workspace);
         return newCode;
     }
 
