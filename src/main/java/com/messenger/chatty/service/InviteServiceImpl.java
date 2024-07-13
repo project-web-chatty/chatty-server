@@ -9,10 +9,7 @@ import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
-import com.messenger.chatty.repository.ChannelJoinRepository;
-import com.messenger.chatty.repository.ChannelRepository;
-import com.messenger.chatty.repository.MemberRepository;
-import com.messenger.chatty.repository.WorkspaceRepository;
+import com.messenger.chatty.repository.*;
 import com.messenger.chatty.security.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +29,7 @@ public class InviteServiceImpl implements InviteService {
     private final ChannelRepository channelRepository;
     private final MemberRepository memberRepository;
     private final ChannelJoinRepository channelJoinRepository;
+    private final WorkspaceJoinRepository workspaceJoinRepository;
     private final InvitationCodeGenerator invitationCodeGenerator;
 
 
@@ -64,9 +62,7 @@ public class InviteServiceImpl implements InviteService {
         // 중복 회원 대비 검증
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
-        List<Long> memberIdListOfWorkspace = memberRepository.
-                findMembersByWorkspaceId(workspace.getId()).stream().map(Member::getId).toList();
-        if(memberIdListOfWorkspace.contains(member.getId()))
+        if(workspaceJoinRepository.existsByWorkspaceIdAndMemberId(workspace.getId(), member.getId()))
             throw new DuplicatedNameException("이미 이 워크스페이스 내에 존재하는 회원입니다.");
 
 
