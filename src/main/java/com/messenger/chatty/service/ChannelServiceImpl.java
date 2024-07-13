@@ -37,8 +37,8 @@ public class ChannelServiceImpl implements ChannelService{
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
 
-        // 채널은 같은 워크스페이스 내에서는 이름이 동일하지 않아야 한다.
-        if(channelRepository.findByWorkspaceAndName(workspace,channelName).isPresent())
+
+        if(workspace.getChannels().stream().map(Channel::getName).toList().contains(channelName))
             throw new DuplicatedNameException(channelName,"채널이름");
 
         Channel channel = Channel.createChannel(channelName, workspace);
