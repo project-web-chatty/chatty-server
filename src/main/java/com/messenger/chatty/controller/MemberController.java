@@ -6,6 +6,7 @@ import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class MemberController {
 
     @Operation(summary = "username(아이디) 중복 검사하기")
     @PostMapping("/check/username")
-    public ResponseEntity<Void> checkDuplicatedUsername(@AuthenticatedUsername String username){
+    public ResponseEntity<Void> checkDuplicatedUsername(@Parameter(hidden = true)  @AuthenticatedUsername String username){
         memberService.checkDuplicatedUsername(username);
         return ResponseEntity.ok().build();
     }
