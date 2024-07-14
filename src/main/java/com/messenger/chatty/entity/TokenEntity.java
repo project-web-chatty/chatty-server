@@ -8,6 +8,7 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
+@Table(name = "token")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TokenEntity {
