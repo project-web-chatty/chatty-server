@@ -27,7 +27,7 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final TokenService tokenService;
+    private final AuthService authService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
 
@@ -59,13 +59,13 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/auth/login", "/api/isHealthy",
-                                "/api/member/signup").permitAll()
+                                "/api/member/signup","/api/auth/reissue").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         // add custom filters
-        httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration),tokenService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JWTFilter(authService), UsernamePasswordAuthenticationFilter.class);
 
         // cors setting
         httpSecurity

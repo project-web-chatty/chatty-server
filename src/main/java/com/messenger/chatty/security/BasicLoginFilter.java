@@ -5,7 +5,6 @@ import com.messenger.chatty.dto.request.LoginRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,14 +20,11 @@ import java.util.Iterator;
 
 public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
+    private final AuthService authService;
 
-    @Value("${jwt-variables.EXPIRES_REFRESH_TOKEN_MINUTE}")
-    private long refreshTokenExpiryDuration;
-
-    public BasicLoginFilter(AuthenticationManager authenticationManager,TokenService tokenService) {
+    public BasicLoginFilter(AuthenticationManager authenticationManager, AuthService authService) {
         this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
+        this.authService = authService;
         setFilterProcessesUrl("/api/auth/login");
     }
 
@@ -60,12 +56,18 @@ public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
 
-        String accessToken = tokenService.generateAccessToken(username, role);
-        String refreshToken = tokenService.generateRefreshToken(username,role);
+        String accessToken = authService.generateAccessToken(username, role);
+        String refreshToken = authService.generateRefreshToken(username,role);
+
+
+        // db에 리프레시 토큰 저장
+        authService.saveRefreshToken(refreshToken,username);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(CookieGenerator.createCookie("refresh_token", refreshToken,refreshTokenExpiryDuration));
+        response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken));
         response.setStatus(HttpStatus.OK.value());
+
+
     }
 
     //로그인 실패시 실행하는 메소드

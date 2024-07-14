@@ -8,20 +8,17 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.entity.TokenEntity;
 import com.messenger.chatty.repository.TokenRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
+public class AuthService {
   private final TokenRepository tokenRepository;
  // private final UserService userService;
   @Value("${jwt-variables.KEY}")
@@ -94,6 +91,19 @@ public class TokenService {
     tokenRepository.save(tokenEntity);
     return refreshToken;
   }
+
+  public void saveRefreshToken(String token,String username){
+      TokenEntity tokenEntity = TokenEntity.createTokenEntity(token, username);
+      tokenRepository.save(tokenEntity);
+  }
+  public boolean checkExistByToken(String token){
+      return tokenRepository.existsByToken(token);
+
+  }
+  public void deleteRefreshToken(String token){
+      tokenRepository.deleteByToken(token);
+  }
+
 
   /*
   public void verifyRefreshToken(Token token) {
