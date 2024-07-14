@@ -1,6 +1,7 @@
 package com.messenger.chatty.security;
 
 
+import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.util.Collections;
 
@@ -31,7 +33,7 @@ import java.util.Collections;
 public class SecurityConfig {
     private final AuthService authService;
     private final AuthenticationConfiguration authenticationConfiguration;
-
+    private final WorkspaceJoinRepository workspaceJoinRepository;
 
     @Bean // for encoding password
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -66,13 +68,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("api/workspace/join/**").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
-                        .requestMatchers("/api/workspace/**","/api/invite/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
+                        .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
                         .anyRequest().authenticated()); // 나머지 엔드포인트에 대해서는 인증만 요구
 
         // add custom filters
         httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class)
-                .addFilterAt(new CustomLogoutFilter(authService),LogoutFilter.class);
+                .addFilterAt(new CustomLogoutFilter(authService),LogoutFilter.class)
+        .addFilterAfter(new WorkspaceRoleFilter(authService, new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
 
         // cors setting
         httpSecurity

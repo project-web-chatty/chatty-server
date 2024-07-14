@@ -26,6 +26,8 @@ public class WorkspaceJoin extends BaseEntity{
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
+    private String role;
+
     //relation-method
     protected void linkMember(Member member){
         this.member = member;
@@ -38,5 +40,10 @@ public class WorkspaceJoin extends BaseEntity{
         workspace.getWorkspaceJoins().add(this);
     }
 
-
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role){
+        this.role =role;
+    }
 }

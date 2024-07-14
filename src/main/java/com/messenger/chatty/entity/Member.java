@@ -68,6 +68,7 @@ public class Member extends BaseEntity  {
 
     public void enterIntoWorkspace(Workspace workspace){
         WorkspaceJoin workspaceJoin = new WorkspaceJoin();
+        workspaceJoin.setRole("WORKSPACE_MEMBER");
         workspaceJoin.linkWorkspace(workspace);
         workspaceJoin.linkMember(this);
     }

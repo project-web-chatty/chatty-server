@@ -70,10 +70,28 @@ public class WorkspaceController {
         return channelService.createChannelToWorkspace(workspaceId, requestDto);
     }
 
+    @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
+    @GetMapping("/{workspaceId}/invite")
+    public String getNewInvitationCode(@PathVariable  Long workspaceId){
+
+        return inviteService.getNewInvitationCode(workspaceId);
+
+    }
+
+    @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
+    @PostMapping("/{workspaceId}/invite")
+    public String generateInvitationCode(@PathVariable Long workspaceId){
+
+        return inviteService.setInvitationCode(workspaceId);
+
+    }
+
+
     @Operation(summary = "특정 채널 삭제하기")
-    @DeleteMapping("/channels/{channelId}")
-    public ResponseEntity<Void> deleteChannelToWorkspace(
+    @DeleteMapping("/{workspaceId}/channels/{channelId}")
+    public ResponseEntity<Void> deleteChannelToWorkspace(   @PathVariable Long workspaceId,
                                                                     @PathVariable Long channelId  ){
+        // workspaceId 도 나중에 넘겨서 해당 채널이 워크스페이스에 속한 것인지 검증하기
         channelService.deleteChannelInWorkspace(channelId);
 
         return ResponseEntity.ok().build();
@@ -90,21 +108,7 @@ public class WorkspaceController {
     }
 
 
-    @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
-    @GetMapping("/{workspaceId}/invite")
-    public String getNewInvitationCode(@PathVariable  Long workspaceId){
 
-        return inviteService.getNewInvitationCode(workspaceId);
-
-    }
-
-    @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
-    @PostMapping("/{workspaceId}/invite")
-    public String generateInvitationCode(@PathVariable Long workspaceId){
-
-        return inviteService.setInvitationCode(workspaceId);
-
-    }
 
 
 
