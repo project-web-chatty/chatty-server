@@ -1,6 +1,7 @@
 package com.messenger.chatty.controller;
 
 
+import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
@@ -31,7 +32,7 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
-    public WorkspaceBriefDto createWorkspace(@RequestParam String username,
+    public WorkspaceBriefDto createWorkspace(@AuthenticatedUsername String username,
                                              @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
         return  workspaceService.generateWorkspace(requestDto, username);
     }
@@ -103,7 +104,7 @@ public class WorkspaceController {
                     "로그인 되어 있다면 이후 로직을 시행, 로그인 되어 있지 않으면 로그인페이지로 리다이렉팅 시킨다.")
     // 로그인 되었다고 가정
     @PostMapping("/join/{code}")
-    public WorkspaceResponseDto joinToWorkspace(@PathVariable String code, @RequestParam String username){
+    public WorkspaceResponseDto joinToWorkspace(@PathVariable String code, @AuthenticatedUsername String username){
         return inviteService.enterToWorkspace(username, code);
     }
 

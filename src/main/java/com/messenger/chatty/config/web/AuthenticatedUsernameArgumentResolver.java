@@ -1,4 +1,5 @@
 package com.messenger.chatty.config.web;
+import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticationException;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,11 +17,8 @@ public class AuthenticatedUsernameArgumentResolver implements HandlerMethodArgum
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-       /* Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(principal instanceof UserDetails)) throw new UnexpectedNotAuthenticationException("unexpected NOT authenticated Exception");
-        return ((UserDetails)principal).getUsername();*/
-
-        return "username" ; // 추후 인증/인가 필터 구현하며 적절히 로직 작성
-
+        return ((UserDetails)principal).getUsername();
     }
 }

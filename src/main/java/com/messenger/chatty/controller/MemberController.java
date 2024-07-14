@@ -1,6 +1,7 @@
 package com.messenger.chatty.controller;
 
 
+import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.service.MemberService;
@@ -33,7 +34,7 @@ public class MemberController {
 
     @Operation(summary = "username(아이디) 중복 검사하기")
     @PostMapping("/check/username")
-    public ResponseEntity<Void> checkDuplicatedUsername(@RequestParam String username){
+    public ResponseEntity<Void> checkDuplicatedUsername(@AuthenticatedUsername String username){
         memberService.checkDuplicatedUsername(username);
         return ResponseEntity.ok().build();
     }
