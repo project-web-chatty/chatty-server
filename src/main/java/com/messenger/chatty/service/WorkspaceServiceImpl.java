@@ -113,7 +113,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         workspaceRepository.save(workspace);
 
         // 생성한 멤버는 곧바로 워크스페이스에 들어간다
-        member.enterIntoWorkspace(workspace);
+        member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_OWNER");
 
         // 기본 채널 announce와 talk를 생성
         Channel announce = Channel.createChannel("announce",workspace);

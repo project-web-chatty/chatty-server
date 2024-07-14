@@ -8,17 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.PathContainer;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class WorkspaceRoleFilter extends OncePerRequestFilter {
@@ -27,6 +27,10 @@ public class WorkspaceRoleFilter extends OncePerRequestFilter {
     private final WorkspaceJoinRepository workspaceJoinRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+
+
+
         String requestUri = request.getRequestURI();
         PathPattern pattern = patternParser.parse("/api/workspace/{workspaceId}/**");
         // URI가 /api/workspace/로 시작하지 않으면 필터 체인을 진행
@@ -36,6 +40,20 @@ public class WorkspaceRoleFilter extends OncePerRequestFilter {
             doFilter(request,response,filterChain);
             return;
         }
+
+        // 유저네임 앞단의 필터에서 설정한 principal 에서 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            doFilter(request,response,filterChain);
+            return;
+
+        }
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        String username = customUserDetails.getUsername();
+
+
+
         // URI에서 추출된 변수들을 가져올 수 있음
         Map<String, String> uriVariables = pathMatchInfo.getUriVariables();
         String workspaceIdStr = uriVariables.get("workspaceId");
@@ -49,42 +67,36 @@ public class WorkspaceRoleFilter extends OncePerRequestFilter {
             System.out.println("Failed to parse workspaceId: " + workspaceIdStr);
             return;
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        // 유저네임 앞단의 필터에서 설정한 principal 에서 가져오기
-        String username = customUserDetails.getUsername();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-        if (username != null) {
-            // WorkspaceMemberRepository를 사용하여 Role 조회
-            WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
-
-
-            // role을 authorities에 추가
-            // 예를 들어, SecurityContextHolder를 사용하여 현재 사용자의 authorities에 role을 추가할 수 있음
-        }
-
-
         System.out.println("Extracted workspaceId: " + workspaceId);
+
+
+        // WorkspaceMemberRepository를 사용하여 Role 조회
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
+        String workspaceRole = workspaceJoin.getRole();
+        System.out.println("role in workspace = " + workspaceRole);
+
+        // 기존의 role을 우선 받아온다.
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority auth = iterator.next();
+        String serviceRole = auth.getAuthority();
+
+
+        List<GrantedAuthority> newAuthorities = new ArrayList<>();
+        newAuthorities.add(new SimpleGrantedAuthority(serviceRole));
+        newAuthorities.add(new SimpleGrantedAuthority(workspaceRole));
+
+      // 권한을 포함하는 새로운 Authentication 객체 생성
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(
+                authentication.getPrincipal(), null, newAuthorities);
+
+        // SecurityContextHolder에 새로운 Authentication 설정
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
+
         doFilter(request,response,filterChain);
 
     }
 
 
-    private Long extractWorkspaceId(String requestURI) {
-        // "/api/workspace/{workspaceId}" 또는 "/api/workspace/{workspaceId}/**" 형태에서 workspaceId 추출
-        String[] pathSegments = requestURI.split("/");
-        for (int i = 0; i < pathSegments.length; i++) {
-            if ("workspace".equals(pathSegments[i]) && i + 1 < pathSegments.length) {
-                try {
-                    return Long.parseLong(pathSegments[i + 1]);
-                } catch (NumberFormatException e) {
-                    // workspaceId가 올바르지 않은 경우 처리
-                    return null; // 또는 예외 처리
-                }
-            }
-        }
-        return null; // workspaceId를 찾지 못한 경우
-    }
 }

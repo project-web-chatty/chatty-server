@@ -104,7 +104,7 @@ public class WorkspaceController {
     // 로그인 되었다고 가정
     @PostMapping("/join/{code}")
     public WorkspaceResponseDto joinToWorkspace(@PathVariable String code, @RequestParam String username){
-        return inviteService.acceptInvitationAndEnterToWorkspace(username, code);
+        return inviteService.enterToWorkspace(username, code);
     }
 
 

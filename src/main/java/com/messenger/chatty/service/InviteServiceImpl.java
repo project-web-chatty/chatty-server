@@ -51,7 +51,7 @@ public class InviteServiceImpl implements InviteService {
 
 
     @Override
-    public WorkspaceResponseDto acceptInvitationAndEnterToWorkspace(String username, String code) {
+    public WorkspaceResponseDto enterToWorkspace(String username, String code) {
 
         // code 검증
         Workspace workspace = workspaceRepository.findByInvitationCode(code)
@@ -66,7 +66,7 @@ public class InviteServiceImpl implements InviteService {
 
 
         // 해당 멤버를 워크스페이스에 참여
-        member.enterIntoWorkspace(workspace);
+        member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
         // 멤버를 추가 시 워크 스페이스 내 모든 채널에 멤버가 속하도록 함 (dm 기능 등의 도입 시 수정 요망)
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         channels.forEach((channel)->{

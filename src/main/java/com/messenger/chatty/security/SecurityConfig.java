@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
                                 "/api/member/signup","/api/member/check/username","/api/auth/reissue").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("api/workspace/join/**").authenticated()
+                        .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
                         .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
                         .anyRequest().authenticated()); // 나머지 엔드포인트에 대해서는 인증만 요구

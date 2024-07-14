@@ -6,7 +6,7 @@ public interface InviteService {
     String getNewInvitationCode(Long workspaceId);
     String setInvitationCode(Long workspaceId);
 
-    WorkspaceResponseDto acceptInvitationAndEnterToWorkspace(String username, String code);
+    WorkspaceResponseDto enterToWorkspace(String username, String code);
 
 
 
