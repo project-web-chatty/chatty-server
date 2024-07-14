@@ -59,9 +59,10 @@ public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = authService.generateAccessToken(username, role);
         String refreshToken = authService.generateRefreshToken(username,role);
 
-
         // db에 리프레시 토큰 저장
         authService.saveRefreshToken(refreshToken,username);
+
+
 
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken));

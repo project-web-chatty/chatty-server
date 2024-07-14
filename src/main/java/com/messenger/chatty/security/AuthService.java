@@ -11,12 +11,14 @@ import com.messenger.chatty.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
   private final TokenRepository tokenRepository;
@@ -76,7 +78,7 @@ public class AuthService {
 
   }
 
-  public String generateRefreshToken(String username,String role) {
+  public String generateRefreshToken(String username, String role) {
     String refreshToken = JWT.create()
             .withSubject(username)
             .withClaim("role", role)
@@ -87,8 +89,6 @@ public class AuthService {
                                     + Duration.ofMinutes(refreshTokenExpiryDuration).toMillis()))
             .withIssuer(jwtIssuer)
             .sign(Algorithm.HMAC256(jwtKey.getBytes()));
-    TokenEntity tokenEntity = TokenEntity.createTokenEntity(refreshToken, username);
-    tokenRepository.save(tokenEntity);
     return refreshToken;
   }
 

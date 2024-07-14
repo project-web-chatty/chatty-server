@@ -21,7 +21,7 @@ public class TokenEntity {
     // @JoinColumn(name = "member_id", nullable = false)
     private String username;
 
-    @Column(nullable = false, unique = true, length = 600)
+    @Column(nullable = false, unique = true)
     private String token;
 
     public static TokenEntity createTokenEntity(String token, String username){

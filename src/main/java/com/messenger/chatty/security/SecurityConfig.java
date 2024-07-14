@@ -65,7 +65,7 @@ public class SecurityConfig {
 
         // add custom filters
         httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTFilter(authService), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class);
 
         // cors setting
         httpSecurity
