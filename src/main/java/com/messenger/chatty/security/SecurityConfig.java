@@ -62,16 +62,11 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/**","/api/auth/reissue").permitAll()
+                                "/api/member/signup","/api/member/check/username","/api/auth/reissue").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("api/workspace/join/**").authenticated()
-                        .requestMatchers(HttpMethod.POST,"/api/workspace/**","/api/invite/**")
-                        .hasAnyRole("ADMIN","WORKSPACE_OWNER")
-                        .requestMatchers(HttpMethod.PUT,"/api/workspace/**")
-                        .hasAnyRole("ADMIN","WORKSPACE_OWNER")
-                        .requestMatchers(HttpMethod.DELETE,"/api/workspace/**")
-                        .hasAnyRole("ADMIN","WORKSPACE_OWNER")
-                        .requestMatchers(HttpMethod.GET,"/api/workspace/**","/api/invite/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
+                        .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
+                        .requestMatchers("/api/workspace/**","/api/invite/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
                         .anyRequest().authenticated()); // 나머지 엔드포인트에 대해서는 인증만 요구
 
         // add custom filters

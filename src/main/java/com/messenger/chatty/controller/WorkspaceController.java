@@ -90,6 +90,22 @@ public class WorkspaceController {
     }
 
 
+    @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
+    @GetMapping("/{workspaceId}/invite")
+    public String getNewInvitationCode(@PathVariable  Long workspaceId){
+
+        return inviteService.getNewInvitationCode(workspaceId);
+
+    }
+
+    @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
+    @PostMapping("/{workspaceId}/invite")
+    public String generateInvitationCode(@PathVariable Long workspaceId){
+
+        return inviteService.setInvitationCode(workspaceId);
+
+    }
+
 
 
 
