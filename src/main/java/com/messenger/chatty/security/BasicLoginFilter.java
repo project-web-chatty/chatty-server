@@ -65,7 +65,7 @@ public class BasicLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken));
+        response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken,7 * 24 * 60 * 60));
         response.setStatus(HttpStatus.OK.value());
 
 

@@ -80,7 +80,7 @@ public class AuthController {
 
         //response
         response.addHeader("Authorization", "Bearer " + newAccessToken);
-        response.addCookie(CookieGenerator.generateCookie("refresh_token", newRefreshToken));
+        response.addCookie(CookieGenerator.generateCookie("refresh_token", newRefreshToken,7 * 24 * 60 * 60));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

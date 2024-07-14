@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -53,19 +54,21 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults());
+                .cors(Customizer.withDefaults())
+                .logout(AbstractHttpConfigurer::disable);
 
         // authorization setting
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/v3/**", "/swagger-ui/**", "/api/auth/login", "/api/isHealthy",
+                        .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
                                 "/api/member/signup","/api/auth/reissue").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         // add custom filters
         httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class);
+        .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class)
+                .addFilterAt(new CustomLogoutFilter(authService),LogoutFilter.class);
 
         // cors setting
         httpSecurity
