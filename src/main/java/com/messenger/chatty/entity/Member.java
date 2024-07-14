@@ -58,7 +58,7 @@ public class Member extends BaseEntity  {
         return Member.builder()
                 .username(username)
                 .password(memberJoinRequestDTO.getPassword())
-                .role("USER")
+                .role("ROLE_USER")
                 .name(username)
                 .nickname(username)
                 .introduction(username +" 님의 소개글입니다.")

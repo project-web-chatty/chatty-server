@@ -31,14 +31,4 @@ public class InviteController {
 
     }
 
-
-    @Operation(summary = "워크 스페이스 초대 수락 요청",
-            description = "초대링크를 브라우저창에 입력해서 웹서버 측에 페이지를 요청했을때, " +
-                    "웹서버 측은 이 엔드포인트 단으로 곧바로 요청을 보낸다. 앞 필터에서 먼저 리프레시 토큰으로 로그인 여부를 확인하고 " +
-                    "로그인 되어 있다면 이후 로직을 시행, 로그인 되어 있지 않으면 로그인페이지로 리다이렉팅 시킨다.")
-    // 로그인 되었다고 가정
-    @PostMapping("/accept/{code}")
-    public WorkspaceResponseDto acceptInvitationAndEnterToWorkspace(@PathVariable String code,@RequestParam String username){
-        return inviteService.acceptInvitationAndEnterToWorkspace(username, code);
-    }
 }

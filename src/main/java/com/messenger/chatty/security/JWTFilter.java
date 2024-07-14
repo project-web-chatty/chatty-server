@@ -70,6 +70,7 @@ public class JWTFilter extends OncePerRequestFilter {
         //userEntity를 생성하여 값 set
         Member member = Member.builder().username(username).role(role).build();
 
+        System.out.println("role = " + role);
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
