@@ -29,9 +29,12 @@ public class WorkspaceRoleFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
-
-
         String requestUri = request.getRequestURI();
+        if (requestUri.startsWith("/api/workspace/join")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         PathPattern pattern = patternParser.parse("/api/workspace/{workspaceId}/**");
         // URI가 /api/workspace/로 시작하지 않으면 필터 체인을 진행
         PathPattern.PathMatchInfo pathMatchInfo = pattern.matchAndExtract(PathContainer.parsePath(requestUri));
