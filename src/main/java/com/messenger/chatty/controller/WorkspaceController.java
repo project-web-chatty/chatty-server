@@ -29,7 +29,6 @@ import java.util.List;
 public class WorkspaceController {
     private final ChannelService channelService;
     private final WorkspaceService workspaceService;
-    private final InviteService inviteService;
 
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
@@ -76,7 +75,7 @@ public class WorkspaceController {
     @GetMapping("/{workspaceId}/invite")
     public String getNewInvitationCode(@PathVariable  Long workspaceId){
 
-        return inviteService.getNewInvitationCode(workspaceId);
+        return workspaceService.getNewInvitationCode(workspaceId);
 
     }
 
@@ -84,7 +83,7 @@ public class WorkspaceController {
     @PostMapping("/{workspaceId}/invite")
     public String generateInvitationCode(@PathVariable Long workspaceId){
 
-        return inviteService.setInvitationCode(workspaceId);
+        return workspaceService.setInvitationCode(workspaceId);
 
     }
 
@@ -107,7 +106,7 @@ public class WorkspaceController {
     @PostMapping("/join/{code}")
     public WorkspaceResponseDto joinToWorkspace(@PathVariable String code,
                                                 @Parameter(hidden = true) @AuthenticatedUsername String username){
-        return inviteService.enterToWorkspace(username, code);
+        return workspaceService.enterToWorkspace(username, code);
     }
 
 
