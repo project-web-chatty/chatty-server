@@ -34,6 +34,8 @@ public class SecurityConfig {
     private final AuthService authService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final WorkspaceJoinRepository workspaceJoinRepository;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean // for encoding password
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -58,6 +60,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .exceptionHandling(
+                        handlingConfigurer -> {
+                            handlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
+                            handlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                        })
                 .logout(AbstractHttpConfigurer::disable);
 
         // authorization setting
