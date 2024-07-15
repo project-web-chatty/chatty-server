@@ -49,7 +49,7 @@ public class ControllerExceptionHandler {
     }
     @ExceptionHandler({InvalidInvitationCodeException.class})
     public ResponseEntity<ErrorResponse> handleInvalidInvitationException(HttpServletRequest request, InvalidInvitationCodeException ex) {
-        return getResEntityWithBadRequest(request.getRequestURI() ,ErrorDetail.INVALID_CODE, ex.getMessage()) ;
+        return getResEntityWithBadRequest(request.getRequestURI() ,ErrorDetail.INVALID_INVITE_CODE, ex.getMessage()) ;
     }
     @ExceptionHandler(PasswordInEqualityException.class)
     public ResponseEntity<ErrorResponse> handleInvalidSignupRequest(HttpServletRequest request, PasswordInEqualityException ex) {

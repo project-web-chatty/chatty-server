@@ -1,5 +1,6 @@
 package com.messenger.chatty.security;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,8 +37,9 @@ public class JWTFilter extends OncePerRequestFilter {
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
-            // 토큰을 그저 포함하지 않은 경우에는 필터를 계속 진행
+            // 토큰을 그저 포함하지 않은 경우에는 필터를 계속 진행.
             System.out.println("token null");
+            request.setAttribute("msg","token not included"); // 권한 필요한 요청은 엔트리 포인트에서 메시지가 보여질 것
             filterChain.doFilter(request, response);
             return;
         }
@@ -53,13 +55,22 @@ public class JWTFilter extends OncePerRequestFilter {
         }
         catch (TokenExpiredException e){
             System.out.println("token expired");
-            sendError(response,e);
+            request.setAttribute("message","토큰이 만료되었습니다.");
+            filterChain.doFilter(request, response);
             return;
-        } // 잘못된 토큰 vs 만료된 토큰 구분하기
+        }catch (JWTVerificationException e){
+            System.out.println("token expired");
+            request.setAttribute("message","유효하지 않은 토큰입니다.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 잘못된 토큰 vs 만료된 토큰 구분하기
 
         if(!decodedJWT.getClaim("category").asString().equals("access")){
             System.out.println("it is not a access token");
-            sendError(response,new RuntimeException("not access token"));
+            request.setAttribute("msg","it is not a accessToken");
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -83,13 +94,6 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
 
-    private void sendError(HttpServletResponse res, Exception e) throws IOException {
-        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        res.setContentType("application/json");
-        PrintWriter out = res.getWriter();
-        ObjectMapper mapper = new ObjectMapper();
-        out.println(mapper.writeValueAsString(Map.of("error", e.getMessage(), "code", "-1")));
-        out.flush();
-    }
+
 
 }

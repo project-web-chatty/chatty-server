@@ -1,6 +1,7 @@
 package com.messenger.chatty.security;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final WorkspaceJoinRepository workspaceJoinRepository;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final ObjectMapper objectMapper;
 
     @Bean // for encoding password
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -71,7 +73,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check/username","/api/auth/reissue").permitAll()
+                                "/api/member/signup","/api/member/check/username").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
@@ -82,7 +84,9 @@ public class SecurityConfig {
         httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class)
                 .addFilterAt(new CustomLogoutFilter(authService),LogoutFilter.class)
-        .addFilterAfter(new WorkspaceRoleFilter(authService, new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
+        .addFilterAfter(new WorkspaceRoleFilter(authService, new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
+                .addFilterBefore(new CustomTokenReissueFilter(authService,objectMapper),JWTFilter.class);
+
 
         // cors setting
         httpSecurity

@@ -23,10 +23,10 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @Operation(summary = "엑세스토큰 재발급 및 리프레시 토큰 rotation")
+    @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "쿠키에 리프레시 토큰이 검증되는 경우에만 재발급됩니다.")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        authService.reIssueRefreshToken(request,response);
+        // 스웨거 문서화를 위한 형식상 메서드
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -40,6 +40,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout()
     { // 스웨거 문서화를 위한 형식상 메서드
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

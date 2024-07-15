@@ -124,7 +124,7 @@ public class AuthService {
       String refreshToken = getRefreshTokenFromRequest(request);
       if (refreshToken == null) {
           // 나중에 예외 처리하기
-          throw new IllegalStateException("refresh token is null");
+          throw new IllegalStateException("쿠키에 토큰이 없습니다.");
       }
 
         DecodedJWT decodedJWT =null;
@@ -134,21 +134,21 @@ public class AuthService {
 
         } catch (TokenExpiredException e) {
             //response status code
-            throw new IllegalStateException("refresh token is expired");
+            throw new IllegalStateException("토큰이 만료되었습니다.");
         }catch (JWTVerificationException e){
-            throw new IllegalStateException("refresh token is invalid");
+            throw new IllegalStateException("토큰이 유효하지 않습니다.");
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
         String category =decodedJWT.getClaim("category").asString();
 
         if (!category.equals("refresh")) {
-            throw new IllegalStateException("this token type is not 'refresh'");
+            throw new IllegalStateException("리프레시 토큰이 아닙니다.");
         }
 
         // db에 저장되어 있는지 확인
         if (!this.checkExistByToken(refreshToken)) {
-            throw new IllegalStateException("this token is no longer valid");
+            throw new IllegalStateException("인증이 거부된 토큰입니다.");
         }
 
 
