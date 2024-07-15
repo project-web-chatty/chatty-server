@@ -96,6 +96,14 @@ public class WorkspaceController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{workspaceId}/role/{memberId}")
+    public ResponseEntity<Void> changeRoleOfMember( @PathVariable Long workspaceId, @PathVariable Long memberId,
+                                         @RequestParam String role ){
+        workspaceService.changeRoleOfMember(workspaceId,memberId,role);
+        return ResponseEntity.ok().build();
+    }
+
+
     @Operation(summary = "워크 스페이스에 참여",
             description = "초대링크를 브라우저창에 입력해서 웹서버 측에 페이지를 요청했을때, " +
                     "웹서버 측은 이 엔드포인트 단으로 곧바로 요청을 보낸다. 앞 필터에서 먼저 리프레시 토큰으로 로그인 여부를 확인하고 " +
@@ -106,6 +114,8 @@ public class WorkspaceController {
                                                 @Parameter(hidden = true) @AuthenticatedUsername String username){
         return workspaceService.enterToWorkspace(username, code);
     }
+
+
 
 
 

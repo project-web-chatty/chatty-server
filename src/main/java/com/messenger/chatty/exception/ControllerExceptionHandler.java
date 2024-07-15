@@ -1,9 +1,6 @@
 package com.messenger.chatty.exception;
 
-import com.messenger.chatty.exception.custom.DuplicatedNameException;
-import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
-import com.messenger.chatty.exception.custom.PasswordInEqualityException;
-import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticationException;
+import com.messenger.chatty.exception.custom.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -36,7 +33,7 @@ public class ControllerExceptionHandler {
     }
 
 
-    @ExceptionHandler({ConstraintViolationException.class })
+    @ExceptionHandler({ConstraintViolationException.class, InvalidRequestParamException.class })
     public ResponseEntity<ErrorResponse> handleRequestBodyValidationExceptions(HttpServletRequest request, RuntimeException ex) {
 
         return getResEntityWithBadRequest(request.getRequestURI(), ErrorDetail.INVALID_REQUEST_BODY, ex.getMessage());
@@ -55,6 +52,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidSignupRequest(HttpServletRequest request, PasswordInEqualityException ex) {
         return getResEntityWithBadRequest(request.getRequestURI(),ErrorDetail.PASSWORD_INEQUALITY, ex.getMessage());
     }
+
 
 
 

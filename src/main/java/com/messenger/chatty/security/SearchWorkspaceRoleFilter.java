@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -21,10 +22,11 @@ import java.io.IOException;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class DynamicWorkspaceRoleUpdateFilter extends OncePerRequestFilter {
+public class SearchWorkspaceRoleFilter extends OncePerRequestFilter {
     private final PathPatternParser patternParser;
     private final WorkspaceJoinRepository workspaceJoinRepository;
     @Override
+    @Transactional(readOnly = true)
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //URI 패턴 확인
         String requestURI = request.getRequestURI();
@@ -68,15 +70,14 @@ public class DynamicWorkspaceRoleUpdateFilter extends OncePerRequestFilter {
             return;
         }
 
-        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
-        // 해당 workspace 의 참여자가 아니었다면 바로 다음 필터를 진행
-        if(workspaceJoin == null){
+        Optional<WorkspaceJoin> workspaceJoinOptional = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
+        if(workspaceJoinOptional.isEmpty()){
             doFilter(request,response,filterChain);
             return;
         }
+
+        WorkspaceJoin workspaceJoin = workspaceJoinOptional.get();
         String workspaceRole = workspaceJoin.getRole();
-
-
         // immutable 객체 authorities 를 새로 생성
         List<GrantedAuthority> newAuthorities = new ArrayList<>();
         newAuthorities.add(new SimpleGrantedAuthority(serviceRole));

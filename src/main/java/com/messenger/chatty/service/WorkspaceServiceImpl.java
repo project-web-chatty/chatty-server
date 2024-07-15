@@ -5,14 +5,8 @@ import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
-import com.messenger.chatty.entity.Channel;
-import com.messenger.chatty.entity.ChannelJoin;
-import com.messenger.chatty.entity.Member;
-import com.messenger.chatty.entity.Workspace;
-import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
-import com.messenger.chatty.exception.custom.DuplicatedNameException;
-import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
-import com.messenger.chatty.exception.custom.UnAuthorizedMemberException;
+import com.messenger.chatty.entity.*;
+import com.messenger.chatty.exception.custom.*;
 import com.messenger.chatty.repository.*;
 import com.messenger.chatty.util.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
@@ -189,6 +183,15 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     }
 
+
+    @Override
+    public void changeRoleOfMember(Long workspaceId,Long memberId,String role){
+        if(!role.equals("ROLE_WORKSPACE_MEMBER") && !role.equals("ROLE_WORKSPACE_OWNER"))
+            throw new InvalidRequestParamException("잘못된 ROLE 변경 요청입니다.");
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, memberId)
+                .orElseThrow(() -> new CustomNoSuchElementException("워크스페이스에 해당 멤버가 속하지 않습니다."));
+        workspaceJoin.setRole(role);
+    }
 
 
 

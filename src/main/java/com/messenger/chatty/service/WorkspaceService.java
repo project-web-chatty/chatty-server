@@ -31,5 +31,7 @@ public interface WorkspaceService {
 
     WorkspaceResponseDto enterToWorkspace(String username, String code);
 
+    void changeRoleOfMember(Long workspaceId,Long memberId,String role);
+
 
 }

@@ -83,7 +83,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
                 .addFilterAt(new CustomLogoutFilter(tokenService,objectMapper),LogoutFilter.class)
-        .addFilterAfter(new DynamicWorkspaceRoleUpdateFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
+        .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
                 .addFilterBefore(new CustomTokenReissueFilter(tokenService,objectMapper),JWTFilter.class);
 
 
