@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface TokenService {
     String generateAccessToken(String username,String role);
     String generateRefreshToken(String username, String role);
-    DecodedJWT verifyJWT(String token) throws JWTVerificationException;
+    DecodedJWT verifyJWT(String token);
     void saveRefreshToken(String token,String username);
     boolean checkExistByToken(String token);
     void deleteRefreshToken(String token);

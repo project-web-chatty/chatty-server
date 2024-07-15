@@ -173,8 +173,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         if(workspaceJoinRepository.existsByWorkspaceIdAndMemberId(workspace.getId(), member.getId()))
             throw new DuplicatedNameException("이미 이 워크스페이스 내에 존재하는 회원입니다.");
 
-
-
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
         // channel_join table은 삭제될 예정. 이후 리팩터링하기

@@ -63,7 +63,7 @@ public class TokenServiceImpl implements TokenService{
             .withIssuer(jwtIssuer)
             .sign(Algorithm.HMAC256(jwtKey.getBytes()));
   }
-  public DecodedJWT verifyJWT(String token) throws JWTVerificationException  {
+  public DecodedJWT verifyJWT(String token)  {
         Algorithm algorithm = Algorithm.HMAC256(jwtKey.getBytes(StandardCharsets.UTF_8));
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
@@ -84,34 +84,27 @@ public class TokenServiceImpl implements TokenService{
   }
 
 
-
   public void reIssueToken(HttpServletRequest request, HttpServletResponse response) {
       String refreshToken = getRefreshTokenFromRequest(request);
       if (refreshToken == null) {
-          // 나중에 예외 처리하기
-          throw new IllegalStateException("there is no token in cookie");
+          throw new IllegalStateException("토큰이 쿠키에 없습니다.");
       }
-
-      DecodedJWT decodedJWT = null;
-      //expired check
+      DecodedJWT decodedJWT;
       try {
           decodedJWT = this.verifyJWT(refreshToken);
 
       } catch (TokenExpiredException e) {
-          //response status code
           throw new IllegalStateException("토큰이 만료되었습니다.");
       } catch (JWTVerificationException e) {
           throw new IllegalStateException("토큰이 유효하지 않습니다.");
       }
 
-      // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
       String category = decodedJWT.getClaim("category").asString();
 
       if (!category.equals("refresh")) {
           throw new IllegalStateException("리프레시 토큰이 아닙니다.");
       }
 
-      // db에 저장되어 있는지 확인
       if (!this.checkExistByToken(refreshToken)) {
           throw new IllegalStateException("인증이 거부된 토큰입니다.");
       }
@@ -120,19 +113,13 @@ public class TokenServiceImpl implements TokenService{
       String username = decodedJWT.getSubject();
       String role = decodedJWT.getClaim("role").asString();
 
-      //make new JWT
       String newAccessToken = generateAccessToken(username, role);
       String newRefreshToken = generateRefreshToken(username, role);
-
-      // 리프레시 토큰 db에 갱신 하여 변경
       deleteRefreshToken(refreshToken);
       saveRefreshToken(newRefreshToken, username);
 
-      //response
       response.addHeader("Authorization", "Bearer " + newAccessToken);
       response.addCookie(CookieGenerator.generateCookie("refresh_token", newRefreshToken, 7 * 24 * 60 * 60));
-
-
   }
     public String getRefreshTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
