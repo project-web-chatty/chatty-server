@@ -28,9 +28,11 @@ public class WorkspaceController {
     private final ChannelService channelService;
     private final WorkspaceService workspaceService;
 
+
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
     public WorkspaceBriefDto createWorkspace(  @Parameter(hidden = true)  @AuthenticatedUsername String username,
+
                                              @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
         return  workspaceService.generateWorkspace(requestDto, username);
     }
@@ -69,6 +71,7 @@ public class WorkspaceController {
         return channelService.createChannelToWorkspace(workspaceId, requestDto);
     }
 
+
     @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
     @GetMapping("/{workspaceId}/invite")
     public String getNewInvitationCode(@PathVariable  Long workspaceId){
@@ -92,8 +95,10 @@ public class WorkspaceController {
                                                                     @PathVariable Long channelId  ){
         channelService.deleteChannelInWorkspace(workspaceId,channelId);
 
+
         return ResponseEntity.ok().build();
     }
+
 
     @Operation(summary = "워크스페이스 내 특정 멤버의 ROLE을 바꾸기")
     @PutMapping("/{workspaceId}/role/{memberId}")

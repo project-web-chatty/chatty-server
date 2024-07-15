@@ -20,5 +20,6 @@ public class AuthenticatedUsernameArgumentResolver implements HandlerMethodArgum
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(principal instanceof UserDetails)) throw new UnexpectedNotAuthenticationException("의도하지 않은 인증 예외입니다.");
         return ((UserDetails)principal).getUsername();
+
     }
 }

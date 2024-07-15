@@ -29,6 +29,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final WorkspaceJoinRepository workspaceJoinRepository;
 
 
+
     @Override
     @Transactional(readOnly = true)
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
@@ -99,6 +100,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         // 생성한 멤버는 곧바로 워크스페이스에 들어간다
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_OWNER");
 
+
         // 기본 채널 announce와 talk를 생성
         Channel announce = Channel.createChannel("announce",workspace);
         Channel talk = Channel.createChannel("talk",workspace);
@@ -135,6 +137,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
                 .orElseThrow(()->new CustomNoSuchElementException("id" , workspaceId,"워크스페이스"));
         workspaceRepository.delete(workspace);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -192,6 +195,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
                 .orElseThrow(() -> new CustomNoSuchElementException("워크스페이스에 해당 멤버가 속하지 않습니다."));
         workspaceJoin.setRole(role);
     }
+
 
 
 

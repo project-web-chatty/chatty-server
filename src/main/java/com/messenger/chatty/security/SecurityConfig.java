@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,6 +33,7 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final TokenService tokenService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final WorkspaceJoinRepository workspaceJoinRepository;
@@ -55,6 +57,7 @@ public class SecurityConfig {
         // stateless session
         httpSecurity.sessionManagement((sessionManagementConfigurer ->
                 sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)));
+
         // default setting
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -102,6 +105,7 @@ public class SecurityConfig {
                         return configuration;
                     }
                 })));
+
 
 
         return httpSecurity.build();

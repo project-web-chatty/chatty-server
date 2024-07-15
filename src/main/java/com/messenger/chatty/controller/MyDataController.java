@@ -1,5 +1,4 @@
 package com.messenger.chatty.controller;
-
 import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
@@ -27,12 +26,14 @@ public class MyDataController {
     @Operation(summary = "내 프로필 정보 가져오기")
     @GetMapping
     public MyProfileDto getMyProfile(  @Parameter(hidden = true)  @AuthenticatedUsername String username) {
+
         return memberService.getMyProfileByUsername(username);
     }
 
     @Operation(summary = "내 프로필 정보 수정하기")
     @PutMapping
     public MemberBriefDto changeMyProfile(  @Parameter(hidden = true)  @AuthenticatedUsername String username ,
+
                     @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
         return memberService.updateMyProfile(username, updateRequestDto);
     }
@@ -55,6 +56,7 @@ public class MyDataController {
     @Operation(summary = "특정 워크스페이스 내에 있는 채널 리스트 가져오기")
     @GetMapping("/channels")
     public List<ChannelBriefDto> getMyChannelsInWorkspace(  @Parameter(hidden = true)  @AuthenticatedUsername String username
+
             , @RequestParam String workspaceName  ) {
         return memberService.getMyChannels(username,workspaceName);
     }
