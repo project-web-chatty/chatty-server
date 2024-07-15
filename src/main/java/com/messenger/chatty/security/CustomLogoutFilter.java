@@ -1,7 +1,11 @@
 package com.messenger.chatty.security;
-
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.messenger.chatty.exception.ErrorDetail;
+import com.messenger.chatty.exception.ErrorResponse;
+import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -9,16 +13,18 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
-
 import java.io.IOException;
 
 
 public class CustomLogoutFilter extends GenericFilterBean {
-    private final AuthService authService;
+    private final TokenService tokenService;
+    private final ObjectMapper objectMapper;
 
-    public CustomLogoutFilter(AuthService authService) {
-        this.authService =authService;
+    public CustomLogoutFilter(TokenService tokenService,ObjectMapper objectMapper) {
+        this.tokenService = tokenService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -28,62 +34,51 @@ public class CustomLogoutFilter extends GenericFilterBean {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-
-        //path and method verify
-        String requestUri = request.getRequestURI();
-        if (!requestUri.matches("/api/auth/logout")|| !request.getMethod().equals("POST")) {
+        // URI 확인
+        String requestURI = request.getRequestURI();
+        if (!requestURI.matches("/api/auth/logout")|| !request.getMethod().equals("POST")) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        // authController의 reissue 메서드와 동일하므로 리팩터링 필수
-        String refreshToken = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh_token")) {
-                refreshToken = cookie.getValue();
-            }
-        }
+        // 토큰 검증
+        String refreshToken = tokenService.getRefreshTokenFromRequest(request);
         if (refreshToken == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            sendError(request,response,"쿠키에 토큰이 없습니다.");
             return;
         }
-        DecodedJWT decodedJWT =null;
-        //expired check
+        DecodedJWT decodedJWT ;
         try {
-            decodedJWT = authService.verifyJWT(refreshToken);
+            decodedJWT = tokenService.verifyJWT(refreshToken);
 
         } catch (TokenExpiredException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            sendError(request,response,"토큰이 이미 만료되었습니다.");
+            return;
+        }catch (JWTVerificationException e){
+            sendError(request,response,"유효한 토큰이 아닙니다.");
             return;
         }
-
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
         String category =decodedJWT.getClaim("category").asString();
-
         if (!category.equals("refresh")) {
-            System.out.println("cateogory:  "+category);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            sendError(request,response,"리프레시 토큰이 아닙니다.");
             return;
         }
-
-        // db에 저장되어 있는지 확인
-        if (!authService.checkExistByToken(refreshToken)) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        if (!tokenService.checkExistByToken(refreshToken)) {
+            sendError(request,response,"유효한 토큰이 아닙니다.");
             return;
         }
-
-
 
         //로그아웃 진행
-        //Refresh 토큰 DB에서 제거
-        authService.deleteRefreshToken(refreshToken);
-
-        //Refresh 토큰 Cookie 값 0
+        tokenService.deleteRefreshToken(refreshToken);
         Cookie nullCookie = CookieGenerator.generateCookie("refresh", null, 0);
-
         response.addCookie(nullCookie);
         response.setStatus(HttpServletResponse.SC_OK);
+    }
+    private void sendError(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(400);
+        ErrorResponse errorResponse = ErrorResponse.from(request.getRequestURI(),
+                HttpStatus.BAD_REQUEST, ErrorDetail.INVALID_LOGOUT_REQUEST,errorMessage);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

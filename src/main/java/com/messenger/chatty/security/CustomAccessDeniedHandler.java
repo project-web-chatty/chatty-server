@@ -7,32 +7,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 
-
-
-// 401
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
 
     @Override
-    public void commence(
+    public void handle(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException authException)
+            AccessDeniedException accessDeniedException)
             throws IOException {
         response.setContentType("application/json");
-        String customMessage = (String) request.getAttribute("message");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response
                 .getWriter()
-                .write(objectMapper.writeValueAsString(ErrorResponse
-                                .from(request.getRequestURI(), HttpStatus.UNAUTHORIZED, ErrorDetail.UN_AUTHORIZED,customMessage))
-                        );
+                .write( objectMapper.writeValueAsString(ErrorResponse.from(request.getRequestURI(), HttpStatus.FORBIDDEN,
+                        ErrorDetail.FORBIDDEN, "인증되었으나 해당 요청에 대한 권한이 부족합니다.")));
     }
 }

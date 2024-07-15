@@ -1,4 +1,4 @@
-package com.messenger.chatty.security;
+package com.messenger.chatty.util;
 import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 

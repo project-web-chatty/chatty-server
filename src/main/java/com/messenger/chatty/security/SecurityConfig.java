@@ -3,13 +3,13 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
+import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,11 +32,11 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthService authService;
+    private final TokenService tokenService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final WorkspaceJoinRepository workspaceJoinRepository;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final ObjectMapper objectMapper;
 
     @Bean // for encoding password
@@ -49,7 +49,6 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -61,11 +60,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .exceptionHandling(
                         handlingConfigurer -> {
-                            handlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
-                            handlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                            handlingConfigurer.accessDeniedHandler(customAccessDeniedHandler);
+                            handlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint);
                         })
                 .logout(AbstractHttpConfigurer::disable);
 
@@ -80,12 +78,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
                         .anyRequest().authenticated()); // 나머지 엔드포인트에 대해서는 인증만 요구
 
-        // add custom filters
-        httpSecurity.addFilterAt(new BasicLoginFilter(authenticationManager(authenticationConfiguration), authService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTFilter(authService), BasicLoginFilter.class)
-                .addFilterAt(new CustomLogoutFilter(authService),LogoutFilter.class)
-        .addFilterAfter(new WorkspaceRoleFilter(authService, new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
-                .addFilterBefore(new CustomTokenReissueFilter(authService,objectMapper),JWTFilter.class);
+        // custom filters settings
+        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService,objectMapper),
+                        UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
+                .addFilterAt(new CustomLogoutFilter(tokenService,objectMapper),LogoutFilter.class)
+        .addFilterAfter(new DynamicWorkspaceRoleUpdateFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
+                .addFilterBefore(new CustomTokenReissueFilter(tokenService,objectMapper),JWTFilter.class);
 
 
         // cors setting
@@ -94,7 +93,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));

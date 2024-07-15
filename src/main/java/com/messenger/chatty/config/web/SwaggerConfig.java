@@ -32,7 +32,9 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("WEB-CHATTY API DOCUMENTATION")
-                .description("WEB CHATTY API 명세서입니다.")
+                .description("WEB CHATTY API 명세서입니다. \n 엑세스토큰은 Authorization header, 리프레시 토큰은 쿠키에 발급됩니다." +
+                        " 로그인 엔드포인트에서 로그인 성공 시 응답으로 받는 엑세스 토큰을(Bearer을 제외한 문자열) 'Authorize' 버튼을 눌렀을 시 나오는 Value에 입력해주세요. " +
+                        "Value에 토큰이 설정되어 있는 동안에는 request의 Authorization header에 자동으로 엑세스 토큰이 포함됩니다. ")
                 .version("1.0.0");
     }
 

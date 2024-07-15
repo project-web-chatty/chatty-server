@@ -1,9 +1,9 @@
 package com.messenger.chatty.repository;
 
-import com.messenger.chatty.entity.TokenEntity;
+import com.messenger.chatty.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TokenRepository  extends JpaRepository<TokenEntity,Long> {
+public interface TokenRepository  extends JpaRepository<RefreshToken,Long> {
     Boolean existsByToken(String token);
     void deleteByToken(String token);
 }

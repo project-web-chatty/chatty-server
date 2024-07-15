@@ -21,30 +21,24 @@ import java.io.IOException;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class WorkspaceRoleFilter extends OncePerRequestFilter {
-    private final AuthService authService;
+public class DynamicWorkspaceRoleUpdateFilter extends OncePerRequestFilter {
     private final PathPatternParser patternParser;
     private final WorkspaceJoinRepository workspaceJoinRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-
-        String requestUri = request.getRequestURI();
-        if (requestUri.startsWith("/api/workspace/join")) {
-            filterChain.doFilter(request, response);
+        //URI 패턴 확인
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/api/workspace/join")) {
+            doFilter(request,response,filterChain);
             return;
         }
-
-        PathPattern pattern = patternParser.parse("/api/workspace/{workspaceId}/**");
-        // URI가 /api/workspace/로 시작하지 않으면 필터 체인을 진행
-        PathPattern.PathMatchInfo pathMatchInfo = pattern.matchAndExtract(PathContainer.parsePath(requestUri));
+        PathPattern.PathMatchInfo pathMatchInfo = patternParser.parse("/api/workspace/{workspaceId}/**")
+                .matchAndExtract(PathContainer.parsePath(requestURI));
         if (pathMatchInfo == null) {
-            System.out.println("invalid uri in this filter");
             doFilter(request,response,filterChain);
             return;
         }
 
-        // 유저네임 앞단의 필터에서 설정한 principal 에서 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             doFilter(request,response,filterChain);
@@ -52,54 +46,46 @@ public class WorkspaceRoleFilter extends OncePerRequestFilter {
 
         }
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
         String username = customUserDetails.getUsername();
-
-
-
-        // URI에서 추출된 변수들을 가져올 수 있음
-        Map<String, String> uriVariables = pathMatchInfo.getUriVariables();
-        String workspaceIdStr = uriVariables.get("workspaceId");
-        // workspaceId를 Long으로 변환하거나 추가적인 작업 수행 가능
-        long workspaceId;
-        try {
-            // workspaceId를 long으로 변환
-            workspaceId = Long.parseLong(workspaceIdStr);
-            System.out.println("Extracted workspaceId: " + workspaceId);
-        } catch (NumberFormatException e) {
-            System.out.println("Failed to parse workspaceId: " + workspaceIdStr);
-            return;
-        }
-        System.out.println("Extracted workspaceId: " + workspaceId);
-
-
-        // WorkspaceMemberRepository를 사용하여 Role 조회
-        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
-        String workspaceRole = workspaceJoin.getRole();
-        System.out.println("role in workspace = " + workspaceRole);
-
-        // 기존의 role을 우선 받아온다.
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = customUserDetails.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String serviceRole = auth.getAuthority();
 
+        //인증된 유저가 ADMIN 인 경우 DB 조회 없이 다음 필터를 진행
+        if(serviceRole.equals("ROLE_ADMIN")) {
+            doFilter(request,response,filterChain);
+            return;
+        }
 
+        Map<String, String> uriVariables = pathMatchInfo.getUriVariables();
+        String variable = uriVariables.get("workspaceId");
+        long workspaceId;
+        try {
+            workspaceId = Long.parseLong(variable);
+        } catch (NumberFormatException e) {
+            doFilter(request,response,filterChain);
+            return;
+        }
+
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberUsername(workspaceId, username);
+        // 해당 workspace 의 참여자가 아니었다면 바로 다음 필터를 진행
+        if(workspaceJoin == null){
+            doFilter(request,response,filterChain);
+            return;
+        }
+        String workspaceRole = workspaceJoin.getRole();
+
+
+        // immutable 객체 authorities 를 새로 생성
         List<GrantedAuthority> newAuthorities = new ArrayList<>();
         newAuthorities.add(new SimpleGrantedAuthority(serviceRole));
         newAuthorities.add(new SimpleGrantedAuthority(workspaceRole));
 
-      // 권한을 포함하는 새로운 Authentication 객체 생성
         Authentication newAuthentication = new UsernamePasswordAuthenticationToken(
                 authentication.getPrincipal(), null, newAuthorities);
-
-        // SecurityContextHolder에 새로운 Authentication 설정
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-
-
         doFilter(request,response,filterChain);
-
     }
-
 
 }

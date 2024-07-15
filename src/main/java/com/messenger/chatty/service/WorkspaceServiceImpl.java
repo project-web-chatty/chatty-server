@@ -14,7 +14,7 @@ import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
 import com.messenger.chatty.exception.custom.UnAuthorizedMemberException;
 import com.messenger.chatty.repository.*;
-import com.messenger.chatty.security.InvitationCodeGenerator;
+import com.messenger.chatty.util.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,19 +34,10 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final InvitationCodeGenerator invitationCodeGenerator;
     private final WorkspaceJoinRepository workspaceJoinRepository;
 
-    // 워크스페이스 내에서 수행되는 멤버쉽과 관련된 인가 권한 검증은 시큐리티의 커스텀 필터를 URL에 맞게 구현
-    // 특정 멤버가 특정 워크스페이스에 대한 해당 메서드에 대해 권한이 있는가 에 대한 validation
-    // 필터에서 이 메서드를 호출하여 검증 수행
-    public void validateAuthorization(){
-        //  추후 로직 작성
-         throw new UnAuthorizedMemberException("incomplete");
-    }
-
 
     @Override
     @Transactional(readOnly = true)
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
-        // 앞의 필터에서 인가 권한에 대하여 검증되었다고 가정하므로 여기서 인가 validation 할 필요 x
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
 
@@ -186,7 +177,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
-        // 멤버를 추가 시 워크 스페이스 내 모든 채널에 멤버가 속하도록 함 (dm 기능 등의 도입 시 수정 요망)
+        // channel_join table은 삭제될 예정. 이후 리팩터링하기
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         channels.forEach((channel)->{
             ChannelJoin channelJoin = ChannelJoin.from(channel,member);

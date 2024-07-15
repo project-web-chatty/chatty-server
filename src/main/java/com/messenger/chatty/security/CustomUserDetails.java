@@ -12,11 +12,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private Member member;
+    private final Member member;
     private final Set<GrantedAuthority> authorities = new HashSet<>();
 
 
@@ -25,10 +24,8 @@ public class CustomUserDetails implements UserDetails {
         authorities.add(new SimpleGrantedAuthority(member.getRole()));
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         return authorities;
     }
 
