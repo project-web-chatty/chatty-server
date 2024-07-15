@@ -12,6 +12,6 @@ public interface ChannelService {
 
   //  List<ChannelBriefDto> getChannelsOfMemberAndWorkspace(Long workspaceId, String username);
 
-    void deleteChannelInWorkspace(Long  channelId);
+    void deleteChannelInWorkspace(Long workspaceId, Long  channelId);
 
 }

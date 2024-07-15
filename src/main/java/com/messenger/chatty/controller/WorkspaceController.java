@@ -90,12 +90,12 @@ public class WorkspaceController {
     @DeleteMapping("/{workspaceId}/channels/{channelId}")
     public ResponseEntity<Void> deleteChannelToWorkspace(   @PathVariable Long workspaceId,
                                                                     @PathVariable Long channelId  ){
-        // workspaceId 도 나중에 넘겨서 해당 채널이 워크스페이스에 속한 것인지 검증하기
-        channelService.deleteChannelInWorkspace(channelId);
+        channelService.deleteChannelInWorkspace(workspaceId,channelId);
 
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "워크스페이스 내 특정 멤버의 ROLE을 바꾸기")
     @PutMapping("/{workspaceId}/role/{memberId}")
     public ResponseEntity<Void> changeRoleOfMember( @PathVariable Long workspaceId, @PathVariable Long memberId,
                                          @RequestParam String role ){
