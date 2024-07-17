@@ -26,7 +26,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Value("${variables.password.KEY}")
     private String secretKey ;
-    private static final SecureRandom securityRandom = new SecureRandom();
+    private SecureRandom securityRandom = new SecureRandom();
 
     @Transactional
     @Override
