@@ -11,27 +11,3 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 201260746722-57imdieckvj1tjhleohocmjb7o0bbhht.apps.googleusercontent.com
-            client-secret: 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
-            scope: profile, email
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google" ## 여기로 하이퍼링크 방식으로 리다이렉션 됨
-            authorization-grant-type: authorization_code
-            client-name: Google
-
-          github:
-            client-id: Ov23liRSBXCKgsUK9jU9
-            client-secret: 57a27f90b3ab635d12c373c107583ffdc3cfe221  # GitHub에서 받은 Client Secret
-            redirect-uri: "http://localhost:8080/login/oauth2/code/github"
-            authorization-grant-type: authorization_code
-            client-name: GitHub
-
-jwt-variables:
-  EXPIRES_ACCESS_TOKEN_MINUTE: 10
-  EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
-  ISSUER: webChatty
-  KEY: asdqweafsds123+K3yyy  #   Should only be handled in environment variables later

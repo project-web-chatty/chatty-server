@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 @SpringBootTest
 public class ChannelRepositoryTest {
     @Autowired

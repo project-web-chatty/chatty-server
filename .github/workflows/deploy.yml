@@ -27,6 +27,7 @@ jobs:
           spring.rabbitmq.port: ${{secrets.DEPLOY_RABBITMQ_PORT}}
           spring.rabbitmq.username: ${{secrets.DEPLOY_RABBITMQ_USERNAME}}
           spring.rabbitmq.password: ${{secrets.DEPLOY_RABBITMQ_PASSWORD}}
+
           spring.security.oauth2.client.registration.google.client-id : ${{secrets.DEPLOY_GOOGLE_CLIENT_ID}}
           spring.security.oauth2.client.registration.google.client-secret : ${{secrets.DEPLOY_GOOGLE_CLIENT_SECRET}}
           spring.security.oauth2.client.registration.google.redirect-uri : ${{secrets.DEPLOY_GOOGLE_REDIRECT_URI}}
@@ -36,7 +37,6 @@ jobs:
           variables.jwt.KEY: ${{secrets.DEPLOY_JWT_SECRET_KEY}}
           variables.password.KEY: ${{secrets.DEPLOY_PASSWORD_SECRET_KEY}}
           variables.invitation.KEY: ${{secrets.DEPLOY_INVITATION_SECRET_KEY}}
-
 
 
       - name: Log in to Docker Hub
