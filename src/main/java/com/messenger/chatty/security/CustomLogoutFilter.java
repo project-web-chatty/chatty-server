@@ -13,27 +13,22 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 
 
-public class CustomLogoutFilter extends GenericFilterBean {
+
+@RequiredArgsConstructor
+public class CustomLogoutFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
 
-    public CustomLogoutFilter(TokenService tokenService,ObjectMapper objectMapper) {
-        this.tokenService = tokenService;
-        this.objectMapper = objectMapper;
-    }
-
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
-    }
-
-    private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // URI 확인
         String requestURI = request.getRequestURI();
         if (!requestURI.matches("/api/auth/logout")|| !request.getMethod().equals("POST")) {
