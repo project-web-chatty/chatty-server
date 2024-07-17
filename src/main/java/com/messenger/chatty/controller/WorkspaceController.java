@@ -1,6 +1,4 @@
 package com.messenger.chatty.controller;
-
-
 import com.messenger.chatty.config.web.AuthenticatedUsername;
 import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
@@ -12,7 +10,6 @@ import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.WorkspaceService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,7 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
-    public WorkspaceBriefDto createWorkspace(  @Parameter(hidden = true)  @AuthenticatedUsername String username,
+    public WorkspaceBriefDto createWorkspace(   @AuthenticatedUsername String username,
 
                                              @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
         return  workspaceService.generateWorkspace(requestDto, username);
@@ -116,7 +113,7 @@ public class WorkspaceController {
     // 로그인 되었다고 가정
     @PostMapping("/join/{code}")
     public WorkspaceResponseDto joinToWorkspace(@PathVariable String code,
-                                                @Parameter(hidden = true) @AuthenticatedUsername String username){
+                                                 @AuthenticatedUsername String username){
         return workspaceService.enterToWorkspace(username, code);
     }
 
