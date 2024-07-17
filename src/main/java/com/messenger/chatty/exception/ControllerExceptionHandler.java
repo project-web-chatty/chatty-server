@@ -1,9 +1,5 @@
 package com.messenger.chatty.exception;
-
-import com.messenger.chatty.exception.custom.DuplicatedNameException;
-import com.messenger.chatty.exception.custom.InvalidInvitationCodeException;
-import com.messenger.chatty.exception.custom.PasswordInEqualityException;
-import com.messenger.chatty.exception.custom.UnexpectedNotAuthenticationException;
+import com.messenger.chatty.exception.custom.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -29,14 +25,12 @@ public class ControllerExceptionHandler {
 
     }
 
-
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleNoSuchElementException(HttpServletRequest request,NoSuchElementException ex) {
         return getResEntityWithBadRequest(request.getRequestURI(),ErrorDetail.NO_SUCH_ELEMENT, ex.getMessage());
     }
 
-
-    @ExceptionHandler({ConstraintViolationException.class })
+    @ExceptionHandler({ConstraintViolationException.class, InvalidRequestParamException.class })
     public ResponseEntity<ErrorResponse> handleRequestBodyValidationExceptions(HttpServletRequest request, RuntimeException ex) {
 
         return getResEntityWithBadRequest(request.getRequestURI(), ErrorDetail.INVALID_REQUEST_BODY, ex.getMessage());
@@ -49,13 +43,13 @@ public class ControllerExceptionHandler {
     }
     @ExceptionHandler({InvalidInvitationCodeException.class})
     public ResponseEntity<ErrorResponse> handleInvalidInvitationException(HttpServletRequest request, InvalidInvitationCodeException ex) {
-        return getResEntityWithBadRequest(request.getRequestURI() ,ErrorDetail.INVALID_CODE, ex.getMessage()) ;
+        return getResEntityWithBadRequest(request.getRequestURI() ,ErrorDetail.INVALID_INVITE_CODE, ex.getMessage()) ;
+
     }
     @ExceptionHandler(PasswordInEqualityException.class)
     public ResponseEntity<ErrorResponse> handleInvalidSignupRequest(HttpServletRequest request, PasswordInEqualityException ex) {
         return getResEntityWithBadRequest(request.getRequestURI(),ErrorDetail.PASSWORD_INEQUALITY, ex.getMessage());
     }
-
 
 
 

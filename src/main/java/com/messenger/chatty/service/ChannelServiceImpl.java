@@ -1,11 +1,8 @@
 package com.messenger.chatty.service;
-
-
 import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.ChannelJoin;
-import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
@@ -77,11 +74,12 @@ public class ChannelServiceImpl implements ChannelService{
      */
 
 
-
     @Override
-    public void deleteChannelInWorkspace(Long channelId) {
+    public void deleteChannelInWorkspace(Long workspaceId, Long channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new CustomNoSuchElementException("채널ID", channelId, "채널"));
+        if(!channel.getWorkspace().getId().equals(workspaceId)) throw new CustomNoSuchElementException("워크스페이스 내에 해당 채널이 없습니다.");
+
         channelRepository.delete(channel);
     }
 }

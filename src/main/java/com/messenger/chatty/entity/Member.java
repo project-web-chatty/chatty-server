@@ -1,10 +1,7 @@
 package com.messenger.chatty.entity;
-
-
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class Member extends BaseEntity  {
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,21 +58,19 @@ public class Member extends BaseEntity {
         return Member.builder()
                 .username(username)
                 .password(memberJoinRequestDTO.getPassword())
-                .role("USER")
+                .role("ROLE_USER")
                 .name(username)
                 .nickname(username)
                 .introduction(username +" 님의 소개글입니다.")
                 .build();
     }
 
-
-    public void enterIntoWorkspace(Workspace workspace){
+    public void enterIntoWorkspace(Workspace workspace,String role){
         WorkspaceJoin workspaceJoin = new WorkspaceJoin();
+        workspaceJoin.setRole(role);
         workspaceJoin.linkWorkspace(workspace);
         workspaceJoin.linkMember(this);
     }
-
-
 
     public void changeEmail(String email){
         this.email = email;

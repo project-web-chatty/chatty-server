@@ -27,6 +27,13 @@ public interface WorkspaceService {
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
 
+    String getNewInvitationCode(Long workspaceId);
+    String setInvitationCode(Long workspaceId);
+
+    WorkspaceResponseDto enterToWorkspace(String username, String code);
+
+    void changeRoleOfMember(Long workspaceId,Long memberId,String role);
+
 
 
 }
