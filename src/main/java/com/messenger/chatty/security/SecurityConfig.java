@@ -3,6 +3,8 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
+import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
+import com.messenger.chatty.security.oauth2.CustomSuccessHandler;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class SecurityConfig {
     private final WorkspaceJoinRepository workspaceJoinRepository;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final ObjectMapper objectMapper;
 
     @Bean // for encoding password
@@ -101,10 +104,17 @@ public class SecurityConfig {
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
                         return configuration;
                     }
                 })));
+
+
+        // oauth setting
+        httpSecurity.oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                        .userService(customOAuth2UserService)).successHandler(new CustomSuccessHandler(tokenService)));
 
 
 
