@@ -31,14 +31,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        // 유저는 리다이렉션 URI로 리다이렉트되고. 파라미터로 받은 코드와 토큰을 통해 유저 정보를 갖고 왔을때
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("user : " + oAuth2User);
-        System.out.println("attribute : "+ oAuth2User.getAttributes());
-        // System.out.println("oAuth2User.getAttributes().get(\"login\") = " + oAuth2User.getAttributes().get("login"));
-        // google이거나 github이거나 등등
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         Oauth2Response oAuth2Response;
+
         if (registrationId.equals("google")) {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         }
@@ -49,17 +45,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
 
-        // detail service 처럼 principal 객체를 반환해주어야 provider가 정상적인 로그인이라고 생각한다
-        //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
-        String username = oAuth2Response.getUniqueUsername();
-        System.out.println("username = " + username);
-
+        String username =oAuth2Response.getUniqueUsername();
         Optional<Member> memberOptional = memberRepository.findByUsername(username);
         Member member;
         if(memberOptional.isEmpty()){
             member = Member.builder()
-                    .username(oAuth2Response.getUniqueUsername())
-                    .password(generateSecretPassword(oAuth2Response.getUniqueUsername()))
+                    .username(username)
+                    .password(generateSecretPassword(username))
                     .email(oAuth2Response.getEmail())
                     .name(oAuth2Response.getName())
                     .nickname(oAuth2Response.getName())
@@ -71,7 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         else {
             member = memberOptional.get();
         }
-        System.out.println("successed");
+
         return new CustomUserDetails(member);
     }
 

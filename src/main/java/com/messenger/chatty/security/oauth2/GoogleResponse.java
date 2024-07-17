@@ -1,5 +1,4 @@
 package com.messenger.chatty.security.oauth2;
-
 import java.util.Map;
 
 public class GoogleResponse implements Oauth2Response{

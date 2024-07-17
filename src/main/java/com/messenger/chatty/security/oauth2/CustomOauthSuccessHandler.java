@@ -1,5 +1,4 @@
 package com.messenger.chatty.security.oauth2;
-
 import com.messenger.chatty.security.CookieGenerator;
 import com.messenger.chatty.security.CustomUserDetails;
 import com.messenger.chatty.service.TokenService;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,7 +19,6 @@ public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
 
-        System.out.println("onAuthenticationSuccess(); ");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
 
