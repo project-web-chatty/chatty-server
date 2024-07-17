@@ -7,8 +7,6 @@ spring:
     username: ${LOCAL_MYSQL_USERNAME}
     password: ${LOCAL_MYSQL_PASSWORD}
 
-
-
   jpa:
     hibernate:
       ddl-auto: update # according to our dev environment
@@ -22,3 +20,21 @@ spring:
     port: ${LOCAL_RABBITMQ_PORT}
     username: ${LOCAL_RABBITMQ_USERNAME}
     password: ${LOCAL_RABBITMQ_PASSWORD}
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${LOCAL_GOOGLE_CLIENT_ID}
+            client-secret: ${LOCAL_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${LOCAL_GITHUB_CLIENT_ID}
+            client-secret: ${LOCAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GITHUB_REDIRECT_URI}
+
+
+jwt-variables:
+  KEY: ${LOCAL_JWT_SECRET_KEY}

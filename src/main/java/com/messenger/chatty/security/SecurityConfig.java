@@ -35,7 +35,6 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final TokenService tokenService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final WorkspaceJoinRepository workspaceJoinRepository;
@@ -43,8 +42,6 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ObjectMapper objectMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

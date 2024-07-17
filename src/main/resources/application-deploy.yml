@@ -7,7 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop # according to our rds environment
-
   data:
     mongodb:
       uri: ${DEPLOY_MONGODB_URL}
@@ -17,3 +16,20 @@ spring:
     port: ${DEPLOY_RABBITMQ_PORT}  # default port is 5672
     username: ${DEPLOY_RABBITMQ_USERNAME}
     password: ${DEPLOY_RABBITMQ_PASSWORD}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${DEPLOY_GOOGLE_CLIENT_ID}
+            client-secret: ${DEPLOY_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${DEPLOY_GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${DEPLOY_GITHUB_CLIENT_ID}
+            client-secret: ${DEPLOY_GITHUB_CLIENT_SECRET}
+            redirect-uri: ${DEPLOY_GITHUB_REDIRECT_URI}
+
+
+jwt-variables:
+  KEY: ${DEPLOY_JWT_SECRET_KEY}
