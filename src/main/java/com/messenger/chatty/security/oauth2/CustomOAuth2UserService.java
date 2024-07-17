@@ -3,6 +3,7 @@ package com.messenger.chatty.security.oauth2;
 
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.repository.MemberRepository;
+import com.messenger.chatty.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -17,7 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
-    private final SecretId
 
     @Transactional
     @Override
@@ -53,11 +53,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .username(oAuth2Response.getUniqueUsername())
                     .email(oAuth2Response.getEmail())
                     .name(oAuth2Response.getName())
+                    .profile_img(oAuth2Response.getProfileImgURL())
                     .build();
+            memberRepository.save(member);
         }
-        member = memberOptional.get();
-        memberRepository.save(member);
-        return new CustomOAuth2User(member);
+        else {
+            member = memberOptional.get();
+        }
+        return new CustomUserDetails(member);
     }
 
 
