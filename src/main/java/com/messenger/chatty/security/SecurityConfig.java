@@ -4,7 +4,7 @@ package com.messenger.chatty.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
-import com.messenger.chatty.security.oauth2.CustomSuccessHandler;
+import com.messenger.chatty.security.oauth2.CustomOauthSuccessHandler;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -114,7 +114,7 @@ public class SecurityConfig {
         // oauth setting
         httpSecurity.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                        .userService(customOAuth2UserService)).successHandler(new CustomSuccessHandler(tokenService)));
+                        .userService(customOAuth2UserService)).successHandler(new CustomOauthSuccessHandler(tokenService)));
 
 
 

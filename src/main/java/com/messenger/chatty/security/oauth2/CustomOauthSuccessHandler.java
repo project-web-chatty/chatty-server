@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final TokenService tokenService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {

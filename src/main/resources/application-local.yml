@@ -7,6 +7,8 @@ spring:
     username: ${LOCAL_MYSQL_USERNAME}
     password: ${LOCAL_MYSQL_PASSWORD}
 
+
+
   jpa:
     hibernate:
       ddl-auto: update # according to our dev environment
