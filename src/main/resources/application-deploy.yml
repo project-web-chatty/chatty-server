@@ -30,6 +30,10 @@ spring:
             client-secret: ${DEPLOY_GITHUB_CLIENT_SECRET}
             redirect-uri: ${DEPLOY_GITHUB_REDIRECT_URI}
 
-
-jwt-variables:
-  KEY: ${DEPLOY_JWT_SECRET_KEY}
+variables:
+  jwt:
+    KEY: ${DEPLOY_JWT_SECRET_KEY}
+  invitation:
+    KEY: ${DEPLOY_INVITATION_SECRET_KEY}
+  password:
+    KEY: ${DEPLOY_PASSWORD_SECRET_KEY}

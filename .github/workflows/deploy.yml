@@ -33,7 +33,9 @@ jobs:
           spring.security.oauth2.client.registration.github.client-id: ${{secrets.DEPLOY_GITHUB_CLIENT_ID}}
           spring.security.oauth2.client.registration.github.client-secret: ${{secrets.DEPLOY_GITHUB_CLIENT_SECRET}}
           spring.security.oauth2.client.registration.github.redirect-uri: ${{secrets.DEPLOY_GITHUB_REDIRECT_URI}}
-          jwt-variables.KEY: ${{secrets.DEPLOY_JWT_SECRET_KEY}}
+          variables.jwt.KEY: ${{secrets.DEPLOY_JWT_SECRET_KEY}}
+          variables.password.KEY: ${{secrets.DEPLOY_PASSWORD_SECRET_KEY}}
+          variables.invitation.KEY: ${{secrets.DEPLOY_INVITATION_SECRET_KEY}}
 
 
 

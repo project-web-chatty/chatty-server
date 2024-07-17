@@ -6,6 +6,7 @@ import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.bson.codecs.BsonUndefinedCodec;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,8 +24,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // 나중에 환경변수로 다루기
-    private static final String secretKey = "abcde12345";
+    @Value("${variables.password.KEY}")
+    private String secretKey ;
     private static final SecureRandom securityRandom = new SecureRandom();
 
     @Transactional
