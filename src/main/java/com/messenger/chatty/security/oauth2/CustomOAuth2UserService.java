@@ -5,6 +5,8 @@ import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.bson.codecs.BsonUndefinedCodec;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -12,12 +14,18 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    // 나중에 환경변수로 다루기
+    private static final String secretKey = "abcde12345";
+    private static final SecureRandom securityRandom = new SecureRandom();
 
     @Transactional
     @Override
@@ -51,16 +59,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(memberOptional.isEmpty()){
             member = Member.builder()
                     .username(oAuth2Response.getUniqueUsername())
+                    .password(generateSecretPassword(oAuth2Response.getUniqueUsername()))
                     .email(oAuth2Response.getEmail())
                     .name(oAuth2Response.getName())
+                    .nickname(oAuth2Response.getName())
                     .profile_img(oAuth2Response.getProfileImgURL())
+                    .role("ROLE_USER")
                     .build();
             memberRepository.save(member);
         }
         else {
             member = memberOptional.get();
         }
+        System.out.println("successed");
         return new CustomUserDetails(member);
+    }
+
+    private String generateSecretPassword(String userPk){
+        return bCryptPasswordEncoder.encode(userPk+secretKey+securityRandom.nextInt());
     }
 
 

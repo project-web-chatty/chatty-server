@@ -18,7 +18,7 @@ public class GithubResponse implements Oauth2Response{
 
     @Override
     public String getUniqueUsername() {
-        return getServiceProvider() +"_" + attribute.get("id").toString();
+        return getServiceProvider() +"_"+ attribute.get("id").toString();
     }
 
     @Override

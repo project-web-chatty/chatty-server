@@ -15,7 +15,7 @@ public class GoogleResponse implements Oauth2Response{
 
     @Override
     public String getUniqueUsername() {
-        return getServiceProvider() +"_" + attribute.get("sub").toString();
+        return getServiceProvider() + "_"+attribute.get("sub").toString();
     }
     @Override
     public String getName() {

@@ -43,11 +43,9 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ObjectMapper objectMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Bean // for encoding password
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
