@@ -20,3 +20,27 @@ spring:
     port: ${LOCAL_RABBITMQ_PORT}
     username: ${LOCAL_RABBITMQ_USERNAME}
     password: ${LOCAL_RABBITMQ_PASSWORD}
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${LOCAL_GOOGLE_CLIENT_ID}
+            client-secret: ${LOCAL_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${LOCAL_GITHUB_CLIENT_ID}
+            client-secret: ${LOCAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GITHUB_REDIRECT_URI}
+
+
+variables:
+  jwt:
+    KEY: ${LOCAL_JWT_SECRET_KEY}
+  invitation:
+    KEY: ${LOCAL_INVITATION_SECRET_KEY}
+  password:
+    KEY: ${LOCAL_PASSWORD_SECRET_KEY}
+

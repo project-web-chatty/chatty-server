@@ -28,13 +28,13 @@ import java.util.Date;
 public class TokenServiceImpl implements TokenService{
   private final TokenRepository tokenRepository;
 
-  @Value("${jwt-variables.KEY}")
+  @Value("${variables.jwt.KEY}")
   private String jwtKey ;
-  @Value("${jwt-variables.ISSUER}")
+  @Value("${variables.jwt.ISSUER}")
   private String jwtIssuer;
-  @Value("${jwt-variables.EXPIRES_ACCESS_TOKEN_MINUTE}")
+  @Value("${variables.jwt.EXPIRES_ACCESS_TOKEN_MINUTE}")
   private long accessTokenExpiryDuration;
-  @Value("${jwt-variables.EXPIRES_REFRESH_TOKEN_MINUTE}")
+  @Value("${variables.jwt.EXPIRES_REFRESH_TOKEN_MINUTE}")
   private long refreshTokenExpiryDuration;
 
   public String generateAccessToken(String username,String role) {

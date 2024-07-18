@@ -13,10 +13,20 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope: profile, email
+            authorization-grant-type: authorization_code
+            client-name: Google
+          github:
+            authorization-grant-type: authorization_code
+            client-name: GitHub
 
-
-jwt-variables:
-  EXPIRES_ACCESS_TOKEN_MINUTE: 10
-  EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
-  ISSUER: webChatty
-  KEY: asdqweafsds123+K3yyy  #   Should only be handled in environment variables later
+variables:
+  jwt:
+    EXPIRES_ACCESS_TOKEN_MINUTE: 10
+    EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
+    ISSUER: webChatty

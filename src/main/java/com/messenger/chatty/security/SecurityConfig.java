@@ -3,6 +3,8 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
+import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
+import com.messenger.chatty.security.oauth2.CustomOauthSuccessHandler;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +35,14 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final TokenService tokenService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final WorkspaceJoinRepository workspaceJoinRepository;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final ObjectMapper objectMapper;
 
-    @Bean // for encoding password
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
@@ -101,10 +99,17 @@ public class SecurityConfig {
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
                         return configuration;
                     }
                 })));
+
+
+        // oauth setting
+        httpSecurity.oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                        .userService(customOAuth2UserService)).successHandler(new CustomOauthSuccessHandler(tokenService)));
 
 
 
