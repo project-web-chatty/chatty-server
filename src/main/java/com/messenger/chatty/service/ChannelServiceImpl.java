@@ -5,7 +5,6 @@ import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
-import com.messenger.chatty.repository.ChannelJoinRepository;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
