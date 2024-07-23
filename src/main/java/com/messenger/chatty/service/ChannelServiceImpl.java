@@ -38,15 +38,6 @@ public class ChannelServiceImpl implements ChannelService{
             throw new DuplicatedNameException(channelName,"채널이름");
 
         Channel channel = Channel.createChannel(channelName, workspace);
-
-        // 만들어진 채널에 현재 워크스페이스에 있는 모든 멤버를 채널에 등록
-        memberRepository.findMembersByWorkspaceId(workspace.getId())
-                .forEach(member -> {
-                    ChannelJoin channelJoin = ChannelJoin.from(channel,member);
-                    channelJoinRepository.save(channelJoin);
-                });
-
-
         Channel savedChannel = channelRepository.save(channel);
         return CustomConverter.convertChannelToBriefDto(savedChannel);
     }

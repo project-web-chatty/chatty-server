@@ -106,10 +106,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Channel talk = Channel.createChannel("talk",workspace);
         channelRepository.save(announce);
         channelRepository.save(talk);
-        ChannelJoin announceJoin = ChannelJoin.from(announce,member);
-      //  channelJoinRepository.save(announceJoin);
-        ChannelJoin talkJoin = ChannelJoin.from(talk,member);
-      //  channelJoinRepository.save(talkJoin);
 
 
         return CustomConverter.convertWorkspaceToBriefDto(workspace);
@@ -172,12 +168,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
-        // channel_join table은 삭제될 예정. 이후 리팩터링하기
-        List<Channel> channels = channelRepository.findByWorkspace(workspace);
-        channels.forEach((channel)->{
-            ChannelJoin channelJoin = ChannelJoin.from(channel,member);
-            channelJoinRepository.save(channelJoin);
-        });
 
 
         Workspace savedWorkspace = workspaceRepository.save(workspace);
