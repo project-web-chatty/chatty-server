@@ -24,7 +24,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
-    private final ChannelJoinRepository channelJoinRepository;
     private final InvitationCodeGenerator invitationCodeGenerator;
     private final WorkspaceJoinRepository workspaceJoinRepository;
 
@@ -118,8 +117,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // 이미지 업로드 기능은 차후 구현
         // if(profile_img !=null) workspace.changeProfile_img(profile_img);
-        if(updateRequestDto.getDescription() !=null)
+        if (updateRequestDto.getDescription() != null) {
             workspace.changeDescription(updateRequestDto.getDescription());
+        }
 
         Workspace saved = workspaceRepository.save(workspace);
 
@@ -169,11 +169,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
 
-
-        Workspace savedWorkspace = workspaceRepository.save(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
-        return CustomConverter.convertWorkspaceToDto(savedWorkspace,channels,members);
-
+        return CustomConverter.convertWorkspaceToDto(workspace, workspace.getChannels(), members);
     }
 
 
@@ -185,9 +182,5 @@ public class WorkspaceServiceImpl implements WorkspaceService{
                 .orElseThrow(() -> new CustomNoSuchElementException("워크스페이스에 해당 멤버가 속하지 않습니다."));
         workspaceJoin.setRole(role);
     }
-
-
-
-
 
 }

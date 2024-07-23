@@ -22,8 +22,6 @@ public class ChannelServiceImpl implements ChannelService{
     private final ChannelRepository channelRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
-    private final ChannelJoinRepository channelJoinRepository;
-
     @Override
     public ChannelBriefDto createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
 

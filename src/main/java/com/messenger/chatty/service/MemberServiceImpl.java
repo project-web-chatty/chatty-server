@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -119,18 +120,6 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
         return myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ChannelBriefDto> getMyChannels(String username, String workspaceName) {
-        Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new CustomNoSuchElementException("이름",workspaceName,"워크스페이스"));
-
-        List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
-        return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
     @Override
