@@ -2,7 +2,6 @@ package com.messenger.chatty.service;
 import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.entity.Channel;
-import com.messenger.chatty.entity.ChannelJoin;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.exception.custom.DuplicatedNameException;
 import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
