@@ -20,15 +20,4 @@ public interface ChannelRepository extends JpaRepository<Channel,Long> {
 
     boolean existsByName(String name);
 
-    // search channels that a member joins at in the specific workspace
-    @Query("SELECT cj.channel FROM ChannelJoin cj WHERE cj.member.id = :memberId " +
-            "AND cj.channel.workspace.id = :workspaceId")
-    List<Channel> findByWorkspaceIdAndMemberId(  @Param("workspaceId") Long workspaceId,@Param("memberId") Long memberId
-    );
-
-
-
-
-
-
 }
