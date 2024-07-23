@@ -11,3 +11,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+
+
+variables:
+  jwt:
+    KEY: 7ebf389565a5f16dc94335ed6242dbf4b20d3419777ea95cfcee92a3db2c38d0
+    EXPIRES_ACCESS_TOKEN_MINUTE: 10
+    EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
+    ISSUER: webChatty
+  invitation:
+    KEY: 7ebf389565a5f16dc94335ed6242dbf4b20d3419777ea95cfcee92a3db2c38d0
+  password:
+    KEY: 7ebf389565a5f16dc94335ed6242dbf4b20d3419777ea95cfcee92a3db2c38d0
