@@ -32,19 +32,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        OAuth2User oAuth2User = super.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        Oauth2Response oAuth2Response;
-
-        if (registrationId.equals("google")) {
-            oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-        }
-        else if(registrationId.equals("github")){
-            oAuth2Response = new GithubResponse(oAuth2User.getAttributes());
-        }
-        else {
-            return null;
-        }
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        Oauth2Response oAuth2Response =getOauth2Response(registrationId,oAuth2User);
+        if(oAuth2Response == null) return null;
 
         String username =oAuth2Response.getUniqueUsername();
         Optional<Member> memberOptional = memberRepository.findByUsername(username);
@@ -70,6 +61,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private String generateSecretPassword(String userPk){
         return bCryptPasswordEncoder.encode(userPk+secretKey+securityRandom.nextInt());
+    }
+    private Oauth2Response getOauth2Response(String registrationId, OAuth2User oAuth2User){
+        if (registrationId.equals("google")) {
+             return new GoogleResponse(oAuth2User.getAttributes());
+        }
+        else if(registrationId.equals("github")){
+            return  new GithubResponse(oAuth2User.getAttributes());
+        }
+        return null;
     }
 
 

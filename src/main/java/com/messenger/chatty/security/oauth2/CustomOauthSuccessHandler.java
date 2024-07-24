@@ -1,5 +1,4 @@
 package com.messenger.chatty.security.oauth2;
-import com.messenger.chatty.security.CookieGenerator;
 import com.messenger.chatty.security.CustomUserDetails;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.ServletException;
