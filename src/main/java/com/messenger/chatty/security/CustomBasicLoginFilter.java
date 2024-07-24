@@ -2,7 +2,7 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.dto.request.LoginRequestDto;
-import com.messenger.chatty.dto.response.member.LoginResponseDto;
+import com.messenger.chatty.dto.response.member.TokenResponseDto;
 import com.messenger.chatty.exception.ErrorDetail;
 import com.messenger.chatty.exception.ErrorResponse;
 import com.messenger.chatty.service.TokenService;
@@ -64,7 +64,7 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         String refreshToken = tokenService.generateRefreshToken(username,role);
         tokenService.saveRefreshToken(refreshToken,username);
 
-        sendToken(response,refreshToken,accessToken);
+        sendTokens(response,refreshToken,accessToken);
     }
 
     @Override
@@ -90,11 +90,11 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 
-    private void sendToken(HttpServletResponse response,String refreshToken, String accessToken) throws IOException{
+    private void sendTokens(HttpServletResponse response, String refreshToken, String accessToken) throws IOException{
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
-        LoginResponseDto loginResponse = LoginResponseDto.builder()
+        TokenResponseDto loginResponse = TokenResponseDto.builder()
                 .access_token(accessToken)
                 .refresh_token(refreshToken)
                 .build();

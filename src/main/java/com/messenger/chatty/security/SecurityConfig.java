@@ -72,7 +72,8 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check/username").permitAll()
+                                "/api/member/signup","/api/member/check/username","/api/auth/reissue"
+                                ,"/api/auth/logout").permitAll()
                         .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
                         .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
@@ -83,9 +84,8 @@ public class SecurityConfig {
         httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService,objectMapper),
                         UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
-                .addFilterAt(new CustomLogoutFilter(tokenService,objectMapper),LogoutFilter.class)
-        .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class)
-                .addFilterBefore(new CustomTokenReissueFilter(tokenService,objectMapper),JWTFilter.class);
+        .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
+
 
 
         // cors setting
