@@ -6,7 +6,9 @@ import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.entity.*;
-import com.messenger.chatty.presentation.custom.*;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.MemberException;
+import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.*;
 import com.messenger.chatty.util.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;
@@ -34,7 +36,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Transactional(readOnly = true)
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
@@ -47,7 +49,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Transactional(readOnly = true)
     public WorkspaceBriefDto getWorkspaceBriefProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         return  CustomConverter.convertWorkspaceToBriefDto(workspace);
     }
 
@@ -55,7 +57,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Transactional(readOnly = true)
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
@@ -65,7 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Transactional(readOnly = true)
     public List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         return  channelRepository.findByWorkspace(workspace)
                 .stream().map(CustomConverter::convertChannelToBriefDto).toList();
@@ -85,11 +87,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Override
     public WorkspaceBriefDto generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String creatorUsername) {
         if(workspaceRepository.existsByName(generateRequestDto.getName()))
-            throw new DuplicatedNameException(generateRequestDto.getName(),"워크스페이스 이름");
+            throw new WorkspaceException(ErrorStatus.WORKSPACE_NAME_ALREADY_EXISTS);
 
         // 멤버 조회
         Member member = memberRepository.findByUsername(creatorUsername)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",creatorUsername,"회원"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         // 워크스페이스 생성 후 초대코드와 같이 저장
         Workspace workspace = Workspace.generateWorkspace(generateRequestDto);
@@ -118,7 +120,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Override
     public WorkspaceBriefDto updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto updateRequestDto) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(()->new CustomNoSuchElementException("id" , workspaceId,"워크스페이스"));
+                .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         // 이미지 업로드 기능은 차후 구현
         // if(profile_img !=null) workspace.changeProfile_img(profile_img);
@@ -134,7 +136,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Override
     public void deleteWorkspace(Long workspaceId){
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(()->new CustomNoSuchElementException("id" , workspaceId,"워크스페이스"));
+                .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         workspaceRepository.delete(workspace);
     }
 
@@ -143,14 +145,14 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Transactional(readOnly = true)
     public String getNewInvitationCode(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("아이디", workspaceId, "워크스페이스"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         return workspace.getInvitationCode();
     }
 
     @Override
     public String setInvitationCode(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("아이디", workspaceId, "워크스페이스"));
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         String newCode = invitationCodeGenerator.generateInviteCode();
         workspace.changeInvitationCode(newCode);
         return newCode;
@@ -162,13 +164,13 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // code 검증
         Workspace workspace = workspaceRepository.findByInvitationCode(code)
-                .orElseThrow(()-> new InvalidInvitationCodeException("유효하지 않은 코드입니다."));
+                .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_INVALID_INVITATION_CODE));
 
         // 중복 회원 대비 검증
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         if(workspaceJoinRepository.existsByWorkspaceIdAndMemberId(workspace.getId(), member.getId()))
-            throw new DuplicatedNameException("이미 이 워크스페이스 내에 존재하는 회원입니다.");
+            throw new MemberException(ErrorStatus.MEMBER_ALREADY_EXISTS_IN_WORKSPACE);
 
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
@@ -190,9 +192,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     @Override
     public void changeRoleOfMember(Long workspaceId,Long memberId,String role){
         if(!role.equals("ROLE_WORKSPACE_MEMBER") && !role.equals("ROLE_WORKSPACE_OWNER"))
-            throw new InvalidRequestParamException("잘못된 ROLE 변경 요청입니다.");
+            throw new WorkspaceException(ErrorStatus.WORKSPACE_INVALID_ROLE_CHANGE_REQUEST);
         WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, memberId)
-                .orElseThrow(() -> new CustomNoSuchElementException("워크스페이스에 해당 멤버가 속하지 않습니다."));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
         workspaceJoin.setRole(role);
     }
 

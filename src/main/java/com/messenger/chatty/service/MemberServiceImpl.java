@@ -10,8 +10,9 @@ import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
-import com.messenger.chatty.presentation.custom.CustomNoSuchElementException;
-import com.messenger.chatty.presentation.custom.DuplicatedNameException;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.MemberException;
+import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -38,7 +39,7 @@ public class MemberServiceImpl implements MemberService{
     public MyProfileDto signup(MemberJoinRequestDto memberJoinRequestDTO){
 
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
-            throw new DuplicatedNameException(memberJoinRequestDTO.getUsername(),"username");
+            throw new MemberException(ErrorStatus.MEMBER_USERNAME_ALREADY_EXISTS);
 
 
         memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
@@ -63,7 +64,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional(readOnly = true)
     public MemberBriefDto getMemberProfileByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",memberId,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         return  CustomConverter.convertMemberToBriefDto(member);
     }
 
@@ -71,7 +72,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional(readOnly = true)
     public MyProfileDto getMyProfileByUsername(String username) {
         Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
 
         return CustomConverter.convertMemberToDto(me,myWorkspaces);
@@ -81,7 +82,7 @@ public class MemberServiceImpl implements MemberService{
     public MyProfileDto updateMyProfile(String targetUsername, MemberUpdateRequestDto memberUpdateRequestDto){
 
         Member me = memberRepository.findByUsername(targetUsername)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",targetUsername,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
 
         String name = memberUpdateRequestDto.getName();
         String nickname = memberUpdateRequestDto.getNickname();
@@ -101,14 +102,14 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void deleteMeByUsername(String username){
         Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         memberRepository.deleteByUsername(username);
     }
 
     @Override
     public void deleteMeById(Long id) {
         Member me = memberRepository.findById(id)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",id,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         memberRepository.delete(me);
     }
 
@@ -116,7 +117,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional(readOnly = true)
     public List<WorkspaceBriefDto> getMyWorkspaces(String username) {
         Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
         return myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
     }
@@ -125,9 +126,9 @@ public class MemberServiceImpl implements MemberService{
     @Transactional(readOnly = true)
     public List<ChannelBriefDto> getMyChannels(String username, String workspaceName) {
         Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomNoSuchElementException("username",username,"회원"));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new CustomNoSuchElementException("이름",workspaceName,"워크스페이스"));
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
         return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
@@ -137,6 +138,6 @@ public class MemberServiceImpl implements MemberService{
     @Transactional(readOnly = true)
     public void checkDuplicatedUsername(String username) {
         if(memberRepository.existsByUsername(username))
-            throw new DuplicatedNameException(username,"username");
+            throw new MemberException(ErrorStatus.MEMBER_USERNAME_ALREADY_EXISTS);
     }
 }

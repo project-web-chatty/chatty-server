@@ -1,5 +1,6 @@
 package com.messenger.chatty.config.web;
-import com.messenger.chatty.presentation.custom.UnexpectedNotAuthenticationException;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.AuthException;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,7 @@ public class AuthenticatedUsernameArgumentResolver implements HandlerMethodArgum
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!(principal instanceof UserDetails)) throw new UnexpectedNotAuthenticationException("의도하지 않은 인증 예외입니다.");
+        if (!(principal instanceof UserDetails)) throw new AuthException(ErrorStatus._UNINTENDED_AUTHENTICATION_ERROR);
         return ((UserDetails)principal).getUsername();
 
     }
