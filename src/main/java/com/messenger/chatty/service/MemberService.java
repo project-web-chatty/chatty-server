@@ -19,7 +19,7 @@ public interface MemberService {
 
     MyProfileDto getMyProfileByUsername(String username) ;
 
-    MyProfileDto updateMyProfile(String targetUsername, MemberUpdateRequestDto updateRequestDto);
+    Long updateMyProfile(String targetUsername, MemberUpdateRequestDto updateRequestDto);
 
     void deleteMeByUsername(String username);
     void deleteMeById(Long id);

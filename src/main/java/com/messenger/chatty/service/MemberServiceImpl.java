@@ -74,24 +74,13 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MyProfileDto updateMyProfile(String targetUsername, MemberUpdateRequestDto memberUpdateRequestDto){
-
+    public Long updateMyProfile(String targetUsername, MemberUpdateRequestDto memberUpdateRequestDto){
         Member me = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        String name = memberUpdateRequestDto.getName();
-        String nickname = memberUpdateRequestDto.getNickname();
-        String introduction = memberUpdateRequestDto.getIntroduction();
+       me.updateProfile(memberUpdateRequestDto);
 
-        // 이미지 업로드 기능은 차후 구현
-        if(name !=null) me.changeName(name);
-        if(nickname !=null) me.changeNickname(nickname);
-        if(introduction !=null) me.changeIntroduction(introduction);
-
-        Member saved = memberRepository.save(me);
-        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(saved.getId());
-
-        return CustomConverter.convertMemberToDto(me,myWorkspaces);
+        return me.getId();
     }
 
     @Override

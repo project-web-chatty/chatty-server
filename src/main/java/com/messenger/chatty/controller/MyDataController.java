@@ -29,7 +29,7 @@ public class MyDataController {
 
     @Operation(summary = "내 프로필 정보 수정하기")
     @PutMapping
-    public ApiResponse<MemberBriefDto> changeMyProfile(@AuthenticatedUsername String username,
+    public ApiResponse<Long> changeMyProfile(@AuthenticatedUsername String username,
                                                        @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
         return ApiResponse.onSuccess(memberService.updateMyProfile(username, updateRequestDto));
     }
