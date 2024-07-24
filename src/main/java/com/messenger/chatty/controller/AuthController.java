@@ -40,7 +40,7 @@ public class AuthController {
     @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요.")
     @PostMapping("/reissue")
     public TokenResponseDto reissue(HttpServletRequest request, HttpServletResponse response) {
-            return  tokenService.reIssueToken(request);
+            return  tokenService.reissueToken(request);
     }
 
 
