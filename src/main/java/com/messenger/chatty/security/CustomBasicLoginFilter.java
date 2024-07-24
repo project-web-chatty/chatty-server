@@ -64,6 +64,7 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         tokenService.saveRefreshToken(refreshToken,username);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
+
         response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken,7 * 24 * 60 * 60));
         response.setStatus(HttpStatus.OK.value());
 
