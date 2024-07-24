@@ -19,7 +19,9 @@ public enum ErrorStatus {
     _UNAUTHORIZED(UNAUTHORIZED, 4001, "인증이 필요한 요청입니다."),
     _FORBIDDEN(FORBIDDEN, 4002, "금지된 요청입니다."),
 
-
+    // commin
+    COMMON_INVALID_ARGUMENT(BAD_REQUEST,4010,"잘못된 형식의 요청 필드가 있습니다"),
+    COMMON_CONSTRAINT_VIOLATION(BAD_REQUEST,4011,"DB 저장 시 제약조건에 위배되는 요청입니다."),
 
     // token & auth error
     AUTH_NULL_TOKEN(BAD_REQUEST,4050,"헤더에 토큰이 없습니다"),
@@ -30,27 +32,25 @@ public enum ErrorStatus {
     AUTH_UNAUTHORIZED_ACCESS(FORBIDDEN,4013,"인증되었으나 해당 요청에 대한 권한이 부족합니다."),
 
     // workspace error
-    WORKSPACE_NOT_FOUND(BAD_REQUEST,4061,"해당 워크스페이스가 존재하지 않습니다."),
-    WORKSPACE_NAME_ALREADY_EXISTS(BAD_REQUEST,4062,"해당 워크스페이스 이름은 이미 존재합니다."),
-    WORKSPACE_INVALID_INVITATION_CODE(BAD_REQUEST,4063,"해당 초대코드는 유효하지 않습니다."),
-    WORKSPACE_INVALID_ROLE_CHANGE_REQUEST(BAD_REQUEST,4064,"잘못된 ROLE 변경 요청입니다."),
+    WORKSPACE_NOT_FOUND(BAD_REQUEST,4060,"해당 워크스페이스가 존재하지 않습니다."),
+    WORKSPACE_NAME_ALREADY_EXISTS(BAD_REQUEST,4061,"해당 워크스페이스 이름은 이미 존재합니다."),
+    WORKSPACE_INVALID_INVITATION_CODE(BAD_REQUEST,4062,"해당 초대코드는 유효하지 않습니다."),
+    WORKSPACE_INVALID_ROLE_CHANGE_REQUEST(BAD_REQUEST,4063,"잘못된 ROLE 변경 요청입니다."),
     // channel error
-    CHANNEL_NOT_FOUND(BAD_REQUEST,4071,"해당 채널이 존재하지 않습니다."),
-    CHANNEL_NOT_IN_WORKSPACE(BAD_REQUEST,4072,"해당 워크스페이스 내에 소속된 채널이 아닙니다."),
-    CHANNEL_NAME_ALREADY_EXISTS(BAD_REQUEST,4073,"해당 채널 이름은 이미 존재합니다."),
+    CHANNEL_NOT_FOUND(BAD_REQUEST,4070,"해당 채널이 존재하지 않습니다."),
+    CHANNEL_NOT_IN_WORKSPACE(BAD_REQUEST,4071,"해당 워크스페이스 내에 소속된 채널이 아닙니다."),
+    CHANNEL_NAME_ALREADY_EXISTS(BAD_REQUEST,4072,"해당 채널 이름은 이미 존재합니다."),
 
     // member error
-    MEMBER_NOT_FOUND(BAD_REQUEST,4081,"해당 멤버는 존재하지 않습니다."),
-    MEMBER_USERNAME_ALREADY_EXISTS(BAD_REQUEST,4082,"해당 USERNAME은 이미 존재합니다."),
-    MEMBER_ALREADY_EXISTS_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 이미 존재합니다."),
-    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4084,"해당 멤버는 워크스페이스에 존재하지 않습니다.");
+    MEMBER_NOT_FOUND(BAD_REQUEST,4080,"해당 멤버는 존재하지 않습니다."),
+    MEMBER_USERNAME_ALREADY_EXISTS(BAD_REQUEST,4081,"해당 USERNAME은 이미 존재합니다."),
+    MEMBER_ALREADY_EXISTS_IN_WORKSPACE(BAD_REQUEST,4082,"해당 멤버는 워크스페이스에 이미 존재합니다."),
+    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 존재하지 않습니다.");
 
 
-    // 일반적인 status
+
     private final HttpStatus httpStatus;
-    // 커스텀 코드
     private final Integer code;
-    // 에러 메시지
     private final String message;
 
 

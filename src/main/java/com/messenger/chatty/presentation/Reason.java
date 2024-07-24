@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 
 
-// Reason 객체는 apiResponse를 만드는데 중요하게 사용
 @Getter
 @Builder
 public class Reason {
