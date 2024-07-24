@@ -25,14 +25,13 @@ public class AuthController {
 
     @Operation(summary = "로그인",description = "리프레시 토큰과 엑세스토큰이 body에 담겨 응답됩니다.")
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto)
-    { // 스웨거 문서화를 위한 형식상 메서드
+    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @Operation(summary = "로그아웃",description = "헤더에 엑세스토큰을 담아 요청을 보내면 리프레시토큰이 disable 되며 정상 로그아웃됩니다.")
+
+    @Operation(summary = "로그아웃", description = "헤더에 엑세스토큰을 담아 요청을 보내면 리프레시토큰이 disable 되며 정상 로그아웃됩니다.")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response)
-    {
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         tokenService.logout(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

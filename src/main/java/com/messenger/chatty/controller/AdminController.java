@@ -25,18 +25,13 @@ public class AdminController {
     @Operation(summary = "모든 멤버 리스트 가져오기")
     @GetMapping("/members")
     public List<MemberBriefDto> getAllMemberList(){
-
         return memberService.getAllMemberList();
-
-
     }
 
     @Operation(summary = "모든 워크스페이스 리스트 가져오기")
     @GetMapping("/workspaces")
     public List<WorkspaceBriefDto> getAllWorkspaceList(){
-
         return workspaceService.getAllWorkspaceList();
-
     }
 
     @Operation(summary = "모든 채널 가져오기")
@@ -44,8 +39,5 @@ public class AdminController {
     public List<ChannelBriefDto> getAllChannelsList(){
         return channelService.getAllChannels();
     }
-
-
-
 
 }
