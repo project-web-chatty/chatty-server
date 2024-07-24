@@ -6,4 +6,5 @@ public interface Oauth2Response {
     String getName();
     String getEmail();
     String getProfileImgURL();
+
 }

@@ -1,7 +1,5 @@
 package com.messenger.chatty.security;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.service.TokenService;
@@ -31,9 +29,10 @@ public class JWTFilter extends OncePerRequestFilter {
         DecodedJWT decodedJWT;
         try{
             token = tokenService.getTokenFromRequest(request);
-            decodedJWT = tokenService.verifyAndDecodeToken(token,"access");
+            decodedJWT = tokenService.decodeToken(token,"access");
         }
         catch (RuntimeException e){
+            // 나중에 exception type 바꾸기
             request.setAttribute("message",e.getMessage());
             filterChain.doFilter(request, response);
             return;
