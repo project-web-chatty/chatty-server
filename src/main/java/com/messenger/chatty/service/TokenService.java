@@ -1,7 +1,7 @@
 package com.messenger.chatty.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.messenger.chatty.dto.response.member.TokenResponseDto;
+import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface TokenService {
@@ -14,5 +14,5 @@ public interface TokenService {
     void logout(HttpServletRequest request);
 
     String getTokenFromRequest(HttpServletRequest request);
-    DecodedJWT verifyAndDecodeToken(String token, String tokenType);
+    DecodedJWT decodeToken(String token, String tokenType);
 }

@@ -1,5 +1,5 @@
 package com.messenger.chatty.security.oauth2;
-import com.messenger.chatty.dto.response.member.TokenResponseDto;
+import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import com.messenger.chatty.security.CustomUserDetails;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.ServletException;
@@ -32,7 +32,7 @@ public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         TokenResponseDto tokenResponseDto = tokenService.generateTokenPair(username, role);
         tokenService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
 
-        String redirectURL = "http://localhost:3000/oauth2/google?refresh_token="
+        String redirectURL = "http://localhost:3000/oauth2?refresh_token="
                 + URLEncoder.encode(tokenResponseDto.getRefresh_token(), StandardCharsets.UTF_8)
                 + "&access_token=" +  URLEncoder.encode(tokenResponseDto.getAccess_token(), StandardCharsets.UTF_8);
         response.sendRedirect(redirectURL);

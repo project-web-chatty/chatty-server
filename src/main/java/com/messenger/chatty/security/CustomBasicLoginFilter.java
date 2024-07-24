@@ -2,7 +2,7 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.dto.request.LoginRequestDto;
-import com.messenger.chatty.dto.response.member.TokenResponseDto;
+import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import com.messenger.chatty.exception.ErrorDetail;
 import com.messenger.chatty.exception.ErrorResponse;
 import com.messenger.chatty.service.TokenService;

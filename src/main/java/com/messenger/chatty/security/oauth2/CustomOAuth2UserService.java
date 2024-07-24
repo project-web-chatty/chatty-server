@@ -62,16 +62,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private String generateSecretPassword(String userPk){
         return bCryptPasswordEncoder.encode(userPk+secretKey+securityRandom.nextInt());
     }
+
     private Oauth2Response getOauth2Response(String registrationId, OAuth2User oAuth2User){
         if (registrationId.equals("google")) {
-             return new GoogleResponse(oAuth2User.getAttributes());
+            return new GoogleResponse(oAuth2User.getAttributes());
         }
         else if(registrationId.equals("github")){
             return  new GithubResponse(oAuth2User.getAttributes());
         }
         return null;
     }
-
 
 
 }

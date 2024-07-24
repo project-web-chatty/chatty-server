@@ -1,4 +1,4 @@
-package com.messenger.chatty.dto.response.member;
+package com.messenger.chatty.dto.response.auth;
 
 
 import lombok.Builder;
