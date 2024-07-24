@@ -10,11 +10,11 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ErrorStatus {
 
-    // 서버 오류
+    // server error
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 오류입니다."),
     _UNINTENDED_AUTHENTICATION_ERROR(INTERNAL_SERVER_ERROR,5001,"서버 에러로 인증에 실패하였습니다."),
 
-    // 일반적인 요청 오류
+    // default
     _BAD_REQUEST(BAD_REQUEST, 4000, "잘못된 요청입니다."),
     _UNAUTHORIZED(UNAUTHORIZED, 4001, "인증이 필요한 요청입니다."),
     _FORBIDDEN(FORBIDDEN, 4002, "금지된 요청입니다."),
