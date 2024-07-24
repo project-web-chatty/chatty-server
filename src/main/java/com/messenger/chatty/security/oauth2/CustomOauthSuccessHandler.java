@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -30,7 +32,7 @@ public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String refreshToken = tokenService.generateRefreshToken(username,role);
         tokenService.saveRefreshToken(refreshToken,username);
 
-        response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken,7 * 24 * 60 * 60));
-        response.sendRedirect("http://localhost:3000/");
+        String redirectURL = "http://localhost:3000/oauth2/google?refresh_token=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+        response.sendRedirect(redirectURL);
     }
 }
