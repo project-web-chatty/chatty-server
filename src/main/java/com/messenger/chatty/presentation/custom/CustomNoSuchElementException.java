@@ -1,4 +1,4 @@
-package com.messenger.chatty.exception.custom;
+package com.messenger.chatty.presentation.custom;
 import java.util.NoSuchElementException;
 
 public class CustomNoSuchElementException extends NoSuchElementException {

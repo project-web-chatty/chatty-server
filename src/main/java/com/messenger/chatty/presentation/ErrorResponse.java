@@ -1,6 +1,5 @@
-package com.messenger.chatty.exception;
+package com.messenger.chatty.presentation;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

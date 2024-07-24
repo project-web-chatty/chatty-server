@@ -1,4 +1,4 @@
-package com.messenger.chatty.exception.custom;
+package com.messenger.chatty.presentation.custom;
 
 public class PasswordInEqualityException extends RuntimeException {
     public PasswordInEqualityException(String msg){

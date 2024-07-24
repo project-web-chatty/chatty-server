@@ -1,4 +1,4 @@
-package com.messenger.chatty.exception.custom;
+package com.messenger.chatty.presentation.custom;
 
 public class DuplicatedNameException extends RuntimeException {
     public DuplicatedNameException( String argument, String argumentType) {

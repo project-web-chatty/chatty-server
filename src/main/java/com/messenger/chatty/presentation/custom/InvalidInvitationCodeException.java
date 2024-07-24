@@ -1,4 +1,4 @@
-package com.messenger.chatty.exception.custom;
+package com.messenger.chatty.presentation.custom;
 
 public class InvalidInvitationCodeException extends RuntimeException{
     public InvalidInvitationCodeException(String msg){

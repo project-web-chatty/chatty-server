@@ -19,10 +19,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -41,7 +39,8 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final ObjectMapper objectMapper;
+    private final CustomResponseSender responseSender;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -81,7 +80,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // custom filters settings
-        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService,objectMapper),
+        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService, responseSender),
                         UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
         .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);

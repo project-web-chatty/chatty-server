@@ -6,7 +6,7 @@ import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.entity.*;
-import com.messenger.chatty.exception.custom.*;
+import com.messenger.chatty.presentation.custom.*;
 import com.messenger.chatty.repository.*;
 import com.messenger.chatty.util.InvitationCodeGenerator;
 import com.messenger.chatty.util.CustomConverter;

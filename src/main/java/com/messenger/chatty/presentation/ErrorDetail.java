@@ -1,4 +1,4 @@
-package com.messenger.chatty.exception;
+package com.messenger.chatty.presentation;
 
 // for frontend' s exception handling
 

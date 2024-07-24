@@ -3,13 +3,11 @@ package com.messenger.chatty.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.dto.request.LoginRequestDto;
 import com.messenger.chatty.dto.response.auth.TokenResponseDto;
-import com.messenger.chatty.exception.ErrorDetail;
-import com.messenger.chatty.exception.ErrorResponse;
+import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,13 +22,13 @@ import java.util.Iterator;
 
 public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final ObjectMapper objectMapper;
     private final TokenService tokenService;
+    private final CustomResponseSender responseSender;
 
-    public CustomBasicLoginFilter(AuthenticationManager authenticationManager, TokenService tokenService, ObjectMapper objectMapper) {
+    public CustomBasicLoginFilter(AuthenticationManager authenticationManager, TokenService tokenService, CustomResponseSender responseSender) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
-        this.objectMapper = objectMapper;
+        this.responseSender = responseSender;
         setFilterProcessesUrl("/api/auth/login");
     }
 
@@ -63,12 +61,12 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         TokenResponseDto tokenResponseDto = tokenService.generateTokenPair(username, role);
         tokenService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
 
-        sendTokens(response,tokenResponseDto);
+        responseSender.sendToken(response,tokenResponseDto);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        sendError(request,response, "로그인에 실패하였습니다.");
+        responseSender.sendError(request,response, ErrorStatus._BAD_REQUEST, failed.getMessage());
     }
 
     private LoginRequestDto obtainLoginRequestDtoFromRequest(HttpServletRequest request) {
@@ -80,20 +78,5 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         }
     }
 
-    private void sendError(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(400);
-        ErrorResponse errorResponse = ErrorResponse.from(request.getRequestURI(),
-                HttpStatus.BAD_REQUEST, ErrorDetail.INVALID_LOGIN_REQUEST,errorMessage);
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-    }
-
-    private void sendTokens(HttpServletResponse response, TokenResponseDto tokenResponseDto) throws IOException{
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(200);
-        response.getWriter().write(objectMapper.writeValueAsString(tokenResponseDto));
-    }
 
 }

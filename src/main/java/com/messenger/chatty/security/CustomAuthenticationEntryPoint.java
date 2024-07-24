@@ -1,8 +1,9 @@
 package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.messenger.chatty.exception.ErrorDetail;
-import com.messenger.chatty.exception.ErrorResponse;
+import com.messenger.chatty.presentation.ErrorDetail;
+import com.messenger.chatty.presentation.ErrorResponse;
+import com.messenger.chatty.presentation.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper;
+    private final CustomResponseSender responseSender;
 
     @Override
     public void commence(
@@ -26,14 +27,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletResponse response,
             AuthenticationException authException)
             throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String customMessage = (String) request.getAttribute("message");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response
-                .getWriter()
-                .write(objectMapper.writeValueAsString(ErrorResponse
-                                .from(request.getRequestURI(), HttpStatus.UNAUTHORIZED, ErrorDetail.UN_AUTHORIZED,customMessage))
-                        );
+        responseSender.sendError(request,response, ErrorStatus.AUTH_UNAUTHENTICATED , authException.getMessage());
     }
 }
