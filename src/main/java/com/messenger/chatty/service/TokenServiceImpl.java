@@ -7,9 +7,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.messenger.chatty.dto.response.member.TokenResponseDto;
 import com.messenger.chatty.entity.RefreshToken;
 import com.messenger.chatty.repository.TokenRepository;
-import com.messenger.chatty.security.CookieGenerator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,7 +84,7 @@ public class TokenServiceImpl implements TokenService{
   }
 
 
-  public void reIssueToken(HttpServletRequest request, HttpServletResponse response) {
+  public TokenResponseDto reIssueToken(HttpServletRequest request) {
       String refreshToken = getRefreshTokenFromRequest(request);
       if (refreshToken == null) {
           throw new IllegalStateException("토큰이 쿠키에 없습니다.");
@@ -118,8 +118,12 @@ public class TokenServiceImpl implements TokenService{
       deleteRefreshToken(refreshToken);
       saveRefreshToken(newRefreshToken, username);
 
-      response.addHeader("Authorization", "Bearer " + newAccessToken);
-      response.addCookie(CookieGenerator.generateCookie("refresh_token", newRefreshToken, 7 * 24 * 60 * 60));
+
+      return TokenResponseDto.builder()
+              .access_token(newAccessToken)
+              .refresh_token(newRefreshToken)
+              .build();
+
   }
     public String getRefreshTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -133,5 +137,35 @@ public class TokenServiceImpl implements TokenService{
         return null;
     }
 
+    @Override
+    public void logout(HttpServletRequest request) {
 
+        String refreshToken = getRefreshTokenFromRequest(request);
+        if (refreshToken == null) {
+            throw new IllegalStateException("토큰이 쿠키에 없습니다.");
+        }
+        DecodedJWT decodedJWT;
+        try {
+            decodedJWT = this.verifyJWT(refreshToken);
+
+        } catch (TokenExpiredException e) {
+            throw new IllegalStateException("토큰이 만료되었습니다.");
+        } catch (JWTVerificationException e) {
+            throw new IllegalStateException("토큰이 유효하지 않습니다.");
+        }
+
+        String category = decodedJWT.getClaim("category").asString();
+
+        if (!category.equals("refresh")) {
+            throw new IllegalStateException("리프레시 토큰이 아닙니다.");
+        }
+
+        if (!this.checkExistByToken(refreshToken)) {
+            throw new IllegalStateException("인증이 거부된 토큰입니다.");
+        }
+
+        //로그아웃 진행
+        deleteRefreshToken(refreshToken);
+
+    }
 }
