@@ -60,11 +60,10 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String accessToken = tokenService.generateAccessToken(username, role);
-        String refreshToken = tokenService.generateRefreshToken(username,role);
-        tokenService.saveRefreshToken(refreshToken,username);
+        TokenResponseDto tokenResponseDto = tokenService.generateTokenPair(username, role);
+        tokenService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
 
-        sendTokens(response,refreshToken,accessToken);
+        sendTokens(response,tokenResponseDto);
     }
 
     @Override
@@ -90,15 +89,11 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 
-    private void sendTokens(HttpServletResponse response, String refreshToken, String accessToken) throws IOException{
+    private void sendTokens(HttpServletResponse response, TokenResponseDto tokenResponseDto) throws IOException{
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
-        TokenResponseDto loginResponse = TokenResponseDto.builder()
-                .access_token(accessToken)
-                .refresh_token(refreshToken)
-                .build();
-        response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
+        response.getWriter().write(objectMapper.writeValueAsString(tokenResponseDto));
     }
 
 }

@@ -27,38 +27,21 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        //Authorization 헤더의 엑세스 토큰 검증
-        String authorization = request.getHeader("Authorization");
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            request.setAttribute("message","헤더에 토큰이 없습니다.");
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String token = authorization.split(" ")[1];
+        String token;
         DecodedJWT decodedJWT;
         try{
-            decodedJWT = tokenService.verifyJWT(token);
+            token = tokenService.getTokenFromRequest(request);
+            decodedJWT = tokenService.verifyAndDecodeToken(token,"access");
         }
-        catch (TokenExpiredException e){
-            request.setAttribute("message","토큰이 만료되었습니다.");
-            filterChain.doFilter(request, response);
-            return;
-        }
-        catch (JWTVerificationException e){
-            request.setAttribute("message","유효하지 않은 토큰입니다.");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if(!decodedJWT.getClaim("category").asString().equals("access")){
-            request.setAttribute("message","엑세스토큰이 아닙니다.");
+        catch (RuntimeException e){
+            request.setAttribute("message",e.getMessage());
             filterChain.doFilter(request, response);
             return;
         }
 
         String username = decodedJWT.getSubject();
         String role = decodedJWT.getClaim("role").asString();
+
         Member member = Member.builder().username(username).role(role).build();
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
