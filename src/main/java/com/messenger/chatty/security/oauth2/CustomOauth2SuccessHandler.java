@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
-public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final TokenService tokenService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
@@ -32,7 +32,7 @@ public class CustomOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         TokenResponseDto tokenResponseDto = tokenService.generateTokenPair(username, role);
         tokenService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
 
-        String redirectURL = "http://localhost:3000/oauth2?refresh_token="
+        String redirectURL = "http://localhost:3000/oauth2/success?refresh_token="
                 + URLEncoder.encode(tokenResponseDto.getRefresh_token(), StandardCharsets.UTF_8)
                 + "&access_token=" +  URLEncoder.encode(tokenResponseDto.getAccess_token(), StandardCharsets.UTF_8);
         response.sendRedirect(redirectURL);
