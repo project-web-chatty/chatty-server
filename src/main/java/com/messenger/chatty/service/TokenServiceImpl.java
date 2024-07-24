@@ -7,6 +7,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import com.messenger.chatty.entity.RefreshToken;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.AuthException;
 import com.messenger.chatty.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +52,12 @@ public class TokenServiceImpl implements TokenService{
       String username = decodedJWT.getSubject();
       String role = decodedJWT.getClaim("role").asString();
 
-      if(!tokenRepository.existsByUsername(username)) throw new IllegalStateException("갱신되기 이전 토큰입니다.");
+      RefreshToken tokenEntity = tokenRepository.findByUsername(username);
+      if(tokenEntity == null )
+          throw new AuthException(ErrorStatus.AUTH_INVALID_TOKEN);
+      if(!tokenEntity.getToken().equals(token))
+          throw new AuthException(ErrorStatus.AUTH_OUTDATED_REFRESH_TOKEN);
+
       TokenResponseDto tokenPair = generateTokenPair(username, role);
       saveRefreshToken(tokenPair.getRefresh_token(), username);
       return tokenPair;
@@ -87,16 +94,16 @@ public class TokenServiceImpl implements TokenService{
 
     public DecodedJWT decodeToken(String token, String tokenType){
         DecodedJWT decodedJWT;
-        if (token == null) throw new IllegalStateException("토큰이 헤더에 없습니다.");
+        if (token == null) throw new AuthException(ErrorStatus.AUTH_NULL_TOKEN);
         try {
             decodedJWT = this.verifyJWT(token);
         } catch (TokenExpiredException e) {
-            throw new IllegalStateException("토큰이 만료되었습니다.");
+            throw new AuthException(ErrorStatus.AUTH_EXPIRED_TOKEN);
         } catch (JWTVerificationException e) {
-            throw new IllegalStateException("토큰이 유효하지 않습니다.");
+            throw new AuthException(ErrorStatus.AUTH_INVALID_TOKEN);
         }
         String category = decodedJWT.getClaim("category").asString();
-        if (!category.equals(tokenType)) throw new IllegalStateException("토큰 타입이 해당요청에 유효하지 않습니다.");
+        if (!category.equals(tokenType)) throw new AuthException(ErrorStatus.AUTH_TYPE_MISMATCH_TOKEN);
         return decodedJWT;
 
     }

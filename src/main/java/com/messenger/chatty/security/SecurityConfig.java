@@ -3,6 +3,7 @@ package com.messenger.chatty.security;
 
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
+import com.messenger.chatty.security.oauth2.CustomOauth2FailureHandler;
 import com.messenger.chatty.security.oauth2.CustomOauth2SuccessHandler;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -106,7 +107,8 @@ public class SecurityConfig {
         // oauth setting
         httpSecurity.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                        .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(tokenService)));
+                        .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(tokenService))
+                .failureHandler(new CustomOauth2FailureHandler()) );
 
 
 
