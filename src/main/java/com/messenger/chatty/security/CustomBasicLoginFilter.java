@@ -2,6 +2,7 @@ package com.messenger.chatty.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.dto.request.LoginRequestDto;
+import com.messenger.chatty.dto.response.member.LoginResponseDto;
 import com.messenger.chatty.exception.ErrorDetail;
 import com.messenger.chatty.exception.ErrorResponse;
 import com.messenger.chatty.service.TokenService;
@@ -49,7 +50,7 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
 
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
@@ -63,12 +64,7 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         String refreshToken = tokenService.generateRefreshToken(username,role);
         tokenService.saveRefreshToken(refreshToken,username);
 
-        response.addHeader("Authorization", "Bearer " + accessToken);
-
-        response.addCookie(CookieGenerator.generateCookie("refresh_token", refreshToken,7 * 24 * 60 * 60));
-        response.setStatus(HttpStatus.OK.value());
-
-
+        sendToken(response,refreshToken,accessToken);
     }
 
     @Override
@@ -92,6 +88,17 @@ public class CustomBasicLoginFilter extends UsernamePasswordAuthenticationFilter
         ErrorResponse errorResponse = ErrorResponse.from(request.getRequestURI(),
                 HttpStatus.BAD_REQUEST, ErrorDetail.INVALID_LOGIN_REQUEST,errorMessage);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    }
+
+    private void sendToken(HttpServletResponse response,String refreshToken, String accessToken) throws IOException{
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(200);
+        LoginResponseDto loginResponse = LoginResponseDto.builder()
+                .access_token(accessToken)
+                .refresh_token(refreshToken)
+                .build();
+        response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
     }
 
 }
