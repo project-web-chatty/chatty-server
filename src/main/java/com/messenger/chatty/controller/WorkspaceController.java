@@ -28,10 +28,9 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
-    public WorkspaceBriefDto createWorkspace(   @AuthenticatedUsername String username,
-
+    public WorkspaceBriefDto createWorkspace(@AuthenticatedUsername String username,
                                              @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
-        return  workspaceService.generateWorkspace(requestDto, username);
+        return workspaceService.generateWorkspace(requestDto, username);
     }
 
     @Operation(summary = "워크스페이스 프로필 정보 가져오기")
@@ -42,29 +41,27 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 프로필 정보 수정하기")
     @PutMapping("/{workspaceId}")
-    public WorkspaceBriefDto updateWorkspaceProfile
-            (@PathVariable Long workspaceId , @RequestBody WorkspaceUpdateRequestDto requestDto
-             ) {
+    public WorkspaceBriefDto updateWorkspaceProfile(@PathVariable Long workspaceId,
+                                                    @RequestBody WorkspaceUpdateRequestDto requestDto) {
         return workspaceService.updateWorkspaceProfile(workspaceId, requestDto);
     }
 
     @Operation(summary = "워크스페이스의 채널 리스트 가져오기")
     @GetMapping("/{workspaceId}/channels")
-    public List<ChannelBriefDto> getChannelsOfWorkspace(@PathVariable Long workspaceId ){
+    public List<ChannelBriefDto> getChannelsOfWorkspace(@PathVariable Long workspaceId) {
         return workspaceService.getChannelsOfWorkspace(workspaceId);
     }
 
     @Operation(summary = "워크스페이스의 멤버 리스트 가져오기")
     @GetMapping("/{workspaceId}/members")
-    public List<MemberBriefDto> getMembersOfWorkspace(@PathVariable Long workspaceId ){
+    public List<MemberBriefDto> getMembersOfWorkspace(@PathVariable Long workspaceId) {
         return workspaceService.getMembersOfWorkspace(workspaceId);
     }
 
     @Operation(summary = "워크스페이스에 채널 추가하기")
     @PostMapping("/{workspaceId}/channels")
     public ChannelBriefDto addChannelToWorkspace(@PathVariable Long workspaceId,
-            @RequestBody @Valid ChannelGenerateRequestDto requestDto ){
-
+                                                 @RequestBody @Valid ChannelGenerateRequestDto requestDto) {
         return channelService.createChannelToWorkspace(workspaceId, requestDto);
     }
 
@@ -72,26 +69,21 @@ public class WorkspaceController {
     @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
     @GetMapping("/{workspaceId}/invite")
     public String getNewInvitationCode(@PathVariable  Long workspaceId){
-
         return workspaceService.getNewInvitationCode(workspaceId);
-
     }
 
     @Operation(summary = "해당 워크스페이스의 초대링크 생성하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
     @PostMapping("/{workspaceId}/invite")
     public String generateInvitationCode(@PathVariable Long workspaceId){
-
         return workspaceService.setInvitationCode(workspaceId);
-
     }
 
 
     @Operation(summary = "특정 채널 삭제하기")
     @DeleteMapping("/{workspaceId}/channels/{channelId}")
-    public ResponseEntity<Void> deleteChannelToWorkspace(   @PathVariable Long workspaceId,
-                                                                    @PathVariable Long channelId  ){
-        channelService.deleteChannelInWorkspace(workspaceId,channelId);
-
+    public ResponseEntity<Void> deleteChannelToWorkspace(@PathVariable Long workspaceId,
+                                                         @PathVariable Long channelId) {
+        channelService.deleteChannelInWorkspace(workspaceId, channelId);
 
         return ResponseEntity.ok().build();
     }
@@ -99,9 +91,10 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 내 특정 멤버의 ROLE을 바꾸기")
     @PutMapping("/{workspaceId}/role/{memberId}")
-    public ResponseEntity<Void> changeRoleOfMember( @PathVariable Long workspaceId, @PathVariable Long memberId,
-                                         @RequestParam String role ){
-        workspaceService.changeRoleOfMember(workspaceId,memberId,role);
+    public ResponseEntity<Void> changeRoleOfMember(@PathVariable Long workspaceId,
+                                                   @PathVariable Long memberId,
+                                                   @RequestParam String role) {
+        workspaceService.changeRoleOfMember(workspaceId, memberId, role);
         return ResponseEntity.ok().build();
     }
 
