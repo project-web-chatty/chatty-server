@@ -5,6 +5,7 @@ import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
+import com.messenger.chatty.presentation.ApiResponse;
 import com.messenger.chatty.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,38 +25,38 @@ public class MyDataController {
 
     @Operation(summary = "내 프로필 정보 가져오기")
     @GetMapping
-    public MyProfileDto getMyProfile(  @AuthenticatedUsername String username) {
+    public ApiResponse<MyProfileDto> getMyProfile(@AuthenticatedUsername String username) {
 
-        return memberService.getMyProfileByUsername(username);
+        return ApiResponse.ok(memberService.getMyProfileByUsername(username));
     }
 
     @Operation(summary = "내 프로필 정보 수정하기")
     @PutMapping
-    public MemberBriefDto changeMyProfile(   @AuthenticatedUsername String username ,
+    public ApiResponse<MemberBriefDto> changeMyProfile(   @AuthenticatedUsername String username ,
                     @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
-        return memberService.updateMyProfile(username, updateRequestDto);
+        return ApiResponse.ok(memberService.updateMyProfile(username, updateRequestDto));
     }
 
 
     @Operation(summary = "서비스에서 탈퇴하기")
     @DeleteMapping
-    public ResponseEntity<Void> deleteMe(   @AuthenticatedUsername String username) {
+    public ApiResponse<Boolean> deleteMe(   @AuthenticatedUsername String username) {
         memberService.deleteMeByUsername(username);
-        return ResponseEntity.ok().build();
+        return ApiResponse.ok(true);
     }
 
     @Operation(summary = "내가 참여중인 워크스페이스 가져오기")
     @GetMapping("/workspaces")
-    public List<WorkspaceBriefDto> getMyWorkspaces(   @AuthenticatedUsername String username ) {
-        return memberService.getMyWorkspaces(username);
+    public ApiResponse<List<WorkspaceBriefDto>> getMyWorkspaces(   @AuthenticatedUsername String username ) {
+        return ApiResponse.ok(memberService.getMyWorkspaces(username));
     }
 
 
     @Operation(summary = "특정 워크스페이스 내에 있는 채널 리스트 가져오기")
     @GetMapping("/channels")
-    public List<ChannelBriefDto> getMyChannelsInWorkspace(   @AuthenticatedUsername String username
+    public ApiResponse<List<ChannelBriefDto>> getMyChannelsInWorkspace(   @AuthenticatedUsername String username
             , @RequestParam String workspaceName  ) {
-        return memberService.getMyChannels(username,workspaceName);
+        return ApiResponse.ok(memberService.getMyChannels(username,workspaceName));
     }
 
 }
