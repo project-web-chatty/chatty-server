@@ -1,5 +1,6 @@
 package com.messenger.chatty.entity;
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.ArrayList;
@@ -87,5 +88,10 @@ public class Member extends BaseEntity  {
         this.introduction = introduction;
     }
 
+    public void updateProfile(MemberUpdateRequestDto memberUpdateRequestDto) {
+        this.name = memberUpdateRequestDto.getName();
+        this.nickname = memberUpdateRequestDto.getNickname();
+        this.introduction = memberUpdateRequestDto.getIntroduction();
+    }
 
 }
