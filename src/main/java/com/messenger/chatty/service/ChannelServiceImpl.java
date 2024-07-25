@@ -66,7 +66,8 @@ public class ChannelServiceImpl implements ChannelService{
     public void deleteChannelInWorkspace(Long workspaceId, Long channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
-        if(!channel.getWorkspace().getId().equals(workspaceId)) throw new ChannelException(ErrorStatus.CHANNEL_NOT_IN_WORKSPACE);
+        if(!channel.getWorkspace().getId().equals(workspaceId))
+            throw new ChannelException(ErrorStatus.CHANNEL_NOT_IN_WORKSPACE);
 
         channelRepository.delete(channel);
     }

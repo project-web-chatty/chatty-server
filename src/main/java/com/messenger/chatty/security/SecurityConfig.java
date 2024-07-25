@@ -71,7 +71,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check/username","/api/auth/reissue"
+                                "/api/member/signup","/api/member/check","/api/auth/reissue"
                                 ,"/api/auth/logout").permitAll()
                         .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")

@@ -59,17 +59,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternalWithReason(generalException, reason, null, request);
     }
     @ExceptionHandler
-    public ResponseEntity<Object> handleUnExpectedEx(Exception e, WebRequest request) {
+    public ResponseEntity<Object> handleUnexpectedEx(Exception e, WebRequest request) {
         e.printStackTrace();
-        return handleExceptionInternalWithoutReason
-                (e, ErrorStatus._INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, request, e.getMessage());
+        return handleExceptionInternalWithoutReason(
+                e,
+                ErrorStatus._INTERNAL_SERVER_ERROR,
+                HttpHeaders.EMPTY,
+                request,
+                e.getMessage());
     }
-
-
-
-
-
-
 
 
 

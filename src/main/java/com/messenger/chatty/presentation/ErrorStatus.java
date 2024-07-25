@@ -19,7 +19,7 @@ public enum ErrorStatus {
     _UNAUTHORIZED(UNAUTHORIZED, 4001, "인증이 필요한 요청입니다."),
     _FORBIDDEN(FORBIDDEN, 4002, "금지된 요청입니다."),
 
-    // commin
+    // common
     COMMON_INVALID_ARGUMENT(BAD_REQUEST,4010,"잘못된 형식의 요청 필드가 있습니다"),
     COMMON_CONSTRAINT_VIOLATION(BAD_REQUEST,4011,"DB 저장 시 제약조건에 위배되는 요청입니다."),
 

@@ -32,8 +32,8 @@ public class MemberController {
     }
 
     @Operation(summary = "username(아이디) 중복 검사하기")
-    @PostMapping("/check/username")
-    public ApiResponse<Boolean> checkDuplicatedUsername(@AuthenticatedUsername String username){
+    @PostMapping("/check")
+    public ApiResponse<Boolean> checkDuplicatedUsername(@RequestParam String username){
         memberService.checkDuplicatedUsername(username);
         return ApiResponse.ok(true);
     }
