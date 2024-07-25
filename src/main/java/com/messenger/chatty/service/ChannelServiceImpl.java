@@ -2,12 +2,10 @@ package com.messenger.chatty.service;
 import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.entity.Channel;
-import com.messenger.chatty.entity.ChannelJoin;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.presentation.exception.custom.ChannelException;
 import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
-import com.messenger.chatty.repository.ChannelJoinRepository;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -25,8 +23,6 @@ public class ChannelServiceImpl implements ChannelService{
     private final ChannelRepository channelRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
-    private final ChannelJoinRepository channelJoinRepository;
-
     @Override
     public ChannelBriefDto createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
 
@@ -40,15 +36,6 @@ public class ChannelServiceImpl implements ChannelService{
             throw new ChannelException(ErrorStatus.CHANNEL_NAME_ALREADY_EXISTS);
 
         Channel channel = Channel.createChannel(channelName, workspace);
-
-        // 만들어진 채널에 현재 워크스페이스에 있는 모든 멤버를 채널에 등록
-        memberRepository.findMembersByWorkspaceId(workspace.getId())
-                .forEach(member -> {
-                    ChannelJoin channelJoin = ChannelJoin.from(channel,member);
-                    channelJoinRepository.save(channelJoin);
-                });
-
-
         Channel savedChannel = channelRepository.save(channel);
         return CustomConverter.convertChannelToBriefDto(savedChannel);
     }

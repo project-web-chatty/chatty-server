@@ -26,28 +26,18 @@ public class AdminController {
     @Operation(summary = "모든 멤버 리스트 가져오기")
     @GetMapping("/members")
     public ApiResponse<List<MemberBriefDto>> getAllMemberList(){
-
         return ApiResponse.ok(memberService.getAllMemberList());
-
-
     }
 
     @Operation(summary = "모든 워크스페이스 리스트 가져오기")
     @GetMapping("/workspaces")
     public ApiResponse<List<WorkspaceBriefDto>> getAllWorkspaceList(){
-
         return ApiResponse.ok(workspaceService.getAllWorkspaceList());
-
     }
 
     @Operation(summary = "모든 채널 가져오기")
     @GetMapping("/channels")
-    public ApiResponse<List<ChannelBriefDto>> getAllChannelsList()
-    {
+    public ApiResponse<List<ChannelBriefDto>> getAllChannelsList(){
         return ApiResponse.ok(channelService.getAllChannels());
     }
-
-
-
-
 }

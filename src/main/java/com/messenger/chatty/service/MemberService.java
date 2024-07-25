@@ -25,7 +25,6 @@ public interface MemberService {
     void deleteMeById(Long id);
 
     List<WorkspaceBriefDto> getMyWorkspaces(String username);
-    List<ChannelBriefDto> getMyChannels(String username, String workspaceName);
 
     void checkDuplicatedUsername(String username);
 

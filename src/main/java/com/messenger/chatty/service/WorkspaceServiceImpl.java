@@ -26,7 +26,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
-    private final ChannelJoinRepository channelJoinRepository;
     private final InvitationCodeGenerator invitationCodeGenerator;
     private final WorkspaceJoinRepository workspaceJoinRepository;
 
@@ -108,10 +107,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Channel talk = Channel.createChannel("talk",workspace);
         channelRepository.save(announce);
         channelRepository.save(talk);
-        ChannelJoin announceJoin = ChannelJoin.from(announce,member);
-      //  channelJoinRepository.save(announceJoin);
-        ChannelJoin talkJoin = ChannelJoin.from(talk,member);
-      //  channelJoinRepository.save(talkJoin);
 
 
         return CustomConverter.convertWorkspaceToBriefDto(workspace);
@@ -124,8 +119,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // 이미지 업로드 기능은 차후 구현
         // if(profile_img !=null) workspace.changeProfile_img(profile_img);
-        if(updateRequestDto.getDescription() !=null)
+        if (updateRequestDto.getDescription() != null) {
             workspace.changeDescription(updateRequestDto.getDescription());
+        }
 
         Workspace saved = workspaceRepository.save(workspace);
 
@@ -174,18 +170,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
-        // channel_join table은 삭제될 예정. 이후 리팩터링하기
-        List<Channel> channels = channelRepository.findByWorkspace(workspace);
-        channels.forEach((channel)->{
-            ChannelJoin channelJoin = ChannelJoin.from(channel,member);
-            channelJoinRepository.save(channelJoin);
-        });
 
-
-        Workspace savedWorkspace = workspaceRepository.save(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
-        return CustomConverter.convertWorkspaceToDto(savedWorkspace,channels,members);
-
+        return CustomConverter.convertWorkspaceToDto(workspace, workspace.getChannels(), members);
     }
 
 
@@ -197,9 +184,5 @@ public class WorkspaceServiceImpl implements WorkspaceService{
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
         workspaceJoin.setRole(role);
     }
-
-
-
-
 
 }

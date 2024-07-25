@@ -42,10 +42,6 @@ public class Member extends BaseEntity  {
     private String introduction;
 
 
-    @Builder.Default
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ChannelJoin> channelJoins = new ArrayList<>();
-
 
     @Builder.Default
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)

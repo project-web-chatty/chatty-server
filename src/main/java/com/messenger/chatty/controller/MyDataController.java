@@ -26,37 +26,27 @@ public class MyDataController {
     @Operation(summary = "내 프로필 정보 가져오기")
     @GetMapping
     public ApiResponse<MyProfileDto> getMyProfile(@AuthenticatedUsername String username) {
-
         return ApiResponse.ok(memberService.getMyProfileByUsername(username));
     }
 
     @Operation(summary = "내 프로필 정보 수정하기")
     @PutMapping
-    public ApiResponse<MemberBriefDto> changeMyProfile(   @AuthenticatedUsername String username ,
-                    @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
+    public ApiResponse<MemberBriefDto> changeMyProfile(@AuthenticatedUsername String username,
+                                                       @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
         return ApiResponse.ok(memberService.updateMyProfile(username, updateRequestDto));
     }
 
 
     @Operation(summary = "서비스에서 탈퇴하기")
     @DeleteMapping
-    public ApiResponse<Boolean> deleteMe(   @AuthenticatedUsername String username) {
+    public ApiResponse<Boolean> deleteMe(@AuthenticatedUsername String username) {
         memberService.deleteMeByUsername(username);
         return ApiResponse.ok(true);
     }
 
     @Operation(summary = "내가 참여중인 워크스페이스 가져오기")
     @GetMapping("/workspaces")
-    public ApiResponse<List<WorkspaceBriefDto>> getMyWorkspaces(   @AuthenticatedUsername String username ) {
+    public ApiResponse<List<WorkspaceBriefDto>> getMyWorkspaces(@AuthenticatedUsername String username) {
         return ApiResponse.ok(memberService.getMyWorkspaces(username));
     }
-
-
-    @Operation(summary = "특정 워크스페이스 내에 있는 채널 리스트 가져오기")
-    @GetMapping("/channels")
-    public ApiResponse<List<ChannelBriefDto>> getMyChannelsInWorkspace(   @AuthenticatedUsername String username
-            , @RequestParam String workspaceName  ) {
-        return ApiResponse.ok(memberService.getMyChannels(username,workspaceName));
-    }
-
 }

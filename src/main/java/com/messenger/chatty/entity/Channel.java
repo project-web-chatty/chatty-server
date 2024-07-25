@@ -28,10 +28,6 @@ public class Channel extends BaseEntity{
     private Workspace workspace;
 
 
-    @Builder.Default
-    @OneToMany(mappedBy = "channel",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<ChannelJoin> channelJoins = new ArrayList<>();
-
 
     // use this when you generate new channel
     public static Channel createChannel(String name, Workspace workspace){

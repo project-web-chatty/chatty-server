@@ -7,12 +7,10 @@ import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
-import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.Workspace;
 import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.presentation.exception.custom.MemberException;
-import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -47,9 +45,6 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.save(me);
         return CustomConverter.convertMemberToDto(me, Collections.emptyList());
     }
-
-
-
 
 
     @Override
@@ -120,18 +115,6 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
         return myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ChannelBriefDto> getMyChannels(String username, String workspaceName) {
-        Member me = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
-        Workspace workspace = workspaceRepository.findByName(workspaceName)
-                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
-
-        List<Channel> channels = channelRepository.findByWorkspaceIdAndMemberId(workspace.getId(), me.getId());
-        return channels.stream().map(CustomConverter::convertChannelToBriefDto).toList();
     }
 
     @Override

@@ -21,7 +21,7 @@ public class MemberController {
 
     @Operation(summary = "회원가입하기(일반)")
     @PostMapping("/signup")
-    public ApiResponse<MemberBriefDto> signup(@Valid @RequestBody final MemberJoinRequestDto memberJoinRequestDTO){
+    public ApiResponse<MemberBriefDto> signup(@Valid @RequestBody MemberJoinRequestDto memberJoinRequestDTO){
         return ApiResponse.ok(memberService.signup(memberJoinRequestDTO));
     }
 
@@ -33,12 +33,8 @@ public class MemberController {
 
     @Operation(summary = "username(아이디) 중복 검사하기")
     @PostMapping("/check/username")
-    public ApiResponse<Boolean> checkDuplicatedUsername(  @AuthenticatedUsername String username){
+    public ApiResponse<Boolean> checkDuplicatedUsername(@AuthenticatedUsername String username){
         memberService.checkDuplicatedUsername(username);
         return ApiResponse.ok(true);
     }
-
-
-
-
 }
