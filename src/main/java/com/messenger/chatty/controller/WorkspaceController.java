@@ -30,52 +30,52 @@ public class WorkspaceController {
     @PostMapping
     public ApiResponse<WorkspaceBriefDto> createWorkspace(@AuthenticatedUsername String username,
                                                           @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
-        return  ApiResponse.ok(workspaceService.generateWorkspace(requestDto, username));
+        return  ApiResponse.onSuccess(workspaceService.generateWorkspace(requestDto, username));
     }
 
     @Operation(summary = "워크스페이스 프로필 정보 가져오기")
     @GetMapping("/{workspaceId}")
     public ApiResponse<WorkspaceResponseDto> getWorkspaceProfile(@PathVariable Long workspaceId) {
-        return ApiResponse.ok(workspaceService.getWorkspaceProfile(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.getWorkspaceProfile(workspaceId));
     }
 
     @Operation(summary = "워크스페이스 프로필 정보 수정하기")
     @PutMapping("/{workspaceId}")
     public ApiResponse<WorkspaceBriefDto> updateWorkspaceProfile(@PathVariable Long workspaceId,
                                                                  @RequestBody WorkspaceUpdateRequestDto requestDto) {
-        return ApiResponse.ok(workspaceService.updateWorkspaceProfile(workspaceId, requestDto));
+        return ApiResponse.onSuccess(workspaceService.updateWorkspaceProfile(workspaceId, requestDto));
     }
 
     @Operation(summary = "워크스페이스의 채널 리스트 가져오기")
     @GetMapping("/{workspaceId}/channels")
     public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable Long workspaceId){
-        return ApiResponse.ok(workspaceService.getChannelsOfWorkspace(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.getChannelsOfWorkspace(workspaceId));
     }
 
     @Operation(summary = "워크스페이스의 멤버 리스트 가져오기")
     @GetMapping("/{workspaceId}/members")
     public ApiResponse<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable Long workspaceId){
-        return ApiResponse.ok(workspaceService.getMembersOfWorkspace(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.getMembersOfWorkspace(workspaceId));
     }
 
     @Operation(summary = "워크스페이스에 채널 추가하기")
     @PostMapping("/{workspaceId}/channels")
     public ApiResponse<ChannelBriefDto> addChannelToWorkspace(@PathVariable Long workspaceId,
                                                               @RequestBody @Valid ChannelGenerateRequestDto requestDto){
-        return ApiResponse.ok(channelService.createChannelToWorkspace(workspaceId, requestDto));
+        return ApiResponse.onSuccess(channelService.createChannelToWorkspace(workspaceId, requestDto));
     }
 
 
     @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
     @GetMapping("/{workspaceId}/invite")
     public ApiResponse<String> getNewInvitationCode(@PathVariable  Long workspaceId){
-        return ApiResponse.ok(workspaceService.getNewInvitationCode(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.getNewInvitationCode(workspaceId));
     }
 
     @Operation(summary = "해당 워크스페이스의 초대링크 갱신하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
     @PostMapping("/{workspaceId}/invite")
     public ApiResponse<String> generateInvitationCode(@PathVariable Long workspaceId){
-        return ApiResponse.ok(workspaceService.setInvitationCode(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.setInvitationCode(workspaceId));
     }
 
 
@@ -84,7 +84,7 @@ public class WorkspaceController {
     public ApiResponse<Boolean> deleteChannelToWorkspace(@PathVariable Long workspaceId,
                                                          @PathVariable Long channelId){
         channelService.deleteChannelInWorkspace(workspaceId,channelId);
-        return ApiResponse.ok(true);
+        return ApiResponse.onSuccess(true);
     }
 
 
@@ -94,7 +94,7 @@ public class WorkspaceController {
                                                    @PathVariable Long memberId,
                                                    @RequestParam String role){
         workspaceService.changeRoleOfMember(workspaceId,memberId,role);
-        return ApiResponse.ok(true);
+        return ApiResponse.onSuccess(true);
     }
 
 
@@ -106,6 +106,6 @@ public class WorkspaceController {
     @PostMapping("/join/{code}")
     public ApiResponse<WorkspaceResponseDto> joinToWorkspace(@PathVariable String code,
                                                              @AuthenticatedUsername String username){
-        return ApiResponse.ok(workspaceService.enterToWorkspace(username, code));
+        return ApiResponse.onSuccess(workspaceService.enterToWorkspace(username, code));
     }
 }

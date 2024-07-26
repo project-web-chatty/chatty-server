@@ -12,12 +12,12 @@ public class ApiResponse<T> {
     private final String message;
     private final T result;
 
-    public static <T> ApiResponse<T> ok(T data) {
+    public static <T> ApiResponse<T> onSuccess(T data) {
         return new ApiResponse<>(true, 2000, "성공", data);
     }
 
 
-    public static <T> ApiResponse<T> onSuccess(Integer code, String message, T data) {
+    public static <T> ApiResponse<T> of(Integer code, String message, T data) {
         return new ApiResponse<>(true, code,message, data);
     }
     public static <T> ApiResponse<T> onFailure(Integer code, String message, T errorDetail) {

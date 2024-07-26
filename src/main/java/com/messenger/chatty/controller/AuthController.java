@@ -8,10 +8,7 @@ import com.messenger.chatty.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +26,7 @@ public class AuthController {
     public ApiResponse<TokenResponseDto> login(@RequestBody LoginRequestDto loginRequestDto)
     {
         // 스웨거 문서화를 위한 형식상 메서드. 이 메서드는 수행되지 않음
-        return ApiResponse.ok(null);
+        return ApiResponse.onSuccess(null);
     }
 
     @Operation(summary = "로그아웃", description = "헤더에 엑세스토큰을 담아 요청을 보내면 리프레시토큰이 disable 되며 정상 로그아웃됩니다.")
@@ -37,13 +34,13 @@ public class AuthController {
     public ApiResponse<Boolean> logout(HttpServletRequest request)
     {
         tokenService.logout(request);
-        return ApiResponse.ok(true);
+        return ApiResponse.onSuccess(true);
     }
 
     @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요. body에 토큰이 담겨 응답됩니다.")
     @PostMapping("/reissue")
     public ApiResponse<TokenResponseDto> reissue(HttpServletRequest request) {
-            return  ApiResponse.ok(tokenService.reissueToken(request));
+            return  ApiResponse.onSuccess(tokenService.reissueToken(request));
     }
 
 

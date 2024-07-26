@@ -28,7 +28,7 @@ public class CustomResponseSender {
     }
 
     public void sendToken(HttpServletResponse response, TokenResponseDto tokenResponseDto) throws IOException{
-        ApiResponse<TokenResponseDto> responseDto = ApiResponse.ok(tokenResponseDto);
+        ApiResponse<TokenResponseDto> responseDto = ApiResponse.onSuccess(tokenResponseDto);
         response.setStatus(200);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
