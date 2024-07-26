@@ -1,10 +1,10 @@
 package com.messenger.chatty.security;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
-import com.messenger.chatty.security.oauth2.CustomOauthSuccessHandler;
+import com.messenger.chatty.security.oauth2.CustomOauth2FailureHandler;
+import com.messenger.chatty.security.oauth2.CustomOauth2SuccessHandler;
 import com.messenger.chatty.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -41,7 +39,8 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final ObjectMapper objectMapper;
+    private final CustomResponseSender responseSender;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -72,7 +71,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check/username","/api/auth/reissue"
+                                "/api/member/signup","/api/member/check","/api/auth/reissue"
                                 ,"/api/auth/logout").permitAll()
                         .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
@@ -81,7 +80,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // custom filters settings
-        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService,objectMapper),
+        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService, responseSender),
                         UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
         .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
@@ -108,7 +107,8 @@ public class SecurityConfig {
         // oauth setting
         httpSecurity.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                        .userService(customOAuth2UserService)).successHandler(new CustomOauthSuccessHandler(tokenService)));
+                        .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(tokenService))
+                .failureHandler(new CustomOauth2FailureHandler()) );
 
 
 

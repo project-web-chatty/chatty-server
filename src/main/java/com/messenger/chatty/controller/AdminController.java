@@ -2,6 +2,7 @@ package com.messenger.chatty.controller;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
+import com.messenger.chatty.presentation.ApiResponse;
 import com.messenger.chatty.service.ChannelService;
 import com.messenger.chatty.service.MemberService;
 import com.messenger.chatty.service.WorkspaceService;
@@ -24,20 +25,19 @@ public class AdminController {
 
     @Operation(summary = "모든 멤버 리스트 가져오기")
     @GetMapping("/members")
-    public List<MemberBriefDto> getAllMemberList(){
-        return memberService.getAllMemberList();
+    public ApiResponse<List<MemberBriefDto>> getAllMemberList(){
+        return ApiResponse.onSuccess(memberService.getAllMemberList());
     }
 
     @Operation(summary = "모든 워크스페이스 리스트 가져오기")
     @GetMapping("/workspaces")
-    public List<WorkspaceBriefDto> getAllWorkspaceList(){
-        return workspaceService.getAllWorkspaceList();
+    public ApiResponse<List<WorkspaceBriefDto>> getAllWorkspaceList(){
+        return ApiResponse.onSuccess(workspaceService.getAllWorkspaceList());
     }
 
     @Operation(summary = "모든 채널 가져오기")
     @GetMapping("/channels")
-    public List<ChannelBriefDto> getAllChannelsList(){
-        return channelService.getAllChannels();
+    public ApiResponse<List<ChannelBriefDto>> getAllChannelsList(){
+        return ApiResponse.onSuccess(channelService.getAllChannels());
     }
-
 }

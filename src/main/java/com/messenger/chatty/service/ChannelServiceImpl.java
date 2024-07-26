@@ -3,8 +3,9 @@ import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.entity.Channel;
 import com.messenger.chatty.entity.Workspace;
-import com.messenger.chatty.exception.custom.DuplicatedNameException;
-import com.messenger.chatty.exception.custom.CustomNoSuchElementException;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.ChannelException;
+import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.ChannelRepository;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
@@ -28,11 +29,11 @@ public class ChannelServiceImpl implements ChannelService{
         String channelName = requestDto.getName();
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomNoSuchElementException("id",workspaceId,"워크스페이스"));
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
 
         if(workspace.getChannels().stream().map(Channel::getName).toList().contains(channelName))
-            throw new DuplicatedNameException(channelName,"채널이름");
+            throw new ChannelException(ErrorStatus.CHANNEL_NAME_ALREADY_EXISTS);
 
         Channel channel = Channel.createChannel(channelName, workspace);
         Channel savedChannel = channelRepository.save(channel);
@@ -64,8 +65,9 @@ public class ChannelServiceImpl implements ChannelService{
     @Override
     public void deleteChannelInWorkspace(Long workspaceId, Long channelId) {
         Channel channel = channelRepository.findById(channelId)
-                .orElseThrow(() -> new CustomNoSuchElementException("채널ID", channelId, "채널"));
-        if(!channel.getWorkspace().getId().equals(workspaceId)) throw new CustomNoSuchElementException("워크스페이스 내에 해당 채널이 없습니다.");
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
+        if(!channel.getWorkspace().getId().equals(workspaceId))
+            throw new ChannelException(ErrorStatus.CHANNEL_NOT_IN_WORKSPACE);
 
         channelRepository.delete(channel);
     }

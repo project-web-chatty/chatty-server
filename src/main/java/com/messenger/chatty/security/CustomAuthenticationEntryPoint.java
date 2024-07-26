@@ -1,12 +1,9 @@
 package com.messenger.chatty.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.messenger.chatty.exception.ErrorDetail;
-import com.messenger.chatty.exception.ErrorResponse;
+import com.messenger.chatty.presentation.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -18,7 +15,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper;
+    private final CustomResponseSender responseSender;
 
     @Override
     public void commence(
@@ -26,14 +23,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletResponse response,
             AuthenticationException authException)
             throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String customMessage = (String) request.getAttribute("message");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response
-                .getWriter()
-                .write(objectMapper.writeValueAsString(ErrorResponse
-                                .from(request.getRequestURI(), HttpStatus.UNAUTHORIZED, ErrorDetail.UN_AUTHORIZED,customMessage))
-                        );
+        Object errorStatus = request.getAttribute("errorStatus");
+        if(errorStatus instanceof ErrorStatus){
+            responseSender.sendError(request,response, (ErrorStatus) errorStatus, authException.getMessage());
+            return;
+        }
+        responseSender.sendError(request,response, ErrorStatus._INTERNAL_SERVER_ERROR, authException.getMessage());
+
     }
 }
