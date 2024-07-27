@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder bcrptPasswordEncoder;
 
     @Override
-    public MyProfileDto signup(MemberJoinRequestDto memberJoinRequestDTO){
+    public Long signup(MemberJoinRequestDto memberJoinRequestDTO){
 
         if(memberRepository.existsByUsername(memberJoinRequestDTO.getUsername()))
             throw new MemberException(ErrorStatus.MEMBER_USERNAME_ALREADY_EXISTS);
@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService{
         memberJoinRequestDTO.encodePassword(bcrptPasswordEncoder.encode(memberJoinRequestDTO.getPassword()));
         Member me = Member.from(memberJoinRequestDTO);
         memberRepository.save(me);
-        return CustomConverter.convertMemberToDto(me, Collections.emptyList());
+        return me.getId();
     }
 
 

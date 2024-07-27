@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface MemberService {
 
-    MyProfileDto signup(MemberJoinRequestDto memberJoinRequestDTO) ;
+    Long signup(MemberJoinRequestDto memberJoinRequestDTO) ;
     List<MemberBriefDto> getAllMemberList();
 
     MemberBriefDto getMemberProfileByMemberId(Long memberId);
