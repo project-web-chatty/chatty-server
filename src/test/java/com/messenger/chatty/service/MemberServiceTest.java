@@ -2,6 +2,7 @@ package com.messenger.chatty.service;
 
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
+import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.repository.MemberRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,6 +85,106 @@ class MemberServiceTest {
                 .get()
                 .extracting("name", "nickname", "introduction")
                 .containsExactly(profile.getName(), profile.getNickname(), profile.getIntroduction());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("memberId를 통해 member 데이터를 삭제합니다.")
+    void removeMember() {
+        //given
+        MemberJoinRequestDto signUp = MemberJoinRequestDto.builder()
+                .username("username")
+                .password("password")
+                .build();
+        Long memberId = memberService.signup(signUp);
+        //when
+        memberService.deleteMeById(memberId);
+        //then
+        List<Member> all = memberRepository.findAll();
+        assertThat(all.size()).isZero();
+    }
+    @Test
+    @Transactional
+    @DisplayName("username을 통해 member 데이터를 삭제합니다.")
+    void removeMemberByUsername() {
+        //given
+        MemberJoinRequestDto signUp = MemberJoinRequestDto.builder()
+                .username("username")
+                .password("password")
+                .build();
+        Long memberId = memberService.signup(signUp);
+        //when
+        memberService.deleteMeByUsername(signUp.getUsername());
+        //then
+        List<Member> all = memberRepository.findAll();
+        assertThat(all.size()).isZero();
+    }
+
+    @Test
+    @DisplayName("데이터베이스에 저장된 모든 멤버 정보를 불러옵니다. 이때 리턴값은 MemberBriefDto(리스트)입니다.")
+    void getAllMember() {
+        //given
+        MemberJoinRequestDto signUp1 = MemberJoinRequestDto.builder()
+                .username("username1")
+                .password("password1")
+                .build();
+        Long memberId1 = memberService.signup(signUp1);
+        MemberJoinRequestDto signUp2 = MemberJoinRequestDto.builder()
+                .username("username2")
+                .password("password2")
+                .build();
+        Long memberId2 = memberService.signup(signUp2);
+        MemberJoinRequestDto signUp3 = MemberJoinRequestDto.builder()
+                .username("username3")
+                .password("password3")
+                .build();
+        Long memberId3 = memberService.signup(signUp3);
+        //when
+        List<MemberBriefDto> allMemberList = memberService.getAllMemberList();
+        //then
+        assertThat(allMemberList).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("특정 멤버 정보를 memberId를 통해 불러옵니다.이때 리턴 값은 memberBriefDto입니다.")
+    void getMemberById() {
+        //given
+        MemberJoinRequestDto signUp1 = MemberJoinRequestDto.builder()
+                .username("username1")
+                .password("password1")
+                .build();
+        Long memberId1 = memberService.signup(signUp1);
+        //when
+        MemberBriefDto response = memberService.getMemberProfileByMemberId(memberId1);
+        //then
+        assertThat(response).extracting("id", "username")
+                .containsExactly(memberId1, signUp1.getUsername());
+    }
+
+    @Test
+    @DisplayName("특정 멤버 정보를 username을 통해 불러옵니다. 이때 리턴 값은 memberBriefDto입니다.")
+    void getMemberByUsername() {
+        //given
+        MemberJoinRequestDto signUp1 = MemberJoinRequestDto.builder()
+                .username("username1")
+                .password("password1")
+                .build();
+        Long memberId1 = memberService.signup(signUp1);
+        //when
+        MyProfileDto response = memberService.getMyProfileByUsername(signUp1.getUsername());
+        //then
+        assertThat(response).extracting("id", "username")
+                .containsExactly(memberId1, signUp1.getUsername());
+    }
+
+    @Test
+    @DisplayName("")
+    void testMethodName() {
+        //given
+
+        //when
+
+        //then
     }
 
 }
