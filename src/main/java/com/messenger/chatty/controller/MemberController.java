@@ -19,7 +19,7 @@ public class MemberController {
 
     @Operation(summary = "회원가입하기(일반)")
     @PostMapping("/signup")
-    public ApiResponse<MemberBriefDto> signup(@Valid @RequestBody MemberJoinRequestDto memberJoinRequestDTO){
+    public ApiResponse<Long> signup(@Valid @RequestBody MemberJoinRequestDto memberJoinRequestDTO){
         return ApiResponse.onSuccess(memberService.signup(memberJoinRequestDTO));
     }
 

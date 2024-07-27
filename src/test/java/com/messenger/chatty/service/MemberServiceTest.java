@@ -43,6 +43,7 @@ class MemberServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("유저네임과 패스워드를 통해 회원가입을 합니다.")
     void registerMember() {
         //given
@@ -51,11 +52,12 @@ class MemberServiceTest {
                 .password("password")
                 .build();
         //when
-        MyProfileDto profileDto = memberService.signup(signUp);
+        Long memberId = memberService.signup(signUp);
         //then
-        assertThat(profileDto.getUsername()).isEqualTo(signUp.getUsername());
-        assertThat(profileDto.getEmail()).isNull();
-
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        assertThat(optionalMember).isPresent()
+                .get().extracting("username", "password")
+                .containsExactly(signUp.getUsername(), signUp.getPassword());
     }
 
     @Test
