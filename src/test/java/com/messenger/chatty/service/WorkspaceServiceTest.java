@@ -168,7 +168,10 @@ class WorkspaceServiceTest {
         WorkspaceResponseDto workspaceProfile = workspaceService.getWorkspaceProfile(workspaceId);
         //then
         assertThat(workspaceProfile).extracting("id", "name", "description")
-                .containsExactly(workspaceId, generateRequestDto.getName(), generateRequestDto.getDescription());
+                .containsExactly(
+                        workspaceId,
+                        generateRequestDto.getName(),
+                        generateRequestDto.getDescription());
     }
 
     @Test
@@ -184,5 +187,81 @@ class WorkspaceServiceTest {
         assertThatThrownBy(() -> workspaceService.getWorkspaceProfile(workspaceId))
                 .isInstanceOf(WorkspaceException.class)
                 .hasMessage(ErrorStatus.WORKSPACE_UNAUTHORIZED.getMessage());
+    }
+
+    @Test
+    @DisplayName("특정 워크스페이스에 대한 정보를 간단하게(참여중인 멤버와 채널 정보 제외) 가져옵니다.")
+    //기획 방향에 맞추어 진행해야할 것 같습니다. 상세조회는 권한이 필수이겠지만 preview는 기획나름일것 같습니다.
+    void getBriefWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        WorkspaceBriefDto workspaceBriefProfile = workspaceService.getWorkspaceBriefProfile(workspaceId);
+        //then
+        assertThat(workspaceBriefProfile).extracting("id", "name", "description")
+                .containsExactly(
+                        workspaceId,
+                        generateRequestDto.getName(),
+                        generateRequestDto.getDescription());
+
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("워크스페이스의 초대코드를 생성합니다. 이때 생성 인증 권한이 필요합니다.")
+    void setInvitationCode() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        String code = workspaceService.setInvitationCode(workspaceId);
+        //then
+        Optional<Workspace> optionalWorkspace = workspaceRepository.findById(workspaceId);
+        assertThat(optionalWorkspace).isPresent();
+        assertThat(optionalWorkspace.get().getInvitationCode()).isEqualTo(code);
+    }
+    @Test
+    @Transactional
+    @DisplayName("사용자가 초대코드를 통해 워크스페이스에 참여합니다.")
+    void joinWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        String code = workspaceService.setInvitationCode(workspaceId);
+        //when
+        workspaceService.enterToWorkspace(memberResponse2.getUsername(), code);
+        //then
+        Optional<Workspace> optionalWorkspace = workspaceRepository.findById(workspaceId);
+        assertThat(optionalWorkspace.get().getWorkspaceJoins().size()).isEqualTo(2);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("워크스페이스에 참여중인 멤버들의 정보를 조회합니다. 이때 조회 권한이 필요합니다.")
+    void getJoinMemberOfWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        String code = workspaceService.setInvitationCode(workspaceId);
+        workspaceService.enterToWorkspace(memberResponse2.getUsername(), code);
+        //when
+        List<MemberBriefDto> membersOfWorkspace = workspaceService.getMembersOfWorkspace(workspaceId);
+        //then
+        assertThat(membersOfWorkspace.size()).isEqualTo(2);
+        assertThat(membersOfWorkspace.get(1)).extracting("username", "id")
+                .containsExactly(memberResponse2.getUsername(), memberResponse2.getId());
     }
 }

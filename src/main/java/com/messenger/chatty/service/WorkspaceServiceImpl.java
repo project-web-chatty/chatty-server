@@ -50,7 +50,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public WorkspaceBriefDto getWorkspaceBriefProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
-        return  CustomConverter.convertWorkspaceToBriefDto(workspace);
+        return CustomConverter.convertWorkspaceToBriefDto(workspace);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
-
+        //TODO 조회 권한
+        //TODO workspace용 멤버 response dto return(해당 멤버의 워크스페이스 내 역할 표시)
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
@@ -153,13 +154,14 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         String newCode = invitationCodeGenerator.generateInviteCode();
+        //TODO 해당 메서드 사용자의 권한 체크
         workspace.changeInvitationCode(newCode);
         return newCode;
     }
 
 
     @Override
-    public WorkspaceResponseDto enterToWorkspace(String username, String code) {
+    public void enterToWorkspace(String username, String code) {
 
         // code 검증
         Workspace workspace = workspaceRepository.findByInvitationCode(code)
@@ -175,7 +177,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
 
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
-        return CustomConverter.convertWorkspaceToDto(workspace, workspace.getChannels(), members);
     }
 
 

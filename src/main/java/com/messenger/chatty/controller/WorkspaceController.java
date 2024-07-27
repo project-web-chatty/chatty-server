@@ -104,8 +104,9 @@ public class WorkspaceController {
                     "로그인 되어 있다면 이후 로직을 시행, 로그인 되어 있지 않으면 로그인페이지로 리다이렉팅 시킨다.")
     // 로그인 되었다고 가정
     @PostMapping("/join/{code}")
-    public ApiResponse<WorkspaceResponseDto> joinToWorkspace(@PathVariable String code,
+    public ApiResponse<Boolean> joinToWorkspace(@PathVariable String code,
                                                              @AuthenticatedUsername String username){
-        return ApiResponse.onSuccess(workspaceService.enterToWorkspace(username, code));
+        workspaceService.enterToWorkspace(username, code);
+        return ApiResponse.onSuccess(true);
     }
 }
