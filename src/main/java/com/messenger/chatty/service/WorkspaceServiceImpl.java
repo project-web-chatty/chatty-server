@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static com.messenger.chatty.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
+import static com.messenger.chatty.entity.WorkspaceRole.ROLE_WORKSPACE_OWNER;
+
 
 @Service
 @Transactional
@@ -101,7 +104,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         workspaceRepository.save(workspace);
 
         // 생성한 멤버는 곧바로 워크스페이스에 들어간다
-        member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_OWNER");
+        member.enterIntoWorkspace(workspace, ROLE_WORKSPACE_OWNER.getRole());
 
 
         // 기본 채널 announce와 talk를 생성
@@ -143,7 +146,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public String getNewInvitationCode(Long workspaceId) {
+    public String getInvitationCode(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         return workspace.getInvitationCode();
@@ -181,12 +184,14 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
-    public void changeRoleOfMember(Long workspaceId,Long memberId,String role){
-        if(!role.equals("ROLE_WORKSPACE_MEMBER") && !role.equals("ROLE_WORKSPACE_OWNER"))
+    public void changeRoleOfMember(Long workspaceId, Long memberId, String role) {
+        if (!role.equals(ROLE_WORKSPACE_MEMBER.getRole()) && !role.equals(ROLE_WORKSPACE_OWNER.getRole()))
             throw new WorkspaceException(ErrorStatus.WORKSPACE_INVALID_ROLE_CHANGE_REQUEST);
         WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, memberId)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
         workspaceJoin.setRole(role);
+        //구체적인 역할 조정 권한이 필요하지 않을까 싶습니다. 멤버 -> 오너 승격에 제한이 필요할 것이고, 오너 -> 멤버 권한 제한에 대한 특별 케이스도
+        //존재할 것 같습니다.
     }
 
 }

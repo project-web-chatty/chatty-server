@@ -3,10 +3,12 @@ package com.messenger.chatty.service;
 import com.messenger.chatty.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
+import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.entity.Workspace;
+import com.messenger.chatty.entity.WorkspaceRole;
 import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.MemberRepository;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.messenger.chatty.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -263,5 +266,54 @@ class WorkspaceServiceTest {
         assertThat(membersOfWorkspace.size()).isEqualTo(2);
         assertThat(membersOfWorkspace.get(1)).extracting("username", "id")
                 .containsExactly(memberResponse2.getUsername(), memberResponse2.getId());
+    }
+
+    @Test
+    @DisplayName("워크스페이스의 채널들을 조회합니다. 이때 조회 권한이 필요합니다.")
+    void getChannelsOfWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        List<ChannelBriefDto> channelsOfWorkspace = workspaceService.getChannelsOfWorkspace(workspaceId);
+        //then
+        assertThat(channelsOfWorkspace.get(0).getName()).isEqualTo("announce");
+        assertThat(channelsOfWorkspace.get(1).getName()).isEqualTo("talk");
+    }
+
+    @Test
+    @DisplayName("사용자가 참여중인 워크스페이스를 조회합니다.")
+    void getMyWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        List<WorkspaceBriefDto> myWorkspaces = memberService.getMyWorkspaces(memberResponse.getUsername());
+        //then
+        assertThat(myWorkspaces.size()).isOne();
+        assertThat(myWorkspaces.get(0).getName()).isEqualTo(generateRequestDto.getName());
+    }
+    @Test
+    @Transactional
+    @DisplayName("워크스페이스에 참여중인 멤버의 역할을 변경합니다.")
+    void changeRole() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+
+        //when
+        workspaceService.changeRoleOfMember(workspaceId, memberResponse.getId(), ROLE_WORKSPACE_MEMBER.getRole());
+        //then
+        Workspace workspace = workspaceRepository.findById(workspaceId).get();
+        assertThat(workspace.getWorkspaceJoins().get(0).getRole()).isEqualTo(ROLE_WORKSPACE_MEMBER.getRole());
     }
 }
