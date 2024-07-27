@@ -28,13 +28,11 @@ public interface WorkspaceService {
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
 
-    String getNewInvitationCode(Long workspaceId);
+    String getInvitationCode(Long workspaceId);
     String setInvitationCode(Long workspaceId);
 
     void enterToWorkspace(String username, String code);
 
     void changeRoleOfMember(Long workspaceId,Long memberId,String role);
-
-
 
 }

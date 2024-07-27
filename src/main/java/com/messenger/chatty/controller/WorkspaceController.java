@@ -69,7 +69,7 @@ public class WorkspaceController {
     @Operation(summary = "해당 워크스페이스의 초대링크 가져오기")
     @GetMapping("/{workspaceId}/invite")
     public ApiResponse<String> getNewInvitationCode(@PathVariable  Long workspaceId){
-        return ApiResponse.onSuccess(workspaceService.getNewInvitationCode(workspaceId));
+        return ApiResponse.onSuccess(workspaceService.getInvitationCode(workspaceId));
     }
 
     @Operation(summary = "해당 워크스페이스의 초대링크 갱신하기",description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
