@@ -5,6 +5,8 @@ import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.member.MyProfileDto;
 import com.messenger.chatty.entity.Member;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.MemberException;
 import com.messenger.chatty.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -178,13 +181,19 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("")
-    void testMethodName() {
+    @DisplayName("회원가입 시 작성된 유저네임이 중복인지 확인합니다")
+    void checkDuplicatedUsername() {
         //given
+        MemberJoinRequestDto signUp1 = MemberJoinRequestDto.builder()
+                .username("username1")
+                .password("password1")
+                .build();
+        Long memberId1 = memberService.signup(signUp1);
 
-        //when
-
-        //then
+        //when & then
+        assertThatThrownBy(() -> memberService.checkDuplicatedUsername(signUp1.getUsername()))
+                .isInstanceOf(MemberException.class)
+                .hasMessage(ErrorStatus.MEMBER_USERNAME_ALREADY_EXISTS.getMessage());
     }
 
 }
