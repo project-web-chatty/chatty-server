@@ -36,6 +36,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        //TODO 조회 권한 확인. 멤버 유저네임을 인자로 필요.
 
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
@@ -122,6 +123,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         if (updateRequestDto.getDescription() != null) {
             workspace.changeDescription(updateRequestDto.getDescription());
         }
+        //TODO 수정권한 부여. 따라서 인자에 멤버나 유저네임 필요.
 
         Workspace saved = workspaceRepository.save(workspace);
 
@@ -133,6 +135,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public void deleteWorkspace(Long workspaceId){
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        //TODO remove relations
         workspaceRepository.delete(workspace);
     }
 

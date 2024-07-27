@@ -5,7 +5,10 @@ import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.dto.response.member.MemberBriefDto;
 import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
+import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
 import com.messenger.chatty.entity.Workspace;
+import com.messenger.chatty.presentation.ErrorStatus;
+import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.WorkspaceRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @SpringBootTest
@@ -39,7 +44,9 @@ class WorkspaceServiceTest {
     MemberRepository memberRepository;
     //Entity & Dto & Else
     Long memberId;
+    Long memberId2;
     MemberBriefDto memberResponse;
+    MemberBriefDto memberResponse2;
 
     @BeforeEach
     void setUp() {
@@ -49,6 +56,12 @@ class WorkspaceServiceTest {
                 .build();
         memberId = memberService.signup(signUp);
         memberResponse = memberService.getMemberProfileByMemberId(memberId);
+        MemberJoinRequestDto signUp2 = MemberJoinRequestDto.builder()
+                .username("username2")
+                .password("password2")
+                .build();
+        memberId2 = memberService.signup(signUp2);
+        memberResponse2 = memberService.getMemberProfileByMemberId(memberId2);
     }
 
     @AfterEach
@@ -98,5 +111,78 @@ class WorkspaceServiceTest {
                 .extracting("description", "name")
                 .containsExactly(request.getDescription(), generateRequestDto.getName());
 
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("특정한 워크스페이스를 workspaceId를 통해 삭제합니다.(통과 x)")
+    void deleteWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        workspaceService.deleteWorkspace(workspaceId);
+        //then
+        List<Workspace> all = workspaceRepository.findAll();
+        assertThat(all.size()).isZero();
+    }
+
+    @Test
+    @DisplayName("서비스 내 전체 워크스페이스를 가져옵니다.")
+    void getAllWorkspace() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto1 = WorkspaceGenerateRequestDto.builder()
+                .description("description1")
+                .name("name1")
+                .build();
+        WorkspaceGenerateRequestDto generateRequestDto2 = WorkspaceGenerateRequestDto.builder()
+                .description("description2")
+                .name("name2")
+                .build();
+        WorkspaceGenerateRequestDto generateRequestDto3 = WorkspaceGenerateRequestDto.builder()
+                .description("description3")
+                .name("name3")
+                .build();
+        workspaceService.generateWorkspace(generateRequestDto1, memberResponse.getUsername());
+        workspaceService.generateWorkspace(generateRequestDto2, memberResponse.getUsername());
+        workspaceService.generateWorkspace(generateRequestDto3, memberResponse.getUsername());
+        //when
+        List<WorkspaceBriefDto> allWorkspaceList = workspaceService.getAllWorkspaceList();
+        //then
+        assertThat(allWorkspaceList.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("특정 워크스페이스에 대한 정보를 가져옵니다. 이때 멤버 권한이 있어야합니다.")
+    void getWorkspaceProfile() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when
+        WorkspaceResponseDto workspaceProfile = workspaceService.getWorkspaceProfile(workspaceId);
+        //then
+        assertThat(workspaceProfile).extracting("id", "name", "description")
+                .containsExactly(workspaceId, generateRequestDto.getName(), generateRequestDto.getDescription());
+    }
+
+    @Test
+    @DisplayName("멤버 권한이 없는 사용자가 특정 워크스페이스에 대한 정보를 가져오려고 할 때 예외를 발생시킵니다.(통과x)")
+    void executionExceptionWhenGetWorkspaceProfile() {
+        //given
+        WorkspaceGenerateRequestDto generateRequestDto = WorkspaceGenerateRequestDto.builder()
+                .description("description")
+                .name("name")
+                .build();
+        Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
+        //when & then
+        assertThatThrownBy(() -> workspaceService.getWorkspaceProfile(workspaceId))
+                .isInstanceOf(WorkspaceException.class)
+                .hasMessage(ErrorStatus.WORKSPACE_UNAUTHORIZED.getMessage());
     }
 }

@@ -36,6 +36,7 @@ public enum ErrorStatus {
     WORKSPACE_NAME_ALREADY_EXISTS(BAD_REQUEST,4061,"해당 워크스페이스 이름은 이미 존재합니다."),
     WORKSPACE_INVALID_INVITATION_CODE(BAD_REQUEST,4062,"해당 초대코드는 유효하지 않습니다."),
     WORKSPACE_INVALID_ROLE_CHANGE_REQUEST(BAD_REQUEST,4063,"잘못된 ROLE 변경 요청입니다."),
+    WORKSPACE_UNAUTHORIZED(BAD_REQUEST, 4064, "해당 워크스페이스에 권한 없는 요청입니다."),
     // channel error
     CHANNEL_NOT_FOUND(BAD_REQUEST,4070,"해당 채널이 존재하지 않습니다."),
     CHANNEL_NOT_IN_WORKSPACE(BAD_REQUEST,4071,"해당 워크스페이스 내에 소속된 채널이 아닙니다."),
