@@ -28,7 +28,7 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 생성하기")
     @PostMapping
-    public ApiResponse<WorkspaceBriefDto> createWorkspace(@AuthenticatedUsername String username,
+    public ApiResponse<Long> createWorkspace(@AuthenticatedUsername String username,
                                                           @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
         return  ApiResponse.onSuccess(workspaceService.generateWorkspace(requestDto, username));
     }
@@ -41,8 +41,8 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스 프로필 정보 수정하기")
     @PutMapping("/{workspaceId}")
-    public ApiResponse<WorkspaceBriefDto> updateWorkspaceProfile(@PathVariable Long workspaceId,
-                                                                 @RequestBody WorkspaceUpdateRequestDto requestDto) {
+    public ApiResponse<Long> updateWorkspaceProfile(@PathVariable Long workspaceId,
+                                                    @RequestBody WorkspaceUpdateRequestDto requestDto) {
         return ApiResponse.onSuccess(workspaceService.updateWorkspaceProfile(workspaceId, requestDto));
     }
 

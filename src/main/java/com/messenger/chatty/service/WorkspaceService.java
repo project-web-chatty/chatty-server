@@ -11,12 +11,13 @@ import java.util.List;
 
 public interface WorkspaceService {
     List<WorkspaceBriefDto> getAllWorkspaceList();
-    WorkspaceBriefDto generateWorkspace(
-                      WorkspaceGenerateRequestDto workspaceGenerateRequestDto,
-                       String creator);
+
+    Long generateWorkspace(
+            WorkspaceGenerateRequestDto workspaceGenerateRequestDto,
+            String creator);
     WorkspaceResponseDto getWorkspaceProfile(Long workspaceId);
 
-    WorkspaceBriefDto updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto requestDto);
+    Long updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto requestDto);
 
     void deleteWorkspace(Long workspaceId);
 

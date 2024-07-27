@@ -84,7 +84,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
 
     @Override
-    public WorkspaceBriefDto generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String creatorUsername) {
+    public Long generateWorkspace(WorkspaceGenerateRequestDto generateRequestDto, String creatorUsername) {
         if(workspaceRepository.existsByName(generateRequestDto.getName()))
             throw new WorkspaceException(ErrorStatus.WORKSPACE_NAME_ALREADY_EXISTS);
 
@@ -109,11 +109,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(talk);
 
 
-        return CustomConverter.convertWorkspaceToBriefDto(workspace);
+        return workspace.getId();
     }
 
     @Override
-    public WorkspaceBriefDto updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto updateRequestDto) {
+    public Long updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto updateRequestDto) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
@@ -125,7 +125,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         Workspace saved = workspaceRepository.save(workspace);
 
-        return CustomConverter.convertWorkspaceToBriefDto(saved);
+        return workspace.getId();
 
     }
 
