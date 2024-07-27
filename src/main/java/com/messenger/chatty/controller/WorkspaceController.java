@@ -60,7 +60,7 @@ public class WorkspaceController {
 
     @Operation(summary = "워크스페이스에 채널 추가하기")
     @PostMapping("/{workspaceId}/channels")
-    public ApiResponse<ChannelBriefDto> addChannelToWorkspace(@PathVariable Long workspaceId,
+    public ApiResponse<Long> addChannelToWorkspace(@PathVariable Long workspaceId,
                                                               @RequestBody @Valid ChannelGenerateRequestDto requestDto){
         return ApiResponse.onSuccess(channelService.createChannelToWorkspace(workspaceId, requestDto));
     }
