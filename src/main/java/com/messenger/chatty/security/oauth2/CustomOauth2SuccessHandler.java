@@ -1,7 +1,7 @@
 package com.messenger.chatty.security.oauth2;
 import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import com.messenger.chatty.security.CustomUserDetails;
-import com.messenger.chatty.service.TokenService;
+import com.messenger.chatty.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +17,7 @@ import java.util.Iterator;
 
 @RequiredArgsConstructor
 public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final TokenService tokenService;
+    private final AuthService authService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
 
@@ -29,8 +29,8 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        TokenResponseDto tokenResponseDto = tokenService.generateTokenPair(username, role);
-        tokenService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
+        TokenResponseDto tokenResponseDto = authService.generateTokenPair(username, role);
+        authService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
 
         String redirectURL = "http://localhost:3000/oauth2/success?refresh_token="
                 + URLEncoder.encode(tokenResponseDto.getRefresh_token(), StandardCharsets.UTF_8)

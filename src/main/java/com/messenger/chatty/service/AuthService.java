@@ -1,10 +1,11 @@
 package com.messenger.chatty.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.messenger.chatty.dto.request.LoginRequestDto;
 import com.messenger.chatty.dto.response.auth.TokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 
-public interface TokenService {
+public interface AuthService {
 
     TokenResponseDto generateTokenPair(String username, String role);
 
@@ -12,7 +13,7 @@ public interface TokenService {
 
     TokenResponseDto reissueToken(HttpServletRequest request);
 
-    TokenResponseDto login(HttpServletRequest request);
+    TokenResponseDto login(LoginRequestDto loginRequestDto);
 
     void logout(HttpServletRequest request);
 

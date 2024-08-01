@@ -5,7 +5,7 @@ import com.messenger.chatty.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.security.oauth2.CustomOAuth2UserService;
 import com.messenger.chatty.security.oauth2.CustomOauth2FailureHandler;
 import com.messenger.chatty.security.oauth2.CustomOauth2SuccessHandler;
-import com.messenger.chatty.service.TokenService;
+import com.messenger.chatty.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +21,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
-
 import java.util.Collections;
 
 
@@ -35,13 +32,11 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final TokenService tokenService;
-    private final AuthenticationConfiguration authenticationConfiguration;
+    private final AuthService authService;
     private final WorkspaceJoinRepository workspaceJoinRepository;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomResponseSender responseSender;
 
 
     @Bean
@@ -82,7 +77,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // custom filters settings
-        httpSecurity.addFilterBefore(new JWTFilter(tokenService), AnonymousAuthenticationFilter.class)
+        httpSecurity.addFilterBefore(new JWTFilter(authService), AnonymousAuthenticationFilter.class)
         .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
 
 
@@ -107,7 +102,7 @@ public class SecurityConfig {
         // oauth2 setting
         httpSecurity.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                        .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(tokenService))
+                        .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(authService))
                 .failureHandler(new CustomOauth2FailureHandler()) );
 
 
