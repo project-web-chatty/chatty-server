@@ -29,7 +29,8 @@ public enum ErrorStatus {
     AUTH_OUTDATED_REFRESH_TOKEN(BAD_REQUEST,4052,"갱신되기 이전의 리프레시 토큰입니다."),
     AUTH_EXPIRED_TOKEN(BAD_REQUEST, 4053, "토큰의 유효기간이 만료되었습니다."),
     AUTH_TYPE_MISMATCH_TOKEN(BAD_REQUEST,4054,"토큰의 타입이 맞지 않습니다."),
-    AUTH_UNAUTHORIZED_ACCESS(FORBIDDEN,4013,"인증되었으나 해당 요청에 대한 권한이 부족합니다."),
+    AUTH_UNAUTHORIZED_ACCESS(FORBIDDEN,4055,"인증되었으나 해당 요청에 대한 권한이 부족합니다."),
+    AUTH_FAIL_LOGIN(FORBIDDEN,4056,"아이디 또는 비밀번호를 잘못 입력하였습니다."),
 
     // workspace error
     WORKSPACE_NOT_FOUND(BAD_REQUEST,4060,"해당 워크스페이스가 존재하지 않습니다."),

@@ -4,7 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.presentation.exception.GeneralException;
-import com.messenger.chatty.service.TokenService;
+import com.messenger.chatty.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
+    private final AuthService authService;
 
 
     @Override
@@ -29,8 +29,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String token;
         DecodedJWT decodedJWT;
         try{
-            token = tokenService.getTokenFromRequest(request);
-            decodedJWT = tokenService.decodeToken(token,"access");
+            token = authService.getTokenFromRequest(request);
+            decodedJWT = authService.decodeToken(token,"access");
         }
         catch (GeneralException e){
             request.setAttribute("errorStatus",e.getErrorStatus());

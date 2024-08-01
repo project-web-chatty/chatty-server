@@ -5,14 +5,18 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.messenger.chatty.dto.request.LoginRequestDto;
 import com.messenger.chatty.dto.response.auth.TokenResponseDto;
+import com.messenger.chatty.entity.Member;
 import com.messenger.chatty.entity.RefreshToken;
 import com.messenger.chatty.presentation.ErrorStatus;
 import com.messenger.chatty.presentation.exception.custom.AuthException;
+import com.messenger.chatty.repository.MemberRepository;
 import com.messenger.chatty.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -22,8 +26,11 @@ import java.util.Date;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TokenServiceImpl implements TokenService{
+public class AuthServiceImpl implements AuthService {
+
+  private final MemberRepository memberRepository;
   private final TokenRepository tokenRepository;
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Value("${variables.jwt.KEY}")
   private String jwtKey ;
@@ -62,6 +69,23 @@ public class TokenServiceImpl implements TokenService{
       saveRefreshToken(tokenPair.getRefresh_token(), username);
       return tokenPair;
   }
+
+    @Override
+    public TokenResponseDto login(LoginRequestDto loginRequestDto) {
+        Member member = memberRepository.findByUsername(loginRequestDto.getUsername())
+                .orElseThrow(() -> new AuthException(ErrorStatus.AUTH_FAIL_LOGIN));
+        String password = member.getPassword();
+        if(!bCryptPasswordEncoder.matches(loginRequestDto.getPassword(),password))
+            throw new AuthException(ErrorStatus.AUTH_FAIL_LOGIN);
+
+        String username = member.getUsername();
+        String serviceRole = member.getRole();
+
+        TokenResponseDto tokenResponseDto = this.generateTokenPair(username, serviceRole);
+        this.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
+
+        return tokenResponseDto;
+    }
 
 
     @Override
