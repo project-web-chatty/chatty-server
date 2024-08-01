@@ -11,6 +11,9 @@ public interface TokenService {
     void saveRefreshToken(String token,String username);
 
     TokenResponseDto reissueToken(HttpServletRequest request);
+
+    TokenResponseDto login(HttpServletRequest request);
+
     void logout(HttpServletRequest request);
 
     String getTokenFromRequest(HttpServletRequest request);

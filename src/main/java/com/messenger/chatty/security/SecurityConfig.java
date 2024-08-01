@@ -20,7 +20,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -71,8 +73,8 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check","/api/auth/reissue"
-                                ,"/api/auth/logout").permitAll()
+                                "/api/member/signup","/api/member/check","/api/auth/**")
+                        .permitAll()
                         .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
                         .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
@@ -80,9 +82,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // custom filters settings
-        httpSecurity.addFilterAt(new CustomBasicLoginFilter(authenticationManager(authenticationConfiguration), tokenService, responseSender),
-                        UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTFilter(tokenService), CustomBasicLoginFilter.class)
+        httpSecurity.addFilterBefore(new JWTFilter(tokenService), AnonymousAuthenticationFilter.class)
         .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
 
 
@@ -104,7 +104,7 @@ public class SecurityConfig {
                 })));
 
 
-        // oauth setting
+        // oauth2 setting
         httpSecurity.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                         .userService(customOAuth2UserService)).successHandler(new CustomOauth2SuccessHandler(tokenService))
