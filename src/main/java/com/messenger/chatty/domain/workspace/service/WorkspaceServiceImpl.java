@@ -45,7 +45,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
-        //TODO 조회 권한 확인. 멤버 유저네임을 인자로 필요.
 
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
@@ -67,7 +66,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
-        //TODO 조회 권한
         //TODO workspace용 멤버 response dto return(해당 멤버의 워크스페이스 내 역할 표시)
         List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
@@ -133,8 +131,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         if (updateRequestDto.getDescription() != null) {
             workspace.changeDescription(updateRequestDto.getDescription());
         }
-        //TODO 수정권한 부여. 따라서 인자에 멤버나 유저네임 필요.
-
         Workspace saved = workspaceRepository.save(workspace);
 
         return workspace.getId();
@@ -163,7 +159,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
         String newCode = invitationCodeGenerator.generateInviteCode();
-        //TODO 해당 메서드 사용자의 권한 체크
         workspace.changeInvitationCode(newCode);
         return newCode;
     }
