@@ -102,8 +102,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void saveRefreshToken(String token,String username){
         RefreshToken refreshToken = RefreshToken.createTokenEntity(token, username);
+
         // 존재한다면 삭제
         tokenRepository.deleteByUsername(username);
+
+        // 쿼리 순서 보장
+        tokenRepository.flush();
+
         tokenRepository.save(refreshToken);
     }
 
