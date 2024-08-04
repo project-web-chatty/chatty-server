@@ -5,6 +5,8 @@ import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.presentation.ApiResponse;
 import com.messenger.chatty.domain.member.service.MemberService;
+import com.messenger.chatty.global.presentation.ErrorStatus;
+import com.messenger.chatty.global.presentation.annotation.api.ApiErrorCodeExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,20 +23,29 @@ public class MyDataController {
     private final MemberService memberService;
 
     @Operation(summary = "내 프로필 정보 가져오기")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_FOUND
+    })
     @GetMapping
     public ApiResponse<MyProfileDto> getMyProfile(@AuthenticatedUsername String username) {
         return ApiResponse.onSuccess(memberService.getMyProfileByUsername(username));
     }
 
     @Operation(summary = "내 프로필 정보 수정하기")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_FOUND
+    })
     @PutMapping
     public ApiResponse<Long> changeMyProfile(@AuthenticatedUsername String username,
-                                                       @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
+                                             @RequestBody @Valid MemberUpdateRequestDto updateRequestDto) {
         return ApiResponse.onSuccess(memberService.updateMyProfile(username, updateRequestDto));
     }
 
 
     @Operation(summary = "서비스에서 탈퇴하기")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_FOUND
+    })
     @DeleteMapping
     public ApiResponse<Boolean> deleteMe(@AuthenticatedUsername String username) {
         memberService.deleteMeByUsername(username);
@@ -42,6 +53,9 @@ public class MyDataController {
     }
 
     @Operation(summary = "내가 참여중인 워크스페이스 가져오기")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_FOUND
+    })
     @GetMapping("/workspaces")
     public ApiResponse<List<WorkspaceBriefDto>> getMyWorkspaces(@AuthenticatedUsername String username) {
         return ApiResponse.onSuccess(memberService.getMyWorkspaces(username));
