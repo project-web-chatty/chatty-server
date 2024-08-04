@@ -32,7 +32,6 @@ public class ChannelServiceImpl implements ChannelService{
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
 
-        //TODO 생성 권한 체크
         if(workspace.getChannels().stream().map(Channel::getName).toList().contains(channelName))
             throw new ChannelException(ErrorStatus.CHANNEL_NAME_ALREADY_EXISTS);
 
@@ -69,7 +68,6 @@ public class ChannelServiceImpl implements ChannelService{
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
         if(!channel.getWorkspace().getId().equals(workspaceId))     //해당 과정은 굳이 필요 없을 것 같습니다
             throw new ChannelException(ErrorStatus.CHANNEL_NOT_IN_WORKSPACE);
-        //TODO 삭제 권한
 
         channelRepository.delete(channel);
     }

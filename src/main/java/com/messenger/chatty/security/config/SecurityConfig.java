@@ -81,10 +81,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // custom filters settings
-        httpSecurity.addFilterBefore(new JWTFilter(authService), AnonymousAuthenticationFilter.class)
-        .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(),workspaceJoinRepository), JWTFilter.class);
-
-
+        httpSecurity
+                .addFilterBefore(new JWTFilter(authService), AnonymousAuthenticationFilter.class)
+                .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(), workspaceJoinRepository), JWTFilter.class);
 
         // cors setting
         httpSecurity
