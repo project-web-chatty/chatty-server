@@ -5,11 +5,14 @@ import com.messenger.chatty.domain.base.entity.BaseEntity;
 import com.messenger.chatty.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@SuperBuilder
 @Table(name = "workspace_joins")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WorkspaceJoin extends BaseEntity {
@@ -31,14 +34,14 @@ public class WorkspaceJoin extends BaseEntity {
     private String role;
 
     //relation-method
-    protected void linkMember(Member member){
+    public void linkMember(Member member){
         this.member = member;
         member.getWorkspaceJoins().add(this);
     }
 
     //relation-method
-    protected void linkWorkspace(Workspace workspace){
-        this.workspace =workspace;
+    public void linkWorkspace(Workspace workspace){
+        this.workspace = workspace;
         workspace.getWorkspaceJoins().add(this);
     }
 

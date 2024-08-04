@@ -35,7 +35,7 @@ public class Channel extends BaseEntity {
         return channel;
     }
 
-    protected void linkWorkspace(Workspace workspace){
+    public void linkWorkspace(Workspace workspace){
        this.workspace = workspace;
     }
 
