@@ -6,6 +6,7 @@ import com.messenger.chatty.global.presentation.ApiResponse;
 import com.messenger.chatty.domain.channel.service.ChannelService;
 import com.messenger.chatty.domain.member.service.MemberService;
 import com.messenger.chatty.domain.workspace.service.WorkspaceService;
+import com.messenger.chatty.global.presentation.annotation.api.ApiErrorCodeExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +25,21 @@ public class AdminController {
 
 
     @Operation(summary = "모든 멤버 리스트 가져오기")
+    @ApiErrorCodeExample
     @GetMapping("/members")
     public ApiResponse<List<MemberBriefDto>> getAllMemberList(){
         return ApiResponse.onSuccess(memberService.getAllMemberList());
     }
 
     @Operation(summary = "모든 워크스페이스 리스트 가져오기")
+    @ApiErrorCodeExample
     @GetMapping("/workspaces")
     public ApiResponse<List<WorkspaceBriefDto>> getAllWorkspaceList(){
         return ApiResponse.onSuccess(workspaceService.getAllWorkspaceList());
     }
 
     @Operation(summary = "모든 채널 가져오기")
+    @ApiErrorCodeExample
     @GetMapping("/channels")
     public ApiResponse<List<ChannelBriefDto>> getAllChannelsList(){
         return ApiResponse.onSuccess(channelService.getAllChannels());
