@@ -30,3 +30,9 @@ variables:
     EXPIRES_ACCESS_TOKEN_MINUTE: 10
     EXPIRES_REFRESH_TOKEN_MINUTE: 10080 # 7 days
     ISSUER: webChatty
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
+  use-fqn: true

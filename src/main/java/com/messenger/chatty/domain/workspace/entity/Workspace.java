@@ -51,7 +51,7 @@ public class Workspace extends BaseEntity {
 
 
     //relation-method
-    protected void addChannel(Channel channel){
+    public void addChannel(Channel channel){
         channels.add(channel);
         channel.linkWorkspace(this);
     }
