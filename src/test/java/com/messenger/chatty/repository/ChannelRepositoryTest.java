@@ -2,8 +2,8 @@ package com.messenger.chatty.repository;
 
 
 import com.messenger.chatty.config.DataCleaner;
-import com.messenger.chatty.entity.Channel;
-import org.assertj.core.api.Assertions;
+import com.messenger.chatty.domain.channel.entity.Channel;
+import com.messenger.chatty.domain.channel.repository.ChannelRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

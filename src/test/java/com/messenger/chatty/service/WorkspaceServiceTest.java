@@ -1,20 +1,21 @@
 package com.messenger.chatty.service;
 
-import com.messenger.chatty.dto.request.MemberJoinRequestDto;
-import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
-import com.messenger.chatty.dto.request.WorkspaceUpdateRequestDto;
-import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
-import com.messenger.chatty.dto.response.member.MemberBriefDto;
-import com.messenger.chatty.dto.response.workspace.WorkspaceBriefDto;
-import com.messenger.chatty.dto.response.workspace.WorkspaceResponseDto;
-import com.messenger.chatty.entity.Workspace;
-import com.messenger.chatty.entity.WorkspaceRole;
-import com.messenger.chatty.presentation.ErrorStatus;
-import com.messenger.chatty.presentation.exception.custom.WorkspaceException;
-import com.messenger.chatty.repository.MemberRepository;
-import com.messenger.chatty.repository.WorkspaceRepository;
+import com.messenger.chatty.domain.member.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.domain.member.service.MemberService;
+import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestDto;
+import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
+import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
+import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
+import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.service.WorkspaceService;
+import com.messenger.chatty.global.presentation.ErrorStatus;
+import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
+import com.messenger.chatty.domain.member.repository.MemberRepository;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
+import com.messenger.chatty.global.service.DatabaseCleanup;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.dialect.Database;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,10 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.messenger.chatty.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
+import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+
 @Slf4j
 @SpringBootTest
 class WorkspaceServiceTest {

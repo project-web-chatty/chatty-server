@@ -1,6 +1,7 @@
 package com.messenger.chatty.repository;
 import com.messenger.chatty.config.DataCleaner;
-import com.messenger.chatty.entity.Workspace;
+import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

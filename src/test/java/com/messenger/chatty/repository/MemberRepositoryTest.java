@@ -2,7 +2,8 @@ package com.messenger.chatty.repository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.messenger.chatty.config.DataCleaner;
-import com.messenger.chatty.entity.Member;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
