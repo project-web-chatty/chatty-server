@@ -1,13 +1,15 @@
 package com.messenger.chatty.service;
 
-import com.messenger.chatty.dto.request.MemberJoinRequestDto;
-import com.messenger.chatty.dto.request.MemberUpdateRequestDto;
-import com.messenger.chatty.dto.response.member.MemberBriefDto;
-import com.messenger.chatty.dto.response.member.MyProfileDto;
-import com.messenger.chatty.entity.Member;
-import com.messenger.chatty.presentation.ErrorStatus;
-import com.messenger.chatty.presentation.exception.custom.MemberException;
-import com.messenger.chatty.repository.MemberRepository;
+import com.messenger.chatty.domain.member.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
+import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.member.service.MemberService;
+import com.messenger.chatty.global.presentation.ErrorStatus;
+import com.messenger.chatty.global.presentation.exception.custom.MemberException;
+import com.messenger.chatty.domain.member.repository.MemberRepository;
+import com.messenger.chatty.global.service.DatabaseCleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +24,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest

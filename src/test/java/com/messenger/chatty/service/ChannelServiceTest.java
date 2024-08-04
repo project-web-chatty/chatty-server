@@ -1,14 +1,17 @@
 package com.messenger.chatty.service;
 
-import com.messenger.chatty.dto.request.ChannelGenerateRequestDto;
-import com.messenger.chatty.dto.request.MemberJoinRequestDto;
-import com.messenger.chatty.dto.request.WorkspaceGenerateRequestDto;
-import com.messenger.chatty.dto.response.channel.ChannelBriefDto;
-import com.messenger.chatty.dto.response.member.MemberBriefDto;
-import com.messenger.chatty.entity.Channel;
-import com.messenger.chatty.repository.ChannelRepository;
+import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
+import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.domain.member.dto.request.MemberJoinRequestDto;
+import com.messenger.chatty.domain.member.service.MemberService;
+import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateRequestDto;
+import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
+import com.messenger.chatty.domain.channel.entity.Channel;
+import com.messenger.chatty.domain.channel.repository.ChannelRepository;
+import com.messenger.chatty.domain.workspace.service.WorkspaceService;
+import com.messenger.chatty.global.service.DatabaseCleanup;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+
 @Slf4j
 @SpringBootTest
 class ChannelServiceTest {

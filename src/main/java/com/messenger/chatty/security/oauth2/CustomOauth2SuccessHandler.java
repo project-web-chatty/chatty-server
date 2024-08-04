@@ -1,7 +1,7 @@
 package com.messenger.chatty.security.oauth2;
-import com.messenger.chatty.dto.response.auth.TokenResponseDto;
-import com.messenger.chatty.security.CustomUserDetails;
-import com.messenger.chatty.service.AuthService;
+import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
+import com.messenger.chatty.security.dto.CustomUserDetails;
+import com.messenger.chatty.security.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

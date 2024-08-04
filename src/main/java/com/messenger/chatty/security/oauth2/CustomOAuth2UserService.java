@@ -1,11 +1,13 @@
 package com.messenger.chatty.security.oauth2;
 
 
-import com.messenger.chatty.entity.Member;
-import com.messenger.chatty.repository.MemberRepository;
-import com.messenger.chatty.security.CustomUserDetails;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.member.repository.MemberRepository;
+import com.messenger.chatty.security.dto.CustomUserDetails;
+import com.messenger.chatty.security.oauth2.dto.GithubResponse;
+import com.messenger.chatty.security.oauth2.dto.GoogleResponse;
+import com.messenger.chatty.security.oauth2.dto.Oauth2Response;
 import lombok.RequiredArgsConstructor;
-import org.bson.codecs.BsonUndefinedCodec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
