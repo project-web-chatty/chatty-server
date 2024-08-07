@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
 import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WORKSPACE_OWNER;
@@ -47,7 +48,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
         List<Channel> channels = channelRepository.findByWorkspace(workspace);
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
+        List<Member> members = workspaceJoinRepository.findMembersByWorkspaceId(workspace.getId());
 
         return  CustomConverter.convertWorkspaceToDto(workspace,channels,members);
 
@@ -66,8 +67,16 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+
         //TODO workspace용 멤버 response dto return(해당 멤버의 워크스페이스 내 역할 표시)
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
+        List<Member> members = workspaceJoinRepository.findMembersByWorkspaceId(workspace.getId());
+        members.forEach(member -> {
+            WorkspaceJoin workspaceJoin = workspaceJoinRepository.
+                    findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
+                    .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+            member.changeRole(workspaceJoin.getRole());
+        });
+
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
     }
@@ -180,7 +189,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
 
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
     }
 
 
