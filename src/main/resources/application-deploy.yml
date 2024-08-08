@@ -31,6 +31,11 @@ spring:
             redirect-uri: ${DEPLOY_GITHUB_REDIRECT_URI}
 
 variables:
+  cloud:
+    s3:
+      bucketName: ${DEPLOY_S3_BUCKET_NAME}
+      accessKey: ${DEPLOY_S3_ACCESS_KEY}
+      secretKey: ${DEPLOY_S3_SECRET_KEY}
   jwt:
     KEY: ${DEPLOY_JWT_SECRET_KEY}
   invitation:
