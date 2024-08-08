@@ -38,6 +38,11 @@ jobs:
           variables.password.KEY: ${{secrets.DEPLOY_PASSWORD_SECRET_KEY}}
           variables.invitation.KEY: ${{secrets.DEPLOY_INVITATION_SECRET_KEY}}
 
+          variables.cloud.s3.bucketName: ${{secrets.DEPLOY_S3_BUCKET_NAME}}
+          variables.cloud.s3.accessKey: ${{secrets.DEPLOY_S3_ACCESS_KEY}}
+          variables.cloud.s3.secretKey: ${{secrets.DEPLOY_S3_SECRET_KEY}}
+
+
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

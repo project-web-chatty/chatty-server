@@ -76,9 +76,7 @@ class ChannelServiceTest {
     @DisplayName("워크스페이스 내 채널을 추가 생성합니다. 이때 생성 권한이 필요하며 중복된 이름은 사용할 수 없습니다.")
     void createChannelInWorkspace() {
         //given
-        ChannelGenerateRequestDto channel = ChannelGenerateRequestDto.builder()
-                .name("channel")
-                .build();
+        ChannelGenerateRequestDto channel = new ChannelGenerateRequestDto("channel");
         //when
         Long channelId = channelService.createChannelToWorkspace(workspaceId, channel);
         //then
@@ -90,9 +88,7 @@ class ChannelServiceTest {
     @DisplayName("특정 채널을 삭제합니다. 이때 삭제 권한이 필요합니다.")
     void deleteChannel() {
         //given
-        ChannelGenerateRequestDto channel = ChannelGenerateRequestDto.builder()
-                .name("channel")
-                .build();
+        ChannelGenerateRequestDto channel = new ChannelGenerateRequestDto("channel");
         Long channelId = channelService.createChannelToWorkspace(workspaceId, channel);
         //when
         channelService.deleteChannelInWorkspace(workspaceId, channelId);

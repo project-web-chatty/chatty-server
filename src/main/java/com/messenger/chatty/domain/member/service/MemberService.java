@@ -6,6 +6,7 @@ import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,5 +27,9 @@ public interface MemberService {
     List<WorkspaceBriefDto> getMyWorkspaces(String username);
 
     void checkDuplicatedUsername(String username);
+
+    String uploadMyProfileImage(String username, MultipartFile file);
+
+    void deleteMyProfileImage(String username);
 
 }

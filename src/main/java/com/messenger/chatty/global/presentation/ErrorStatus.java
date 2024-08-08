@@ -47,8 +47,16 @@ public enum ErrorStatus {
     MEMBER_NOT_FOUND(BAD_REQUEST,4080,"해당 멤버는 존재하지 않습니다."),
     MEMBER_USERNAME_ALREADY_EXISTS(BAD_REQUEST,4081,"해당 USERNAME은 이미 존재합니다."),
     MEMBER_ALREADY_EXISTS_IN_WORKSPACE(BAD_REQUEST,4082,"해당 멤버는 워크스페이스에 이미 존재합니다."),
-    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 존재하지 않습니다.");
+    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 존재하지 않습니다."),
 
+
+    // image upload error
+    EMPTY_FILE_EXCEPTION(BAD_REQUEST,4090,"빈 파일 형식입니다."),
+    NO_FILE_EXTENSION(BAD_REQUEST,4091,"확장자를 포함하고 있지 않습니다."),
+    INVALID_FILE_EXTENSION(BAD_REQUEST,4092,"유효한 이미지 확장자가 아닙니다."),
+    INVALID_FILE_URI(BAD_REQUEST,4093,"유효하지 않은 이미지 주소 입니다."),
+    IO_EXCEPTION_ON_IMAGE_UPLOAD(INTERNAL_SERVER_ERROR,5090,"이미지 업로드 중 에러가 발생하였습니다."),
+    IO_EXCEPTION_ON_IMAGE_DELETE(INTERNAL_SERVER_ERROR,5091,"이미지 삭제 중 에러가 발생하였습니다.");
 
 
     private final HttpStatus httpStatus;

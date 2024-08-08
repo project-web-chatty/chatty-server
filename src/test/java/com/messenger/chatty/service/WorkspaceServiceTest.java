@@ -7,7 +7,6 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestD
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
 import com.messenger.chatty.domain.workspace.service.WorkspaceService;
 import com.messenger.chatty.global.presentation.ErrorStatus;
@@ -103,9 +102,7 @@ class WorkspaceServiceTest {
                 .name("name")
                 .build();
         Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
-        WorkspaceUpdateRequestDto request = WorkspaceUpdateRequestDto.builder()
-                .description("updatedDescription")
-                .build();
+        WorkspaceUpdateRequestDto request = new WorkspaceUpdateRequestDto("updatedDescription");
         //when
         Long updatedWorkspaceId = workspaceService.updateWorkspaceProfile(workspaceId, request);
         //then
@@ -169,7 +166,7 @@ class WorkspaceServiceTest {
                 .build();
         Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
         //when
-        WorkspaceResponseDto workspaceProfile = workspaceService.getWorkspaceProfile(workspaceId);
+        WorkspaceBriefDto workspaceProfile = workspaceService.getWorkspaceProfile(workspaceId);
         //then
         assertThat(workspaceProfile).extracting("id", "name", "description")
                 .containsExactly(

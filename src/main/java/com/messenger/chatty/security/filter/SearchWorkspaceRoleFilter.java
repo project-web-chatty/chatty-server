@@ -79,6 +79,7 @@ public class SearchWorkspaceRoleFilter extends OncePerRequestFilter {
 
         WorkspaceJoin workspaceJoin = workspaceJoinOptional.get();
         String workspaceRole = workspaceJoin.getRole();
+
         // immutable 객체 authorities 를 새로 생성
         List<GrantedAuthority> newAuthorities = new ArrayList<>();
         newAuthorities.add(new SimpleGrantedAuthority(serviceRole));

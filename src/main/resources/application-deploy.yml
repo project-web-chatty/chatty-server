@@ -6,7 +6,7 @@ spring:
     password: ${DEPLOY_MYSQL_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create-drop # according to our rds environment
+      ddl-auto: validate # according to our rds environment
   data:
     mongodb:
       uri: ${DEPLOY_MONGODB_URL}
@@ -31,6 +31,11 @@ spring:
             redirect-uri: ${DEPLOY_GITHUB_REDIRECT_URI}
 
 variables:
+  cloud:
+    s3:
+      bucketName: ${DEPLOY_S3_BUCKET_NAME}
+      accessKey: ${DEPLOY_S3_ACCESS_KEY}
+      secretKey: ${DEPLOY_S3_SECRET_KEY}
   jwt:
     KEY: ${DEPLOY_JWT_SECRET_KEY}
   invitation:
