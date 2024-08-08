@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @Operation(summary = "로그인",description = "리프레시 토큰과 엑세스토큰이 body에 담겨 응답됩니다.")
+    @Operation(summary = "로그인",description = "리프레시 토큰과 엑세스토큰이 body에 담겨 응답됩니다. 리프레시 토큰의 주기는 7일, 엑세스 토큰의 주기는 10분입니다.")
     @ApiErrorCodeExample({
             ErrorStatus.AUTH_FAIL_LOGIN
     })
@@ -42,7 +42,7 @@ public class AuthController {
         return ApiResponse.onSuccess(true);
     }
 
-    @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요. body에 토큰이 담겨 응답됩니다.")
+    @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요. body에 리프레시&엑세스 토큰이 담겨 응답됩니다.")
     @ApiErrorCodeExample({
             ErrorStatus.AUTH_INVALID_TOKEN,
             ErrorStatus.AUTH_OUTDATED_REFRESH_TOKEN

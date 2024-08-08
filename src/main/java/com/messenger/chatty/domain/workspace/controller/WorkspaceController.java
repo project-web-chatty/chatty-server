@@ -48,7 +48,7 @@ public class WorkspaceController {
         return ApiResponse.onSuccess(workspaceService.getWorkspaceProfile(workspaceId));
     }
 
-    @Operation(summary = "워크스페이스 프로필 정보 수정하기")
+    @Operation(summary = "워크스페이스 프로필 정보 수정하기",description = "워크스페이스 오너 이상의 역할만 가능합니다")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
@@ -76,7 +76,8 @@ public class WorkspaceController {
         return ApiResponse.onSuccess(workspaceService.getMembersOfWorkspace(workspaceId));
     }
 
-    @Operation(summary = "해당 워크스페이스 내에서의 특정 멤버 데이터를 가져오기(기존 멤버 데이터 get 요청과는 role 필드만 달라집니다.)")
+    @Operation(summary = "해당 워크스페이스 내에서의 특정 멤버 데이터를 가져오기",description = "이 요청의 응답에서는 role field가 워크스페이스 내 역할 값을 가집니다." +
+            "워크스페이스 내 역할은 일반 멤버(ROLE_WORKSPACE_MEMBER이거나 워크스페이스의 오너(ROLE_WORKSPACE_OWNER)입니다. 오너는 워크스페이스 정보 수정, 채널 추가, 삭제 등의 권한을 가집니다.")
     @ApiErrorCodeExample({
             ErrorStatus.MEMBER_NOT_FOUND,
             ErrorStatus.MEMBER_NOT_IN_WORKSPACE
@@ -87,7 +88,7 @@ public class WorkspaceController {
         return ApiResponse.onSuccess(workspaceService.getMemberProfileOfWorkspace(workspaceId, memberId));
     }
 
-    @Operation(summary = "워크스페이스에 채널 추가하기")
+    @Operation(summary = "워크스페이스에 채널 추가하기",description = "워크스페이스 오너 이상의 역할만 가능합니다")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_NOT_FOUND,
             ErrorStatus.CHANNEL_NAME_ALREADY_EXISTS
@@ -108,7 +109,7 @@ public class WorkspaceController {
         return ApiResponse.onSuccess(workspaceService.getInvitationCode(workspaceId));
     }
 
-    @Operation(summary = "해당 워크스페이스의 초대링크 갱신하기", description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다")
+    @Operation(summary = "해당 워크스페이스의 초대링크 갱신하기", description = "워크 스페이스의 초대링크를 새로 갱신할때 사용합니다. 워크스페이스 오너 이상의 역할만 가능합니다.")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
@@ -118,7 +119,7 @@ public class WorkspaceController {
     }
 
 
-    @Operation(summary = "특정 채널 삭제하기")
+    @Operation(summary = "특정 채널 삭제하기",description = "워크스페이스 오너 이상의 역할만 가능합니다.")
     @ApiErrorCodeExample({
             ErrorStatus.CHANNEL_NOT_FOUND,
             ErrorStatus.CHANNEL_NOT_IN_WORKSPACE
@@ -131,7 +132,7 @@ public class WorkspaceController {
     }
 
 
-    @Operation(summary = "워크스페이스 내 특정 멤버의 ROLE을 바꾸기")
+    @Operation(summary = "워크스페이스 내 특정 멤버의 ROLE을 바꾸기",description = "워크스페이스 오너 이상의 역할만 가능합니다")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_INVALID_ROLE_CHANGE_REQUEST,
             ErrorStatus.MEMBER_NOT_IN_WORKSPACE
@@ -163,7 +164,7 @@ public class WorkspaceController {
     }
 
 
-    @Operation(summary = "특정 워크스페이스 삭제하기")
+    @Operation(summary = "특정 워크스페이스 삭제하기",description = "워크스페이스 오너 이상의 역할만 가능합니다.")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
