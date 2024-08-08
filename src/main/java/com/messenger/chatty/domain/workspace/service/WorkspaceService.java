@@ -5,7 +5,6 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestD
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public interface WorkspaceService {
     Long generateWorkspace(
             WorkspaceGenerateRequestDto workspaceGenerateRequestDto,
             String creator);
-    WorkspaceResponseDto getWorkspaceProfile(Long workspaceId);
+    WorkspaceBriefDto getWorkspaceProfile(Long workspaceId);
 
     Long updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto requestDto);
 

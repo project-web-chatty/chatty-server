@@ -4,7 +4,6 @@ import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
@@ -63,7 +62,7 @@ public class CustomConverter {
                 .lastModifiedDate(workspace.getLastModifiedDate()).build();
     }
 
-    public static WorkspaceResponseDto convertWorkspaceToDto(Workspace workspace, List<Channel> channelList, List<Member> memberList ) {
+    /*public static WorkspaceResponseDto convertWorkspaceToDto(Workspace workspace, List<Channel> channelList, List<Member> memberList ) {
 
         List<ChannelBriefDto> channelBriefList = channelList.stream().map(CustomConverter::convertChannelToBriefDto).toList();
         List<MemberBriefDto> memberBriefLst = memberList.stream().map(CustomConverter::convertMemberToBriefDto).toList();
@@ -79,7 +78,7 @@ public class CustomConverter {
                 .members(memberBriefLst)
                 .build();
     }
-
+*/
 
 
 

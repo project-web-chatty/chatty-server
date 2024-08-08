@@ -1,11 +1,11 @@
 package com.messenger.chatty.domain.workspace.controller;
+import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.global.presentation.ApiResponse;
 import com.messenger.chatty.domain.channel.service.ChannelService;
 import com.messenger.chatty.domain.workspace.service.WorkspaceService;
@@ -44,7 +44,7 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}")
-    public ApiResponse<WorkspaceResponseDto> getWorkspaceProfile(@PathVariable Long workspaceId) {
+    public ApiResponse<WorkspaceBriefDto> getWorkspaceProfile(@PathVariable Long workspaceId) {
         return ApiResponse.onSuccess(workspaceService.getWorkspaceProfile(workspaceId));
     }
 

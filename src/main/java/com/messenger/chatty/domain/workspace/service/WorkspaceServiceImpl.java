@@ -10,7 +10,6 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestD
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
@@ -43,14 +42,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
+    public WorkspaceBriefDto getWorkspaceProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
-        List<Channel> channels = channelRepository.findByWorkspace(workspace);
-        List<Member> members = workspaceJoinRepository.findMembersByWorkspaceId(workspace.getId());
-
-        return  CustomConverter.convertWorkspaceToDto(workspace,channels,members);
+        return  CustomConverter.convertWorkspaceToBriefDto(workspace);
 
     }
 
