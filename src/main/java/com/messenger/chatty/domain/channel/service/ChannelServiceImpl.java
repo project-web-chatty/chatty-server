@@ -26,9 +26,6 @@ public class ChannelServiceImpl implements ChannelService{
     @Override
     public Long createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
 
-        System.out.println("workspaceId = " + workspaceId);
-        System.out.println("requestDto = " + requestDto.getName());
-
         String channelName = requestDto.getName();
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
