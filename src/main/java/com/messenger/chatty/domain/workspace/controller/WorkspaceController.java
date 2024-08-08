@@ -161,4 +161,15 @@ public class WorkspaceController {
         workspaceService.enterToWorkspace(username, code);
         return ApiResponse.onSuccess(true);
     }
+
+
+    @Operation(summary = "특정 워크스페이스 삭제하기")
+    @ApiErrorCodeExample({
+            ErrorStatus.WORKSPACE_NOT_FOUND
+    })
+    @DeleteMapping("/{workspaceId}")
+    public ApiResponse<Boolean> deleteChannelToWorkspace(@PathVariable Long workspaceId) {
+        workspaceService.deleteWorkspace(workspaceId);
+        return ApiResponse.onSuccess(true);
+    }
 }
