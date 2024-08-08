@@ -76,6 +76,22 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.
+                findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
+                .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+        member.changeRole(workspaceJoin.getRole());
+
+        return CustomConverter.convertMemberToBriefDto(member);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId) {

@@ -76,6 +76,17 @@ public class WorkspaceController {
         return ApiResponse.onSuccess(workspaceService.getMembersOfWorkspace(workspaceId));
     }
 
+    @Operation(summary = "해당 워크스페이스 내에서의 특정 멤버 데이터를 가져오기(기존 멤버 데이터 get 요청과는 role 필드만 달라집니다.)")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_FOUND,
+            ErrorStatus.MEMBER_NOT_IN_WORKSPACE
+    })
+    @GetMapping("/{workspaceId}/members/{memberId}")
+    public ApiResponse<MemberBriefDto> getMemberProfileOfWorkspace(@PathVariable Long workspaceId,
+                                                                   @PathVariable Long memberId){
+        return ApiResponse.onSuccess(workspaceService.getMemberProfileOfWorkspace(workspaceId, memberId));
+    }
+
     @Operation(summary = "워크스페이스에 채널 추가하기")
     @ApiErrorCodeExample({
             ErrorStatus.WORKSPACE_NOT_FOUND,

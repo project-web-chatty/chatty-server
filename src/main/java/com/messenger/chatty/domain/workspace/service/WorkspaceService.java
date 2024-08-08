@@ -24,6 +24,8 @@ public interface WorkspaceService {
 
     List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId);
 
+    MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId);
+
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
 
