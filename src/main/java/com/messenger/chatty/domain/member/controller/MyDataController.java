@@ -66,7 +66,7 @@ public class MyDataController {
     }
 
 
-    @Operation(summary = "내 프로필 이미지 삭제하기",description = "등록된 이미지가 존재하는 경우 삭제합니다.")
+    @Operation(summary = "내 프로필 이미지 삭제하기",description = "내 프로필 이미지가 존재하는 경우 삭제합니다.")
     @ApiErrorCodeExample({
             MEMBER_NOT_FOUND,
             INVALID_FILE_URI,

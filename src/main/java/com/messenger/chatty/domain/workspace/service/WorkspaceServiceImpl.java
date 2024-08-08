@@ -15,11 +15,14 @@ import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
+import com.messenger.chatty.global.service.S3Service;
 import com.messenger.chatty.global.util.InvitationCodeGenerator;
 import com.messenger.chatty.global.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,7 @@ import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WO
 @RequiredArgsConstructor
 public class WorkspaceServiceImpl implements WorkspaceService{
 
+    private final S3Service s3Service;
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
@@ -215,4 +219,25 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         //존재할 것 같습니다.
     }
 
+    @Override
+    public String uploadProfileImage(Long workspaceId, MultipartFile file) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        String oldProfileImgURI = workspace.getProfile_img();
+        if(oldProfileImgURI != null) s3Service.deleteImage(oldProfileImgURI);
+
+        String newProfileImgURI = s3Service.uploadImage(file);
+        workspace.changeProfile_img(newProfileImgURI);
+        return newProfileImgURI;
+    }
+
+    @Override
+    public void deleteProfileImage(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        String profileImgURI = workspace.getProfile_img();
+        if(profileImgURI ==null) return;
+        s3Service.deleteImage(profileImgURI);
+        workspace.changeProfile_img(null);
+    }
 }

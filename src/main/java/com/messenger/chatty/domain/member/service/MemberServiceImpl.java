@@ -120,7 +120,7 @@ public class MemberServiceImpl implements MemberService{
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         String oldProfileImgURI = me.getProfile_img();
-        if(!(oldProfileImgURI ==null)) s3Service.deleteImage(oldProfileImgURI);
+        if(oldProfileImgURI !=null) s3Service.deleteImage(oldProfileImgURI);
 
         String newProfileImgURI = s3Service.uploadImage(file);
         me.changeProfileImg(newProfileImgURI);
@@ -132,7 +132,8 @@ public class MemberServiceImpl implements MemberService{
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
         String profileImgURI = me.getProfile_img();
-        if((profileImgURI ==null)) return;
+        if(profileImgURI ==null) return;
         s3Service.deleteImage(profileImgURI);
+        me.changeProfileImg(null);
     }
 }

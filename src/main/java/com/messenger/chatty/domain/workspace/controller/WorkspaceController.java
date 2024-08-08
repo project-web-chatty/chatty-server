@@ -16,7 +16,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+
+import static com.messenger.chatty.global.presentation.ErrorStatus.*;
+import static com.messenger.chatty.global.presentation.ErrorStatus.IO_EXCEPTION_ON_IMAGE_DELETE;
 
 @Tag(name = "WORKSPACE API", description = "워크스페이스와 관련된 핵심적인 API 들입니다.")
 @RequestMapping("/api/workspace")
@@ -171,6 +176,38 @@ public class WorkspaceController {
     @DeleteMapping("/{workspaceId}")
     public ApiResponse<Boolean> deleteChannelToWorkspace(@PathVariable Long workspaceId) {
         workspaceService.deleteWorkspace(workspaceId);
+        return ApiResponse.onSuccess(true);
+    }
+
+
+
+    @Operation(summary = "워크스페이스 프로필 이미지 업로드하기(수정 포함)")
+    @ApiErrorCodeExample({
+            WORKSPACE_NOT_FOUND,
+            EMPTY_FILE_EXCEPTION,
+            NO_FILE_EXTENSION,
+            INVALID_FILE_EXTENSION,
+            INVALID_FILE_URI,
+            IO_EXCEPTION_ON_IMAGE_UPLOAD,
+            IO_EXCEPTION_ON_IMAGE_DELETE
+    })
+    @PostMapping("/{workspaceId}/profile-image")
+    public ApiResponse<String> uploadWorkspaceProfileImg(@PathVariable Long workspaceId,
+                                                         @RequestParam("file") MultipartFile file) {
+        String profileImageURI = workspaceService.uploadProfileImage(workspaceId, file);
+        return ApiResponse.onSuccess(profileImageURI);
+    }
+
+
+    @Operation(summary = "워크스페이스 프로필 이미지 삭제하기",description = "워크스페이스의 프로필 이미지가 존재하는 경우 삭제합니다.")
+    @ApiErrorCodeExample({
+            WORKSPACE_NOT_FOUND,
+            INVALID_FILE_URI,
+            IO_EXCEPTION_ON_IMAGE_DELETE
+    })
+    @DeleteMapping("/{workspaceId}/profile-image")
+    public ApiResponse<Boolean> deleteWorkspaceProfileImg(@PathVariable Long workspaceId){
+        workspaceService.deleteProfileImage(workspaceId);
         return ApiResponse.onSuccess(true);
     }
 }
