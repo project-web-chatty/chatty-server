@@ -28,7 +28,7 @@ public class MemberController {
         return ApiResponse.onSuccess(memberService.signup(memberJoinRequestDTO));
     }
 
-    @Operation(summary = "멤버(타인) 프로필 정보 가져오기")
+    @Operation(summary = "멤버(타인) 프로필 정보 가져오기",description = "이 응답의 role field 는 ROLE_USER 이거나 ROLE_ADMIN입니다. 이 역할은 웹서비스에서의 일반 유저/어드민 여부를 알려주는 것이며, 워크스페이스 내에서의 역할이 아닙니다.")
     @ApiErrorCodeExample({
             ErrorStatus.MEMBER_NOT_FOUND
     })
