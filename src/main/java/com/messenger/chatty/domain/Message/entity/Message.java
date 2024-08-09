@@ -1,5 +1,6 @@
 package com.messenger.chatty.domain.Message.entity;
 
+import com.messenger.chatty.domain.Message.dto.MessageDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -19,10 +20,20 @@ public class Message {
     @NotNull
     private Long channelId;
 
-
     @NotBlank
     private String content;
 
     @NotBlank
     private String senderNickname;
+    @NotBlank
+    private String senderUsername;
+
+    public static Message of(MessageDto messageDto) {
+        return Message.builder()
+                .channelId(messageDto.getChannelId())
+                .content(messageDto.getContent())
+                .senderNickname(messageDto.getSenderNickname())
+                .senderUsername(messageDto.getSenderUsername())
+                .build();
+    }
 }
