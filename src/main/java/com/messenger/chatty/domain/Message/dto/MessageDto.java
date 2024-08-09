@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,6 @@ public class MessageDto {
     private String senderNickname;
     private String senderUsername;
     private String content;
+    private LocalDateTime regDate;
+
 }
