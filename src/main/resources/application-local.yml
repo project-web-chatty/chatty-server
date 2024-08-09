@@ -44,3 +44,7 @@ variables:
   password:
     KEY: ${LOCAL_PASSWORD_SECRET_KEY}
 
+mongodb:
+  client: mongodb://username:password@localhost:27017/chat?authSource=chat
+  name: chat
+
