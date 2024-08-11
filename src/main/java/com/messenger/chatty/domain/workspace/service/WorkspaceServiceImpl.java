@@ -168,6 +168,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public void deleteWorkspace(Long workspaceId){
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        this.deleteProfileImage(workspaceId);
         //TODO remove relations
         workspaceRepository.delete(workspace);
     }

@@ -89,6 +89,7 @@ public class MemberServiceImpl implements MemberService{
     public void deleteMeByUsername(String username){
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        this.deleteMyProfileImage(username);
         memberRepository.deleteByUsername(username);
     }
 
