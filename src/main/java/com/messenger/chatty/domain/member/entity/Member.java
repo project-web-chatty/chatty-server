@@ -94,9 +94,9 @@ public class Member extends BaseEntity {
     public void changeRole(String role){this.role = role;}
 
     public void updateProfile(MemberUpdateRequestDto memberUpdateRequestDto) {
-        this.name = memberUpdateRequestDto.getName();
-        this.nickname = memberUpdateRequestDto.getNickname();
-        this.introduction = memberUpdateRequestDto.getIntroduction();
+        if(memberUpdateRequestDto.getName()!=null) this.name = memberUpdateRequestDto.getName();
+        if(memberUpdateRequestDto.getNickname()!=null) this.nickname = memberUpdateRequestDto.getNickname();
+        if(memberUpdateRequestDto.getIntroduction()!=null) this.introduction = memberUpdateRequestDto.getIntroduction();
     }
 
 }
