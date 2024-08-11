@@ -142,6 +142,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(announce);
         channelRepository.save(talk);
 
+        // 이미지를 업로드
+        this.uploadProfileImage(workspace.getId(), generateRequestDto.getFile());
 
         return workspace.getId();
     }
