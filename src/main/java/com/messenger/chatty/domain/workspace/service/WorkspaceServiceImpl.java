@@ -10,18 +10,21 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestD
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
+import com.messenger.chatty.global.service.S3Service;
 import com.messenger.chatty.global.util.InvitationCodeGenerator;
 import com.messenger.chatty.global.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+import java.util.Optional;
 
 import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WORKSPACE_MEMBER;
 import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WORKSPACE_OWNER;
@@ -32,6 +35,7 @@ import static com.messenger.chatty.domain.workspace.entity.WorkspaceRole.ROLE_WO
 @RequiredArgsConstructor
 public class WorkspaceServiceImpl implements WorkspaceService{
 
+    private final S3Service s3Service;
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
@@ -42,14 +46,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public WorkspaceResponseDto getWorkspaceProfile(Long workspaceId) {
+    public WorkspaceBriefDto getWorkspaceProfile(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
-        List<Channel> channels = channelRepository.findByWorkspace(workspace);
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
-
-        return  CustomConverter.convertWorkspaceToDto(workspace,channels,members);
+        return  CustomConverter.convertWorkspaceToBriefDto(workspace);
 
     }
 
@@ -66,11 +67,35 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+
         //TODO workspace용 멤버 response dto return(해당 멤버의 워크스페이스 내 역할 표시)
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
+        List<Member> members = workspaceJoinRepository.findMembersByWorkspaceId(workspace.getId());
+        members.forEach(member -> {
+            WorkspaceJoin workspaceJoin = workspaceJoinRepository.
+                    findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
+                    .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+            member.changeRole(workspaceJoin.getRole());
+        });
+
         return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.
+                findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
+                .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+        member.changeRole(workspaceJoin.getRole());
+
+        return CustomConverter.convertMemberToBriefDto(member);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId) {
@@ -180,7 +205,6 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         // 해당 멤버를 워크스페이스에 참여
         member.enterIntoWorkspace(workspace,"ROLE_WORKSPACE_MEMBER");
 
-        List<Member> members = memberRepository.findMembersByWorkspaceId(workspace.getId());
     }
 
 
@@ -195,4 +219,25 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         //존재할 것 같습니다.
     }
 
+    @Override
+    public String uploadProfileImage(Long workspaceId, MultipartFile file) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        String oldProfileImgURI = workspace.getProfile_img();
+        if(oldProfileImgURI != null) s3Service.deleteImage(oldProfileImgURI);
+
+        String newProfileImgURI = s3Service.uploadImage(file);
+        workspace.changeProfile_img(newProfileImgURI);
+        return newProfileImgURI;
+    }
+
+    @Override
+    public void deleteProfileImage(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        String profileImgURI = workspace.getProfile_img();
+        if(profileImgURI ==null) return;
+        s3Service.deleteImage(profileImgURI);
+        workspace.changeProfile_img(null);
+    }
 }

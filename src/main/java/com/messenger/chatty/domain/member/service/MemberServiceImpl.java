@@ -13,11 +13,13 @@ import com.messenger.chatty.global.presentation.exception.custom.MemberException
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
+import com.messenger.chatty.global.service.S3Service;
 import com.messenger.chatty.global.util.CustomConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class MemberServiceImpl implements MemberService{
     private final WorkspaceRepository workspaceRepository;
     private final ChannelRepository channelRepository;
     private final PasswordEncoder bcrptPasswordEncoder;
+    private final S3Service s3Service;
 
     @Override
     public Long signup(MemberJoinRequestDto memberJoinRequestDTO){
@@ -110,5 +113,27 @@ public class MemberServiceImpl implements MemberService{
     public void checkDuplicatedUsername(String username) {
         if(memberRepository.existsByUsername(username))
             throw new MemberException(ErrorStatus.MEMBER_USERNAME_ALREADY_EXISTS);
+    }
+
+    @Override
+    public String uploadMyProfileImage(String username, MultipartFile file) {
+        Member me = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        String oldProfileImgURI = me.getProfile_img();
+        if(oldProfileImgURI !=null) s3Service.deleteImage(oldProfileImgURI);
+
+        String newProfileImgURI = s3Service.uploadImage(file);
+        me.changeProfileImg(newProfileImgURI);
+        return newProfileImgURI;
+    }
+
+    @Override
+    public void deleteMyProfileImage(String username) {
+        Member me = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        String profileImgURI = me.getProfile_img();
+        if(profileImgURI ==null) return;
+        s3Service.deleteImage(profileImgURI);
+        me.changeProfileImg(null);
     }
 }

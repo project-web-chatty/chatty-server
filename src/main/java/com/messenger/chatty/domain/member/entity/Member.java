@@ -91,6 +91,7 @@ public class Member extends BaseEntity {
     public void changeIntroduction(String introduction){
         this.introduction = introduction;
     }
+    public void changeRole(String role){this.role = role;}
 
     public void updateProfile(MemberUpdateRequestDto memberUpdateRequestDto) {
         this.name = memberUpdateRequestDto.getName();

@@ -5,7 +5,7 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestD
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface WorkspaceService {
     Long generateWorkspace(
             WorkspaceGenerateRequestDto workspaceGenerateRequestDto,
             String creator);
-    WorkspaceResponseDto getWorkspaceProfile(Long workspaceId);
+    WorkspaceBriefDto getWorkspaceProfile(Long workspaceId);
 
     Long updateWorkspaceProfile(Long workspaceId, WorkspaceUpdateRequestDto requestDto);
 
@@ -24,6 +24,8 @@ public interface WorkspaceService {
     WorkspaceBriefDto  getWorkspaceBriefProfile(Long workspaceId);
 
     List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId);
+
+    MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId);
 
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
@@ -35,4 +37,6 @@ public interface WorkspaceService {
 
     void changeRoleOfMember(Long workspaceId,Long memberId,String role);
 
+    String uploadProfileImage(Long workspaceId, MultipartFile file);
+    void deleteProfileImage(Long workspaceId);
 }
