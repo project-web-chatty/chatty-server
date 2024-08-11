@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.domain.member.dto.request.LoginRequestDto;
+import com.messenger.chatty.domain.member.dto.request.PasswordUpdateRequestDto;
 import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.refresh.entity.RefreshToken;
@@ -172,6 +173,17 @@ public class AuthServiceImpl implements AuthService {
                 .sign(Algorithm.HMAC256(jwtKey.getBytes()));
     }
 
+    @Override
+    public void changePassword(String username, PasswordUpdateRequestDto requestDto) {
 
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthException(ErrorStatus.AUTH_FAIL_LOGIN));
 
+        String password = member.getPassword();
+        if(!bCryptPasswordEncoder.matches(requestDto.getOldPassword(),password))
+            throw new AuthException(ErrorStatus.AUTH_FAIL_PASSWORD_MATCHING);
+
+        member.changePassword(requestDto.getNewPassword());
+        tokenRepository.deleteByUsername(username);
+    }
 }

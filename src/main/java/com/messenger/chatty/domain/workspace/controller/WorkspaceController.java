@@ -191,7 +191,7 @@ public class WorkspaceController {
             IO_EXCEPTION_ON_IMAGE_UPLOAD,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @PostMapping("/{workspaceId}/profile-image")
+    @PostMapping("/{workspaceId}/profileImage")
     public ApiResponse<String> uploadWorkspaceProfileImg(@PathVariable Long workspaceId,
                                                          @RequestParam("file") MultipartFile file) {
         String profileImageURI = workspaceService.uploadProfileImage(workspaceId, file);
@@ -205,7 +205,7 @@ public class WorkspaceController {
             INVALID_FILE_URI,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @DeleteMapping("/{workspaceId}/profile-image")
+    @DeleteMapping("/{workspaceId}/profileImage")
     public ApiResponse<Boolean> deleteWorkspaceProfileImg(@PathVariable Long workspaceId){
         workspaceService.deleteProfileImage(workspaceId);
         return ApiResponse.onSuccess(true);

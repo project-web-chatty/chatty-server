@@ -58,7 +58,7 @@ public class MyDataController {
             IO_EXCEPTION_ON_IMAGE_UPLOAD,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @PostMapping("/profile-image")
+    @PostMapping("/profileImage")
     public ApiResponse<String> uploadMyProfileImg(@AuthenticatedUsername String username,
                                                   @RequestParam("file") MultipartFile file) {
         String profileImageURI = memberService.uploadMyProfileImage(username, file);
@@ -72,7 +72,7 @@ public class MyDataController {
             INVALID_FILE_URI,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @DeleteMapping("/profile-image")
+    @DeleteMapping("/profileImage")
     public ApiResponse<Boolean> deleteMyProfileImg(@AuthenticatedUsername String username){
         memberService.deleteMyProfileImage(username);
         return ApiResponse.onSuccess(true);
