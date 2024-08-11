@@ -20,7 +20,7 @@ public class CustomConverter {
                 .email(member.getEmail())
                 .name(member.getName())
                 .role(member.getRole())
-                .profile_img(member.getProfile_img())
+                .profileImg(member.getProfile_img())
                 .nickname(member.getNickname())
                 .introduction(member.getIntroduction())
                 .createdDate(member.getCreatedDate())
@@ -35,7 +35,7 @@ public class CustomConverter {
                 .email(member.getEmail())
                 .name(member.getName())
                 .role(member.getRole())
-                .profile_img(member.getProfile_img())
+                .profileImg(member.getProfile_img())
                 .nickname(member.getNickname())
                 .introduction(member.getIntroduction())
                 .createdDate(member.getCreatedDate())
@@ -57,7 +57,7 @@ public class CustomConverter {
                 .id(workspace.getId())
                 .name(workspace.getName())
                 .description(workspace.getDescription())
-                .profile_img(workspace.getProfile_img())
+                .profileImg(workspace.getProfile_img())
                 .createdDate(workspace.getCreatedDate())
                 .lastModifiedDate(workspace.getLastModifiedDate()).build();
     }

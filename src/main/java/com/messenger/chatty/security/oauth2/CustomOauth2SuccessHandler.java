@@ -30,11 +30,11 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String role = auth.getAuthority();
 
         TokenResponseDto tokenResponseDto = authService.generateTokenPair(username, role);
-        authService.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
+        authService.saveRefreshToken(tokenResponseDto.getRefreshToken(),username);
 
         String redirectURL = "http://localhost:3000/oauth2/success?refresh_token="
-                + URLEncoder.encode(tokenResponseDto.getRefresh_token(), StandardCharsets.UTF_8)
-                + "&access_token=" +  URLEncoder.encode(tokenResponseDto.getAccess_token(), StandardCharsets.UTF_8);
+                + URLEncoder.encode(tokenResponseDto.getRefreshToken(), StandardCharsets.UTF_8)
+                + "&access_token=" +  URLEncoder.encode(tokenResponseDto.getAccessToken(), StandardCharsets.UTF_8);
         response.sendRedirect(redirectURL);
 
     }

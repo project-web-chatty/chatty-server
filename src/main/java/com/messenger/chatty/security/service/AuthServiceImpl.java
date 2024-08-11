@@ -45,8 +45,8 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public TokenResponseDto generateTokenPair(String username, String role){
       return TokenResponseDto.builder()
-              .access_token(generateAccessToken(username, role))
-              .refresh_token(generateRefreshToken(username, role))
+              .accessToken(generateAccessToken(username, role))
+              .refreshToken(generateRefreshToken(username, role))
               .build();
   }
 
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
           throw new AuthException(ErrorStatus.AUTH_OUTDATED_REFRESH_TOKEN);
 
       TokenResponseDto tokenPair = generateTokenPair(username, role);
-      saveRefreshToken(tokenPair.getRefresh_token(), username);
+      saveRefreshToken(tokenPair.getRefreshToken(), username);
       return tokenPair;
   }
 
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         String serviceRole = member.getRole();
 
         TokenResponseDto tokenResponseDto = this.generateTokenPair(username, serviceRole);
-        this.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
+        this.saveRefreshToken(tokenResponseDto.getRefreshToken(),username);
 
         return tokenResponseDto;
     }
