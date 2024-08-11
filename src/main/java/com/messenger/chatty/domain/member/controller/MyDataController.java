@@ -81,9 +81,6 @@ public class MyDataController {
 
 
 
-
-
-
     @Operation(summary = "서비스에서 탈퇴하기")
     @ApiErrorCodeExample({
             ErrorStatus.MEMBER_NOT_FOUND
