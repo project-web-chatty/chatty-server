@@ -142,6 +142,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         channelRepository.save(announce);
         channelRepository.save(talk);
 
+        // 이미지 업로드
+        MultipartFile file = generateRequestDto.getFile();
+        if(file != null && !file.isEmpty()) this.uploadProfileImage(workspace.getId(),file);
 
         return workspace.getId();
     }
@@ -166,6 +169,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     public void deleteWorkspace(Long workspaceId){
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(()-> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        this.deleteProfileImage(workspaceId);
         //TODO remove relations
         workspaceRepository.delete(workspace);
     }

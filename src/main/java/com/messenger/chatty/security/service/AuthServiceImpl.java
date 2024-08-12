@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.domain.member.dto.request.LoginRequestDto;
+import com.messenger.chatty.domain.member.dto.request.PasswordUpdateRequestDto;
 import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.refresh.entity.RefreshToken;
@@ -45,8 +46,8 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public TokenResponseDto generateTokenPair(String username, String role){
       return TokenResponseDto.builder()
-              .access_token(generateAccessToken(username, role))
-              .refresh_token(generateRefreshToken(username, role))
+              .accessToken(generateAccessToken(username, role))
+              .refreshToken(generateRefreshToken(username, role))
               .build();
   }
 
@@ -66,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
           throw new AuthException(ErrorStatus.AUTH_OUTDATED_REFRESH_TOKEN);
 
       TokenResponseDto tokenPair = generateTokenPair(username, role);
-      saveRefreshToken(tokenPair.getRefresh_token(), username);
+      saveRefreshToken(tokenPair.getRefreshToken(), username);
       return tokenPair;
   }
 
@@ -82,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
         String serviceRole = member.getRole();
 
         TokenResponseDto tokenResponseDto = this.generateTokenPair(username, serviceRole);
-        this.saveRefreshToken(tokenResponseDto.getRefresh_token(),username);
+        this.saveRefreshToken(tokenResponseDto.getRefreshToken(),username);
 
         return tokenResponseDto;
     }
@@ -172,6 +173,17 @@ public class AuthServiceImpl implements AuthService {
                 .sign(Algorithm.HMAC256(jwtKey.getBytes()));
     }
 
+    @Override
+    public void changePassword(String username, PasswordUpdateRequestDto requestDto) {
 
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthException(ErrorStatus.AUTH_FAIL_LOGIN));
 
+        String password = member.getPassword();
+        if(!bCryptPasswordEncoder.matches(requestDto.getOldPassword(),password))
+            throw new AuthException(ErrorStatus.AUTH_FAIL_PASSWORD_MATCHING);
+
+        member.changePassword(requestDto.getNewPassword());
+        tokenRepository.deleteByUsername(username);
+    }
 }

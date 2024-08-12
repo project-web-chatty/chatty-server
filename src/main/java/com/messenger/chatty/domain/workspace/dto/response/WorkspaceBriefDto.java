@@ -12,6 +12,6 @@ import lombok.experimental.SuperBuilder;
 public class WorkspaceBriefDto  extends BaseResDto {
     private Long id;
     private String name;
-    private String profile_img;
+    private String profileImg;
     private String description;
 }

@@ -31,6 +31,7 @@ public enum ErrorStatus {
     AUTH_TYPE_MISMATCH_TOKEN(BAD_REQUEST,4054,"토큰의 타입이 맞지 않습니다."),
     AUTH_UNAUTHORIZED_ACCESS(FORBIDDEN,4055,"인증되었으나 해당 요청에 대한 권한이 부족합니다."),
     AUTH_FAIL_LOGIN(FORBIDDEN,4056,"아이디 또는 비밀번호를 잘못 입력하였습니다."),
+    AUTH_FAIL_PASSWORD_MATCHING(BAD_REQUEST,4057,"비밀번호가 올바르지 않습니다."),
 
     // workspace error
     WORKSPACE_NOT_FOUND(BAD_REQUEST,4060,"해당 워크스페이스가 존재하지 않습니다."),

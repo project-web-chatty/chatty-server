@@ -40,7 +40,7 @@ public class WorkspaceController {
     })
     @PostMapping
     public ApiResponse<Long> createWorkspace(@AuthenticatedUsername String username,
-                                             @Valid @RequestBody WorkspaceGenerateRequestDto requestDto) {
+                                             @Valid @ModelAttribute WorkspaceGenerateRequestDto requestDto) {
         return ApiResponse.onSuccess(workspaceService.generateWorkspace(requestDto, username));
     }
 

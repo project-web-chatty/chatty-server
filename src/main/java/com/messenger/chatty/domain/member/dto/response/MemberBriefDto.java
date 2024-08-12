@@ -15,7 +15,7 @@ public class MemberBriefDto extends BaseResDto {
     protected String username;
     protected String email;
     protected String role;
-    protected String profile_img;
+    protected String profileImg;
     protected String name;
     protected String nickname;
     protected String introduction;

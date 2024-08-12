@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class WorkspaceGenerateRequestDto {
     @Size(min = 2,max = 15,message = "최소 2자에서 최대 20자까지 가능합니다.")
     private String name;
     private String description;
+    private MultipartFile file;
 }
