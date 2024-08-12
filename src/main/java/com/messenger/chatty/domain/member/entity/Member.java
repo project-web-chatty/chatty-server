@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -94,9 +95,9 @@ public class Member extends BaseEntity {
     public void changeRole(String role){this.role = role;}
 
     public void updateProfile(MemberUpdateRequestDto memberUpdateRequestDto) {
-        if(memberUpdateRequestDto.getName()!=null) this.name = memberUpdateRequestDto.getName();
-        if(memberUpdateRequestDto.getNickname()!=null) this.nickname = memberUpdateRequestDto.getNickname();
-        if(memberUpdateRequestDto.getIntroduction()!=null) this.introduction = memberUpdateRequestDto.getIntroduction();
+        if(!Objects.isNull(memberUpdateRequestDto.getName())) this.name = memberUpdateRequestDto.getName();
+        if(!Objects.isNull(memberUpdateRequestDto.getNickname())) this.nickname = memberUpdateRequestDto.getNickname();
+        if(!Objects.isNull(memberUpdateRequestDto.getIntroduction())) this.introduction = memberUpdateRequestDto.getIntroduction();
     }
 
 }
