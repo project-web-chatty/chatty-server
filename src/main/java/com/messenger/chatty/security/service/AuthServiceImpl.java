@@ -183,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
         if(!bCryptPasswordEncoder.matches(requestDto.getOldPassword(),password))
             throw new AuthException(ErrorStatus.AUTH_FAIL_PASSWORD_MATCHING);
 
-        member.changePassword(requestDto.getNewPassword());
+        member.changePassword(bCryptPasswordEncoder.encode(requestDto.getNewPassword()));
         tokenRepository.deleteByUsername(username);
     }
 }
