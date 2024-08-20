@@ -29,23 +29,6 @@ public class RabbitmqConfig {
 
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange("message.exchange");
-    }
-
-    @Bean
-    Queue queue() {
-        return new Queue("message.queue", true, false, false);
-    }
-
-
-    @Bean
-    Binding binding(TopicExchange topicExchange, Queue queue) {
-        return BindingBuilder.bind(queue).to(topicExchange).with("channel.*");
-    }
-
-
-    @Bean
     ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setHost(host);
