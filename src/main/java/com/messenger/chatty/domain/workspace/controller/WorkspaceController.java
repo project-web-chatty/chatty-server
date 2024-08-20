@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +39,7 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND,
             ErrorStatus._UNINTENDED_AUTHENTICATION_ERROR
     })
-    @PostMapping
+    @PostMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<Long> createWorkspace(@AuthenticatedUsername String username,
                                              @Valid @ModelAttribute WorkspaceGenerateRequestDto requestDto) {
         return ApiResponse.onSuccess(workspaceService.generateWorkspace(requestDto, username));
@@ -191,7 +192,7 @@ public class WorkspaceController {
             IO_EXCEPTION_ON_IMAGE_UPLOAD,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @PostMapping("/{workspaceId}/profile-image")
+    @PostMapping(value= "/{workspaceId}/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadWorkspaceProfileImg(@PathVariable Long workspaceId,
                                                          @RequestParam("file") MultipartFile file) {
         String profileImageURI = workspaceService.uploadProfileImage(workspaceId, file);
