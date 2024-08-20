@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,7 +59,7 @@ public class MyDataController {
             IO_EXCEPTION_ON_IMAGE_UPLOAD,
             IO_EXCEPTION_ON_IMAGE_DELETE
     })
-    @PostMapping("/profile-image")
+    @PostMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadMyProfileImg(@AuthenticatedUsername String username,
                                                   @RequestParam("file") MultipartFile file) {
         String profileImageURI = memberService.uploadMyProfileImage(username, file);
