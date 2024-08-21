@@ -39,7 +39,6 @@ import static org.springframework.messaging.simp.stomp.StompCommand.UNSUBSCRIBE;
 public class ChatPreHandler implements ChannelInterceptor {
 
     private final AuthService authService;
-    private final MemberService memberService;
     private final ChannelService channelService;
 
     @Override
