@@ -4,6 +4,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.messenger.chatty.domain.member.service.MemberService;
 import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
+import com.messenger.chatty.global.presentation.ErrorStatus;
+import com.messenger.chatty.global.presentation.exception.GeneralException;
+import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,16 +42,37 @@ public class ChatPreHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        String authorizationHeader = String.valueOf(headerAccessor.getNativeHeader("Authorization"));
         StompCommand command = headerAccessor.getCommand();
 
 
         if(command.equals(SUBSCRIBE) || command.equals(CONNECT) || command.equals(SEND)) {
-            DecodedJWT decodedJWT = authService.decodeToken(authorizationHeader, "access");
-            TokenResponseDto token = authService
-                    .generateTokenPair(decodedJWT.getSubject(), decodedJWT.getClaim("role").asString());
+            DecodedJWT decodedJWT = authService.decodeToken(getAccessToken(headerAccessor), "access");
+            String username =  decodedJWT.getSubject();
+
+            headerAccessor.setUser(() -> username);
+            Long channelId = getChannelId(headerAccessor);
         }
         return message;
+    }
+
+    private String getAccessToken(StompHeaderAccessor accessor) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7).trim();
+        }
+        throw new MemberException(ErrorStatus.AUTH_NULL_TOKEN);
+    }
+
+    private Long getChannelId(StompHeaderAccessor accessor) {
+        String channelIdStr = accessor.getFirstNativeHeader("channelId");
+        if (channelIdStr != null) {
+            try {
+                return Long.valueOf(channelIdStr);
+            } catch (NumberFormatException e) {
+                log.error("Invalid chatRoomId format: {}", channelIdStr, e);
+            }
+        }
+        return null;
     }
 
 }
