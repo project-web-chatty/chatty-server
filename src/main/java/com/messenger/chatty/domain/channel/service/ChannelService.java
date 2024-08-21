@@ -16,5 +16,7 @@ public interface ChannelService {
 
     boolean validateEnterChannel(Long channelId, String username);
 
+    void updateAccessTime(Long channelId, String username);
+
 
 }

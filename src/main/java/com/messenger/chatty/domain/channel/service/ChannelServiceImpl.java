@@ -2,6 +2,8 @@ package com.messenger.chatty.domain.channel.service;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
+import com.messenger.chatty.domain.channel.entity.ChannelAccess;
+import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
 import com.messenger.chatty.global.presentation.ErrorStatus;
@@ -25,6 +27,7 @@ public class ChannelServiceImpl implements ChannelService{
     private final ChannelRepository channelRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
+    private final ChannelAccessRepository channelAccessRepository;
     @Override
     public Long createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
 
@@ -39,6 +42,7 @@ public class ChannelServiceImpl implements ChannelService{
 
         Channel channel = Channel.createChannel(channelName, workspace);
         Channel savedChannel = channelRepository.save(channel);
+
         return savedChannel.getId();
     }
 
@@ -75,6 +79,7 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean validateEnterChannel(Long channelId, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -82,5 +87,22 @@ public class ChannelServiceImpl implements ChannelService{
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
         return channel.getWorkspace().getWorkspaceJoins().stream()
                 .anyMatch(workspaceJoin -> workspaceJoin.getMember().equals(member));
+    }
+
+    @Override
+    public void updateAccessTime(Long channelId, String username) {
+        ChannelAccess channelAccess = channelAccessRepository
+                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .orElse(channelAccessRepository.save(builderChannelAccess(username, channelId)));
+
+        channelAccess.updateAccessTime();
+    }
+
+    private ChannelAccess builderChannelAccess(String username, Long channelId) {
+        return ChannelAccess.builder()
+                .username(username)
+                .channel(channelRepository.findById(channelId)
+                        .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND)))
+                .build();
     }
 }
