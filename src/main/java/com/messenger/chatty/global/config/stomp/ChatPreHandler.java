@@ -55,6 +55,7 @@ public class ChatPreHandler implements ChannelInterceptor {
             if (!validated) {
                 //TODO exception of chat
             }
+            headerAccessor.getSessionAttributes().put("username", username);
         }
         return message;
     }
