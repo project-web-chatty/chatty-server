@@ -2,6 +2,8 @@ package com.messenger.chatty.global.config.stomp;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.member.service.MemberService;
 import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
 import com.messenger.chatty.global.presentation.ErrorStatus;
@@ -38,19 +40,22 @@ public class ChatPreHandler implements ChannelInterceptor {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final ChannelService channelService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         StompCommand command = headerAccessor.getCommand();
 
-
-        if(command.equals(SUBSCRIBE) || command.equals(CONNECT) || command.equals(SEND)) {
+        //only entrance
+        if(command.equals(SUBSCRIBE) || command.equals(CONNECT)) {
             DecodedJWT decodedJWT = authService.decodeToken(getAccessToken(headerAccessor), "access");
             String username =  decodedJWT.getSubject();
-
-            headerAccessor.setUser(() -> username);
             Long channelId = getChannelId(headerAccessor);
+            boolean validated = channelService.validateEnterChannel(channelId, username);
+            if (!validated) {
+                //TODO exception of chat
+            }
         }
         return message;
     }

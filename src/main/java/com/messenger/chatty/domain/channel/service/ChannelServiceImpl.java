@@ -2,9 +2,11 @@ package com.messenger.chatty.domain.channel.service;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
+import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
+import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
@@ -70,5 +72,15 @@ public class ChannelServiceImpl implements ChannelService{
             throw new ChannelException(ErrorStatus.CHANNEL_NOT_IN_WORKSPACE);
 
         channelRepository.delete(channel);
+    }
+
+    @Override
+    public boolean validateEnterChannel(Long channelId, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
+        return channel.getWorkspace().getWorkspaceJoins().stream()
+                .anyMatch(workspaceJoin -> workspaceJoin.getMember().equals(member));
     }
 }
