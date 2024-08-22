@@ -39,4 +39,6 @@ public interface WorkspaceService {
 
     String uploadProfileImage(Long workspaceId, MultipartFile file);
     void deleteProfileImage(Long workspaceId);
+
+    void leaveWorkspace(String username,Long workspaceId);
 }
