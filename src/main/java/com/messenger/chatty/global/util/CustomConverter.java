@@ -3,6 +3,7 @@ package com.messenger.chatty.global.util;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.member.entity.Member;
@@ -60,6 +61,17 @@ public class CustomConverter {
                 .profileImg(workspace.getProfile_img())
                 .createdDate(workspace.getCreatedDate())
                 .lastModifiedDate(workspace.getLastModifiedDate()).build();
+    }
+    public static MyWorkspaceDto convertToMyWorkspaceDto(Workspace workspace, String myRole){
+        return MyWorkspaceDto.builder()
+                .id(workspace.getId())
+                .name(workspace.getName())
+                .description(workspace.getDescription())
+                .profileImg(workspace.getProfile_img())
+                .createdDate(workspace.getCreatedDate())
+                .lastModifiedDate(workspace.getLastModifiedDate())
+                .myRole(myRole)
+                .build();
     }
 
     /*public static WorkspaceResponseDto convertWorkspaceToDto(Workspace workspace, List<Channel> channelList, List<Member> memberList ) {

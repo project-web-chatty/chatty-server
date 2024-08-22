@@ -1,4 +1,5 @@
 package com.messenger.chatty.domain.member.controller;
+import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
@@ -97,7 +98,7 @@ public class MyDataController {
             ErrorStatus.MEMBER_NOT_FOUND
     })
     @GetMapping("/workspaces")
-    public ApiResponse<List<WorkspaceBriefDto>> getMyWorkspaces(@AuthenticatedUsername String username) {
+    public ApiResponse<List<MyWorkspaceDto>> getMyWorkspaces(@AuthenticatedUsername String username) {
         return ApiResponse.onSuccess(memberService.getMyWorkspaces(username));
     }
 }
