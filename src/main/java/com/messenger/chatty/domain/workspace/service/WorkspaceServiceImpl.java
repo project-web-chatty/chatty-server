@@ -244,4 +244,14 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         s3Service.deleteImage(profileImgURI);
         workspace.changeProfile_img(null);
     }
+
+    @Override
+    public void leaveWorkspace(String username, Long workspaceId) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, member.getId())
+                .orElseThrow(()-> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+
+        workspaceJoinRepository.delete(workspaceJoin);
+    }
 }

@@ -211,4 +211,7 @@ public class WorkspaceController {
         workspaceService.deleteProfileImage(workspaceId);
         return ApiResponse.onSuccess(true);
     }
+
+
+
 }

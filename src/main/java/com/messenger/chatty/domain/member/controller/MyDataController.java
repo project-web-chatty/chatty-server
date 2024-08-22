@@ -1,5 +1,7 @@
 package com.messenger.chatty.domain.member.controller;
 import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
+import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.service.WorkspaceService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
@@ -29,6 +31,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RestController
 public class MyDataController {
     private final MemberService memberService;
+    private final WorkspaceService workspaceService;
 
     @Operation(summary = "내 프로필 정보 가져오기")
     @ApiErrorCodeExample({
@@ -101,4 +104,19 @@ public class MyDataController {
     public ApiResponse<List<MyWorkspaceDto>> getMyWorkspaces(@AuthenticatedUsername String username) {
         return ApiResponse.onSuccess(memberService.getMyWorkspaces(username));
     }
+
+    @Operation(summary = "워크스페이스에서 나가기",description = "해당 워크스페이스에서 나갑니다.")
+    @ApiErrorCodeExample({
+             MEMBER_NOT_FOUND,
+            MEMBER_NOT_IN_WORKSPACE
+    })
+    @DeleteMapping("/workspaces/{workspaceId}")
+    public ApiResponse<Boolean> deleteWorkspaceProfileImg(@AuthenticatedUsername String username,
+                                                          @PathVariable Long workspaceId){
+        workspaceService.leaveWorkspace(username, workspaceId);
+        return ApiResponse.onSuccess(true);
+    }
+
+
+
 }
