@@ -1,0 +1,19 @@
+package com.messenger.chatty.domain.workspace.dto.response;
+
+import com.messenger.chatty.domain.base.dto.response.BaseResDto;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+
+@Getter
+@SuperBuilder
+@ToString
+public class MyWorkspaceDto extends BaseResDto {
+    private Long id;
+    private String name;
+    private String profileImg;
+    private String description;
+    private String myRole;
+
+}

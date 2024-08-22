@@ -5,9 +5,12 @@ import com.messenger.chatty.domain.member.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.entity.WorkspaceJoin;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
@@ -31,9 +34,11 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceJoinRepository workspaceJoinRepository;
     private final ChannelRepository channelRepository;
     private final PasswordEncoder bcrptPasswordEncoder;
     private final S3Service s3Service;
+
 
     @Override
     public Long signup(MemberJoinRequestDto memberJoinRequestDTO){
@@ -102,11 +107,14 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<WorkspaceBriefDto> getMyWorkspaces(String username) {
+    public List<MyWorkspaceDto> getMyWorkspaces(String username) {
         Member me = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
-        List<Workspace> myWorkspaces = workspaceRepository.findWorkspacesByMemberId(me.getId());
-        return myWorkspaces.stream().map(CustomConverter::convertWorkspaceToBriefDto).toList();
+
+        List<WorkspaceJoin> myWorkspaceJoins = workspaceJoinRepository.findByMemberId(me.getId());
+        return myWorkspaceJoins.stream().map(workspaceJoin ->
+                CustomConverter.convertToMyWorkspaceDto(workspaceJoin.getWorkspace(), workspaceJoin.getRole())).toList();
+
     }
 
     @Override

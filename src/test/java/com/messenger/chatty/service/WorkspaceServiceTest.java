@@ -6,6 +6,7 @@ import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateReques
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
+import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
 import com.messenger.chatty.domain.workspace.service.WorkspaceService;
@@ -292,7 +293,7 @@ class WorkspaceServiceTest {
                 .build();
         Long workspaceId = workspaceService.generateWorkspace(generateRequestDto, memberResponse.getUsername());
         //when
-        List<WorkspaceBriefDto> myWorkspaces = memberService.getMyWorkspaces(memberResponse.getUsername());
+        List<MyWorkspaceDto> myWorkspaces = memberService.getMyWorkspaces(memberResponse.getUsername());
         //then
         assertThat(myWorkspaces.size()).isOne();
         assertThat(myWorkspaces.get(0).getName()).isEqualTo(generateRequestDto.getName());

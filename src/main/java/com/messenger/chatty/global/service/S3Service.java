@@ -57,7 +57,7 @@ public class S3Service {
     private String uploadImageToS3(MultipartFile image) {
         try {
             String originalFilename = image.getOriginalFilename();
-            String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
+            String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename.substring(0,10);
             InputStream inputStream = image.getInputStream();
             s3Client.putObject(new PutObjectRequest(bucketName, s3FileName, inputStream, null));
             return s3Client.getUrl(bucketName, s3FileName).toString();
