@@ -2,12 +2,15 @@ package com.messenger.chatty.global.util;
 
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
+import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,6 +31,21 @@ public class CustomConverter {
                 .lastModifiedDate(member.getLastModifiedDate())
                 .build();
     }
+    public static MemberInWorkspaceDto convertToMemberInWorkspaceDto(Member member,String role, LocalDateTime joinDate){
+        return MemberInWorkspaceDto.builder().id(member.getId())
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .name(member.getName())
+                .role(role)
+                .profileImg(member.getProfile_img())
+                .nickname(member.getNickname())
+                .introduction(member.getIntroduction())
+                .createdDate(member.getCreatedDate())
+                .lastModifiedDate(member.getLastModifiedDate())
+                .joinDate(joinDate)
+                .build();
+    }
+
     public static MyProfileDto convertMemberToDto(Member member,List<Workspace> workspaceList){
         List<WorkspaceBriefDto> workspaceBriefDtoList = workspaceList.stream()
                 .map(CustomConverter::convertWorkspaceToBriefDto).toList();

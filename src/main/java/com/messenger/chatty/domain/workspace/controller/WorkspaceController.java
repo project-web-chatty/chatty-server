@@ -1,4 +1,5 @@
 package com.messenger.chatty.domain.workspace.controller;
+import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
@@ -78,7 +79,7 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}/members")
-    public ApiResponse<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable Long workspaceId){
+    public ApiResponse<List<MemberInWorkspaceDto>> getMembersOfWorkspace(@PathVariable Long workspaceId){
         return ApiResponse.onSuccess(workspaceService.getMembersOfWorkspace(workspaceId));
     }
 
@@ -89,7 +90,7 @@ public class WorkspaceController {
             ErrorStatus.MEMBER_NOT_IN_WORKSPACE
     })
     @GetMapping("/{workspaceId}/members/{memberId}")
-    public ApiResponse<MemberBriefDto> getMemberProfileOfWorkspace(@PathVariable Long workspaceId,
+    public ApiResponse<MemberInWorkspaceDto> getMemberProfileOfWorkspace(@PathVariable Long workspaceId,
                                                                    @PathVariable Long memberId){
         return ApiResponse.onSuccess(workspaceService.getMemberProfileOfWorkspace(workspaceId, memberId));
     }
