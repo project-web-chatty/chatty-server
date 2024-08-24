@@ -41,4 +41,6 @@ public interface WorkspaceService {
     void deleteProfileImage(Long workspaceId);
 
     void leaveWorkspace(String username,Long workspaceId);
+
+    void deleteMemberFromWorkspace(Long workspaceId, Long memberId);
 }

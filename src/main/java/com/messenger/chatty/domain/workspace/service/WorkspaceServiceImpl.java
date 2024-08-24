@@ -254,4 +254,11 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
         workspaceJoinRepository.delete(workspaceJoin);
     }
+
+    @Override
+    public void deleteMemberFromWorkspace(Long workspaceId, Long memberId) {
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, memberId)
+                .orElseThrow(()-> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+        workspaceJoinRepository.delete(workspaceJoin);
+    }
 }
