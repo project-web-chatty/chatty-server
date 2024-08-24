@@ -1,8 +1,8 @@
-package com.messenger.chatty.domain.Message.service;
+package com.messenger.chatty.domain.message.service;
 
-import com.messenger.chatty.domain.Message.dto.MessageDto;
-import com.messenger.chatty.domain.Message.entity.Message;
-import com.messenger.chatty.domain.Message.repository.MessageRepository;
+import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.entity.Message;
+import com.messenger.chatty.domain.message.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

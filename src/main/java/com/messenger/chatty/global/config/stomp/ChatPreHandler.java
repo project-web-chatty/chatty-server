@@ -46,16 +46,24 @@ public class ChatPreHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         StompCommand command = headerAccessor.getCommand();
+        log.info("1");
+        log.info("message = {}", message.getPayload());
+        log.info("message header = {}", message.getHeaders());
 
         //only entrance
         if(command.equals(SUBSCRIBE) || command.equals(CONNECT)) {
+            log.info("2");
             DecodedJWT decodedJWT = authService.decodeToken(WebSocketUtil.getAccessToken(headerAccessor), "access");
+            log.info("3");
             String username =  decodedJWT.getSubject();
             Long channelId = WebSocketUtil.getChannelId(headerAccessor);
             boolean validated = channelService.validateEnterChannel(channelId, username);
+            log.info("4");
             if (!validated) {
+                log.info("validation failed");
                 //TODO exception of chat
             }
+            log.info("5");
             headerAccessor.getSessionAttributes().put("username", username);
         }
         return message;

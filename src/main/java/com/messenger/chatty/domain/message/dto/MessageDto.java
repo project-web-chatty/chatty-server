@@ -1,4 +1,4 @@
-package com.messenger.chatty.domain.Message.dto;
+package com.messenger.chatty.domain.message.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

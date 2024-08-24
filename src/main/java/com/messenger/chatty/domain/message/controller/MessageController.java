@@ -1,13 +1,16 @@
-package com.messenger.chatty.domain.Message.controller;
+package com.messenger.chatty.domain.message.controller;
 
-import com.messenger.chatty.domain.Message.dto.MessageDto;
-import com.messenger.chatty.domain.Message.service.MessageService;
+import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -20,19 +23,20 @@ public class MessageController {
     private final RabbitTemplate template;
     private final MessageService messageService;
 
-    @MessageMapping("chat.enter.{channelId}")
-    public void enter(MessageDto messageDto, @DestinationVariable String channelId) {
+    @MessageMapping("chat.enter")
+    public void enter(MessageDto messageDto, @Header("channelId") String channelIdStr) {
+        if(channelIdStr == null) throw new MessagingException("error");     //TODO unify form
         messageDto.setContent("입장하셨습니다.");
         messageDto.setRegDate(LocalDateTime.now());
         //TODO 입장 시 messageDto setting
 
         messageService.send(messageDto);
-        template.convertAndSend("amq.topic", "channel." + channelId, messageDto); //topic
+        template.convertAndSend("amq.topic", "channel." + channelIdStr, messageDto); //topic
     }
 
 
-    @MessageMapping("chat.message.{channelId}")
-    public void send(MessageDto messageDto, @DestinationVariable String channelId) {
+    @MessageMapping("chat.message")
+    public void send(MessageDto messageDto, @Header("channelId") String channelId) {
         messageDto.setRegDate(LocalDateTime.now());
 
         messageService.send(messageDto);
