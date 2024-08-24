@@ -111,7 +111,7 @@ public class MyDataController {
             MEMBER_NOT_IN_WORKSPACE
     })
     @DeleteMapping("/workspaces/{workspaceId}")
-    public ApiResponse<Boolean> deleteWorkspaceProfileImg(@AuthenticatedUsername String username,
+    public ApiResponse<Boolean> leaveWorkspace(@AuthenticatedUsername String username,
                                                           @PathVariable Long workspaceId){
         workspaceService.leaveWorkspace(username, workspaceId);
         return ApiResponse.onSuccess(true);
