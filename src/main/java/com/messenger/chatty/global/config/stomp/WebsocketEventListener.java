@@ -25,6 +25,5 @@ public class WebsocketEventListener {
         if (username != null) {
             channelService.updateAccessTime(channelId, username);
         }
-
     }
 }
