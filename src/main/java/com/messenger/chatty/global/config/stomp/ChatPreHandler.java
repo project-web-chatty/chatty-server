@@ -9,6 +9,7 @@ import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.GeneralException;
 import com.messenger.chatty.global.presentation.exception.custom.MemberException;
+import com.messenger.chatty.global.util.WebSocketUtil;
 import com.messenger.chatty.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,9 +49,9 @@ public class ChatPreHandler implements ChannelInterceptor {
 
         //only entrance
         if(command.equals(SUBSCRIBE) || command.equals(CONNECT)) {
-            DecodedJWT decodedJWT = authService.decodeToken(getAccessToken(headerAccessor), "access");
+            DecodedJWT decodedJWT = authService.decodeToken(WebSocketUtil.getAccessToken(headerAccessor), "access");
             String username =  decodedJWT.getSubject();
-            Long channelId = getChannelId(headerAccessor);
+            Long channelId = WebSocketUtil.getChannelId(headerAccessor);
             boolean validated = channelService.validateEnterChannel(channelId, username);
             if (!validated) {
                 //TODO exception of chat
@@ -59,25 +60,4 @@ public class ChatPreHandler implements ChannelInterceptor {
         }
         return message;
     }
-
-    private String getAccessToken(StompHeaderAccessor accessor) {
-        String token = accessor.getFirstNativeHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7).trim();
-        }
-        throw new MemberException(ErrorStatus.AUTH_NULL_TOKEN);
-    }
-
-    private Long getChannelId(StompHeaderAccessor accessor) {
-        String channelIdStr = accessor.getFirstNativeHeader("channelId");
-        if (channelIdStr != null) {
-            try {
-                return Long.valueOf(channelIdStr);
-            } catch (NumberFormatException e) {
-                log.error("Invalid chatRoomId format: {}", channelIdStr, e);
-            }
-        }
-        return null;
-    }
-
 }

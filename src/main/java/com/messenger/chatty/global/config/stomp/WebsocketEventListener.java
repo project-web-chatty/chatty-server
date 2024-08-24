@@ -1,6 +1,7 @@
 package com.messenger.chatty.global.config.stomp;
 
 import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.global.util.WebSocketUtil;
 import com.messenger.chatty.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +21,10 @@ public class WebsocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String username = (String) headerAccessor.getSessionAttributes().get("username");
-        Long channelId = getChannelId(headerAccessor);
+        Long channelId = WebSocketUtil.getChannelId(headerAccessor);
         if (username != null) {
             channelService.updateAccessTime(channelId, username);
         }
 
-    }
-    private Long getChannelId(StompHeaderAccessor accessor) {
-        String channelIdStr = accessor.getFirstNativeHeader("channelId");
-        if (channelIdStr != null) {
-            try {
-                return Long.valueOf(channelIdStr);
-            } catch (NumberFormatException e) {
-                log.error("Invalid chatRoomId format: {}", channelIdStr, e);
-            }
-        }
-        return null;
     }
 }
