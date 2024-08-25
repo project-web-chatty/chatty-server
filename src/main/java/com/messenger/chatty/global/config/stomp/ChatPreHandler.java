@@ -63,6 +63,7 @@ public class ChatPreHandler implements ChannelInterceptor {
                     }
 
                     boolean validated = channelService.validateEnterChannel(channelId, username);
+                    headerAccessor.getSessionAttributes().put("validated", validated);
                     if (!validated) {
                         log.info("SUBSCRIBE: Validation failed for username={}, channelId={}", username, channelId);
                         throw new MessageDeliveryException("Validation failed for channel access");
@@ -72,6 +73,13 @@ public class ChatPreHandler implements ChannelInterceptor {
                 } catch (Exception e) {
                     log.error("Failed to process SUBSCRIBE command", e);
                     throw new MessageDeliveryException("Failed to process SUBSCRIBE command");
+                }
+            }
+            case DISCONNECT -> {
+                if ((Boolean) headerAccessor.getSessionAttributes().get("validated")) {
+                    String username = (String) headerAccessor.getSessionAttributes().get("username");
+                    Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+                    channelService.updateAccessTime(channelId, username);
                 }
             }
             default -> {
