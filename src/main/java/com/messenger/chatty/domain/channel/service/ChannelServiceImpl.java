@@ -93,9 +93,19 @@ public class ChannelServiceImpl implements ChannelService{
     public void updateAccessTime(Long channelId, String username) {
         ChannelAccess channelAccess = channelAccessRepository
                 .findChannelAccessByChannel_IdAndUsername(channelId, username)
-                .orElse(channelAccessRepository.save(builderChannelAccess(username, channelId)));
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
 
         channelAccess.updateAccessTime();
+    }
+
+    @Override
+    public Long createAccessTime(Long channelId, String username) {
+        return channelAccessRepository.save(builderChannelAccess(username, channelId)).getId();
+    }
+
+    @Override
+    public boolean hasAccessTime(Long channelId, String username) {
+        return channelAccessRepository.existsByChannelIdAndUsername(channelId, username);
     }
 
     private ChannelAccess builderChannelAccess(String username, Long channelId) {

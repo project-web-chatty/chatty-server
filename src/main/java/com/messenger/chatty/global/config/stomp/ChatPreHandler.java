@@ -79,7 +79,11 @@ public class ChatPreHandler implements ChannelInterceptor {
                 if ((Boolean) headerAccessor.getSessionAttributes().get("validated")) {
                     String username = (String) headerAccessor.getSessionAttributes().get("username");
                     Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
-                    channelService.updateAccessTime(channelId, username);
+                    if (!channelService.hasAccessTime(channelId, username)) {
+                        channelService.createAccessTime(channelId, username);
+                    }
+                    channelService.updateAccessTime(channelId,username);
+
                 }
             }
             default -> {

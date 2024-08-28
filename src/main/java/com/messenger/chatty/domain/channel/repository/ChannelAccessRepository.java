@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface ChannelAccessRepository extends JpaRepository<ChannelAccess, Long> {
     Optional<ChannelAccess> findChannelAccessByChannel_IdAndUsername(Long channelId, String username);
+
+    boolean existsByChannelIdAndUsername(Long channelId, String username);
 }

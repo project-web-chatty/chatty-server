@@ -18,5 +18,9 @@ public interface ChannelService {
 
     void updateAccessTime(Long channelId, String username);
 
+    Long createAccessTime(Long channelId, String username);
+
+    boolean hasAccessTime(Long channelId, String username);
+
 
 }
