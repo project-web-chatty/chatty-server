@@ -42,6 +42,7 @@ public enum ErrorStatus {
     CHANNEL_NOT_FOUND(BAD_REQUEST,4070,"해당 채널이 존재하지 않습니다."),
     CHANNEL_NOT_IN_WORKSPACE(BAD_REQUEST,4071,"해당 워크스페이스 내에 소속된 채널이 아닙니다."),
     CHANNEL_NAME_ALREADY_EXISTS(BAD_REQUEST,4072,"해당 채널 이름은 이미 존재합니다."),
+    CHANNEL_ACCESS_NOT_FOUND(NOT_FOUND, 4073, "채널 접근이 조회되지 않습니다"),
 
     // member error
     MEMBER_NOT_FOUND(BAD_REQUEST,4080,"해당 멤버는 존재하지 않습니다."),

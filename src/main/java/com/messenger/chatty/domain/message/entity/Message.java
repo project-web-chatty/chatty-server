@@ -1,6 +1,7 @@
 package com.messenger.chatty.domain.message.entity;
 
 import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.global.util.TimeUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -28,12 +29,16 @@ public class Message {
     @NotBlank
     private String senderUsername;
 
+    @NotNull
+    private Long sendTime;
+
     public static Message of(MessageDto messageDto) {
         return Message.builder()
                 .channelId(messageDto.getChannelId())
                 .content(messageDto.getContent())
                 .senderNickname(messageDto.getSenderNickname())
                 .senderUsername(messageDto.getSenderUsername())
+                .sendTime(TimeUtil.convertTimeTypeToLong(messageDto.getRegDate()))
                 .build();
     }
 }

@@ -93,7 +93,7 @@ public class ChannelServiceImpl implements ChannelService{
     public void updateAccessTime(Long channelId, String username) {
         ChannelAccess channelAccess = channelAccessRepository
                 .findChannelAccessByChannel_IdAndUsername(channelId, username)
-                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
 
         channelAccess.updateAccessTime();
     }
