@@ -13,4 +13,7 @@ public interface MessageRepository extends MongoRepository<Message, Long> {
                                                                     Long accessTime,
                                                                     Pageable pageable);
 
+    @Query(value = "{'chatRoomId': ?0, 'sendTime': {$gt: ?1}}", count = true)
+    long countByChatRoomIdAndSendTimeAfter(Long chatRoomId, long lastAccessTime);
+
 }

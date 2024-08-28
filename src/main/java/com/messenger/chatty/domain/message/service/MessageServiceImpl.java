@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -26,6 +27,7 @@ public class MessageServiceImpl implements MessageService{
         return message.getId();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Message> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
         ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
@@ -37,8 +39,15 @@ public class MessageServiceImpl implements MessageService{
                         pageable);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Long countUnreadMessage(Long channelId, String username) {
-        return 0;
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
+
+        return messageRepository.countByChatRoomIdAndSendTimeAfter(
+                channelId,
+                TimeUtil.convertTimeTypeToLong(channelAccess.getAccessTime())
+        );
     }
 }
