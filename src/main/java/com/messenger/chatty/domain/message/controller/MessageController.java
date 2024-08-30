@@ -23,6 +23,7 @@ public class MessageController {
 
     @MessageMapping("chat.enter")
     public void enter(MessageDto messageDto, @Header("channelId") String channelIdStr) {
+        log.info("enter");
         if(channelIdStr == null) throw new MessagingException("error");     //TODO unify form
         messageDto.setContent("입장하셨습니다.");
         messageDto.setRegDate(LocalDateTime.now());
@@ -34,11 +35,13 @@ public class MessageController {
 
 
     @MessageMapping("chat.message")
-    public void send(MessageDto messageDto, @Header("channelId") String channelId) {
+    public void send(MessageDto messageDto, @Header("channelId") String channelIdStr) {
+        log.info("send");
+        if(channelIdStr == null) throw new MessagingException("error");
         messageDto.setRegDate(LocalDateTime.now());
 
         messageService.send(messageDto);
-        template.convertAndSend("amq.topic", "channel." + channelId, messageDto);
+        template.convertAndSend("amq.topic", "channel." + channelIdStr, messageDto);
     }
 
     // receiver()는 단순히 큐에 들어온 메세지를 소비만 한다. (현재는 디버그 용도)

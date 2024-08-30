@@ -1,6 +1,5 @@
 package com.messenger.chatty.domain.channel.controller;
 
-import com.messenger.chatty.domain.channel.service.ChannelService;
 import com.messenger.chatty.domain.message.dto.MessageDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
@@ -23,7 +22,6 @@ import static com.messenger.chatty.global.presentation.annotation.api.Predefined
 @RestController
 @RequestMapping("/api/chat")
 public class ChannelController {
-    private final ChannelService channelService;
     private final MessageService messageService;
 
     @Operation(summary = "안읽은 메세지 페이징 조회", description = "사용자가 읽지 않은 채널 내 메세지부터 조회하도록 합니다")
@@ -36,6 +34,16 @@ public class ChannelController {
                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10);
         return ApiResponse.onSuccess(messageService.getMessageByLastAccessTime(channelId, username, pageable));
+    }
+
+    @Operation(summary = "안읽은 메세지 개수", description = "사용자가 채널 내 읽지 않은 메세지의 개수를 확인합니다.")
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.CHANNEL_ACCESS_NOT_FOUND
+    }, status = AUTH)
+    @GetMapping("/{channelId}")
+    public ApiResponse<Long> countUnreadMessageInChannel(@AuthenticatedUsername String username,
+                                                         @PathVariable Long channelId) {
+        return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, username));
     }
 
 
