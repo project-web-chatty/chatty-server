@@ -3,16 +3,20 @@ package com.messenger.chatty.domain.message.service;
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
 import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
+import com.messenger.chatty.global.util.CustomConverter;
 import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -29,14 +33,15 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Message> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
+    public List<MessageDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
         ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
-        return messageRepository
+        Page<Message> messages = messageRepository
                 .findMessagesByChatRoomIdAfterMemberDisconnectTime(
                         channelId,
                         TimeUtil.convertTimeTypeToLong(channelAccess.getAccessTime()),
                         pageable);
+        return CustomConverter.convertMessageResponse(messages);
     }
 
     @Transactional(readOnly = true)

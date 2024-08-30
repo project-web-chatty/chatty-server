@@ -28,6 +28,8 @@ public class Message {
     private String senderNickname;
     @NotBlank
     private String senderUsername;
+    @NotBlank
+    private String senderProfileImg;
 
     @NotNull
     private Long sendTime;
@@ -38,6 +40,7 @@ public class Message {
                 .content(messageDto.getContent())
                 .senderNickname(messageDto.getSenderNickname())
                 .senderUsername(messageDto.getSenderUsername())
+                .senderProfileImg(messageDto.getSenderProfileImg())
                 .sendTime(TimeUtil.convertTimeTypeToLong(messageDto.getRegDate()))
                 .build();
     }

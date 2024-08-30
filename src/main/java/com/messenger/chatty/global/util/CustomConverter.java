@@ -1,13 +1,17 @@
 package com.messenger.chatty.global.util;
 
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
+import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceResponseDto;
-import com.messenger.chatty.domain.channel.entity.Channel;
-import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 
@@ -81,7 +85,7 @@ public class CustomConverter {
     }
 
 
-
-
-
+    public static List<MessageDto> convertMessageResponse(Page<Message> messages) {
+        return null;
+    }
 }

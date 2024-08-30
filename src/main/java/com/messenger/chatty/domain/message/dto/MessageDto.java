@@ -16,6 +16,7 @@ public class MessageDto {
     private Long channelId;
     private String senderNickname;
     private String senderUsername;
+    private String senderProfileImg;
     private String content;
     private LocalDateTime regDate;
 
