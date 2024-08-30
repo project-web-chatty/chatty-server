@@ -3,7 +3,6 @@ package com.messenger.chatty.domain.message.service;
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
 import com.messenger.chatty.domain.message.dto.MessageDto;
-import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;

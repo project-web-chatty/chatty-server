@@ -13,6 +13,7 @@ import com.messenger.chatty.domain.workspace.entity.Workspace;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class CustomConverter {
@@ -86,6 +87,17 @@ public class CustomConverter {
 
 
     public static List<MessageDto> convertMessageResponse(Page<Message> messages) {
-        return null;
+         return messages.getContent().stream()
+                .map(message -> MessageDto.builder()
+                        .senderProfileImg(message.getId())
+                        .senderUsername(message.getSenderUsername())
+                        .senderNickname(message.getSenderNickname())
+                        .regDate(TimeUtil.convertTimeTypeToLocalDateTime(message.getSendTime()))
+                        .content(message.getContent())
+                        .id(message.getId())
+                        .channelId(message.getChannelId())
+                        .build())
+                .collect(Collectors.toList());
     }
+
 }
