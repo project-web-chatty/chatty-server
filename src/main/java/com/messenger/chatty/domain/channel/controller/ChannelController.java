@@ -40,13 +40,10 @@ public class ChannelController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.CHANNEL_ACCESS_NOT_FOUND
     }, status = AUTH)
-    @GetMapping("/{channelId}")
+    @GetMapping("/{channelId}/count")
     public ApiResponse<Long> countUnreadMessageInChannel(@AuthenticatedUsername String username,
                                                          @PathVariable Long channelId) {
         return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, username));
     }
-
-
-
 
 }
