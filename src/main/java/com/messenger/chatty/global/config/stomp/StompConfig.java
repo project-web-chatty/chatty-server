@@ -2,8 +2,6 @@ package com.messenger.chatty.global.config.stomp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.AntPathMatcher;
@@ -21,8 +19,8 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/stomp/chat")
-                .setAllowedOriginPatterns("*");
-//                .withSockJS();
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 
 

@@ -7,6 +7,11 @@ spring:
     username: ${LOCAL_MYSQL_USERNAME}
     password: ${LOCAL_MYSQL_PASSWORD}
 
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    enabled: true
+
   jpa:
     hibernate:
       ddl-auto: update # according to our dev environment
