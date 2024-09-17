@@ -17,6 +17,8 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @Component
 @RequiredArgsConstructor
@@ -82,7 +84,7 @@ public class ChatPreHandler implements ChannelInterceptor {
                     if (!channelService.hasAccessTime(channelId, username)) {
                         channelService.createAccessTime(channelId, username);
                     }
-                    channelService.updateAccessTime(channelId,username);
+                    channelService.updateAccessTime(channelId,username, LocalDateTime.now());
 
                 }
             }

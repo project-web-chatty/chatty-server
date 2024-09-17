@@ -1,10 +1,9 @@
 package com.messenger.chatty.domain.channel.entity;
 
 import com.messenger.chatty.domain.base.entity.BaseEntity;
+import com.messenger.chatty.domain.message.entity.Message;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,9 +24,9 @@ public class ChannelAccess extends BaseEntity {
     @JoinColumn(name = "channel_id")
     private Channel channel;
 
-    private LocalDateTime accessTime;
+    private String lastMessageId;
 
-    public void updateAccessTime() {
-        this.accessTime = LocalDateTime.now();
+    public void updateAccessTime(Message message) {
+        this.lastMessageId = message.getId();
     }
 }

@@ -3,6 +3,7 @@ package com.messenger.chatty.domain.channel.service;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ChannelService {
@@ -16,7 +17,7 @@ public interface ChannelService {
 
     boolean validateEnterChannel(Long channelId, String username);
 
-    void updateAccessTime(Long channelId, String username);
+    void updateAccessTime(Long channelId, String username, LocalDateTime currentTime);
 
     Long createAccessTime(Long channelId, String username);
 

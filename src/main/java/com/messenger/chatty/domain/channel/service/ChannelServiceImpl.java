@@ -1,23 +1,27 @@
 package com.messenger.chatty.domain.channel.service;
+
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
 import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
+import com.messenger.chatty.domain.channel.repository.ChannelRepository;
 import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.member.repository.MemberRepository;
+import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
 import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
-import com.messenger.chatty.domain.channel.repository.ChannelRepository;
-import com.messenger.chatty.domain.member.repository.MemberRepository;
-import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.util.CustomConverter;
+import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,6 +31,7 @@ public class ChannelServiceImpl implements ChannelService{
     private final ChannelRepository channelRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
+    private final MessageRepository messageRepository;
     private final ChannelAccessRepository channelAccessRepository;
     @Override
     public Long createChannelToWorkspace(Long workspaceId, ChannelGenerateRequestDto requestDto) {
@@ -90,12 +95,14 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public void updateAccessTime(Long channelId, String username) {
+    public void updateAccessTime(Long channelId, String username, LocalDateTime currentTime) {
         ChannelAccess channelAccess = channelAccessRepository
                 .findChannelAccessByChannel_IdAndUsername(channelId, username)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
-
-        channelAccess.updateAccessTime();
+        //accesstime -> lastModifiedTime으로 사용 / 마지막으로 읽은 메세지 아이디 변경
+        messageRepository
+                .findLastMessageBeforeTime(channelId, TimeUtil.convertTimeTypeToLong(currentTime))
+                .ifPresent(channelAccess::updateAccessTime);
     }
 
     @Override
