@@ -51,4 +51,14 @@ public class ChannelController {
         return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, username));
     }
 
+    @Operation(summary = "읽은 마지막 메세지 아이디 조회", description = "사용자가 채널에서 읽은 마지막 메세지의 아이디를 조회합니다.")
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.CHANNEL_ACCESS_NOT_FOUND
+    }, status = AUTH)
+    @GetMapping("/{channelId}/read/id")
+    public ApiResponse<String> getLastReadMessageId(@AuthenticatedUsername String username,
+                                                    @PathVariable Long channelId) {
+        return ApiResponse.onSuccess(messageService.getLastReadMessageId(channelId, username));
+    }
+
 }

@@ -23,5 +23,7 @@ public interface ChannelService {
 
     boolean hasAccessTime(Long channelId, String username);
 
+    String getUnreadMessageId(Long channelId, String username);
+
 
 }

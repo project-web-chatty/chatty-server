@@ -18,6 +18,8 @@ import com.messenger.chatty.global.presentation.exception.custom.WorkspaceExcept
 import com.messenger.chatty.global.util.CustomConverter;
 import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,8 +102,10 @@ public class ChannelServiceImpl implements ChannelService{
                 .findChannelAccessByChannel_IdAndUsername(channelId, username)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         //accesstime -> lastModifiedTime으로 사용 / 마지막으로 읽은 메세지 아이디 변경
+        Pageable pageable = PageRequest.of(0, 1);
         messageRepository
-                .findLastMessageBeforeTime(channelId, TimeUtil.convertTimeTypeToLong(currentTime))
+                .findLastMessageBeforeTime(channelId, TimeUtil.convertTimeTypeToLong(currentTime), pageable)
+                .stream().findFirst()
                 .ifPresent(channelAccess::updateAccessTime);
     }
 
@@ -113,6 +117,13 @@ public class ChannelServiceImpl implements ChannelService{
     @Override
     public boolean hasAccessTime(Long channelId, String username) {
         return channelAccessRepository.existsByChannelIdAndUsername(channelId, username);
+    }
+
+    @Override
+    public String getUnreadMessageId(Long channelId, String username) {
+        return channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND))
+                .getLastMessageId();
     }
 
     private ChannelAccess builderChannelAccess(String username, Long channelId) {

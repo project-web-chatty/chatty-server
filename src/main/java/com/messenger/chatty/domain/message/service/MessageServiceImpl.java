@@ -66,7 +66,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public String getLastUnreadMessageId(Long channelId, String username) {
+    public String getLastReadMessageId(Long channelId, String username) {
         ChannelAccess channelAccess = channelAccessRepository
                 .findChannelAccessByChannel_IdAndUsername(channelId, username)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));

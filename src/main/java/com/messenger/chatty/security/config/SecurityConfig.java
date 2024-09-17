@@ -76,7 +76,7 @@ public class SecurityConfig {
                                 "/api/member/signup", "/api/member/check", "/api/auth/**")
                         .permitAll()
                         .requestMatchers("/api/workspace/join/**", "/api/workspace").authenticated()
-                        .requestMatchers("/chat/**", "/stomp/chat", "/pub/chat/**",
+                        .requestMatchers("/chat/**", "/stomp/chat/**", "/pub/chat/**",
                                 "/message/**", "/queue/**", "/topic/**", "/socket.io/**",
                                 "/exchange/**", "/amq/queue/**").permitAll()    //임시
                         .requestMatchers(HttpMethod.GET, "/api/workspace/**").hasAnyRole("ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER")

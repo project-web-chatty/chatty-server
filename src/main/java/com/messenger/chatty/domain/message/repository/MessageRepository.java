@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import java.util.Optional;
-
 public interface MessageRepository extends MongoRepository<Message, Long> {
 
     @Query(value = "{'channelId': ?0, 'sendTime': {$gt: ?1}}", sort = "{'sendTime': -1}")
@@ -22,6 +20,8 @@ public interface MessageRepository extends MongoRepository<Message, Long> {
     Page<Message> findMessages(Long channelId, Pageable pageable);
 
     @Query(value = "{'channelId': ?0, 'sendTime': {$lt: ?1}}", sort = "{'sendTime': -1}")
-    Optional<Message> findLastMessageBeforeTime(Long channelId, Long time);
+    Page<Message> findLastMessageBeforeTime(Long channelId,
+                                                Long time,
+                                                Pageable pageable);
 
 }
