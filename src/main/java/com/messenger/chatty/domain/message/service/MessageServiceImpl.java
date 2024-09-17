@@ -10,6 +10,7 @@ import com.messenger.chatty.global.presentation.exception.custom.ChannelExceptio
 import com.messenger.chatty.global.util.CustomConverter;
 import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService{
@@ -53,5 +55,11 @@ public class MessageServiceImpl implements MessageService{
                 channelId,
                 TimeUtil.convertTimeTypeToLong(channelAccess.getAccessTime())
         );
+    }
+
+    @Override
+    public List<MessageDto> getMessages(Long channelId, Pageable pageable) {
+        Page<Message> messages = messageRepository.findMessages(channelId, pageable);
+        return CustomConverter.convertMessageResponse(messages);
     }
 }

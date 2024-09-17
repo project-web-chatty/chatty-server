@@ -38,6 +38,9 @@
   <input type="submit" value="Send" class="btn-send">
 </form>
 
+<!-- Disconnect 버튼 추가 -->
+<button id="disconnectBtn">Disconnect</button>
+
 <div class="chats">
   <!-- 서버에서 받은 메시지를 표시할 영역 -->
 </div>
@@ -49,6 +52,7 @@
   const chats = document.querySelector('.chats');
   const messageContent = document.querySelector('#message');
   const btnSend = document.querySelector('.btn-send');
+  const disconnectBtn = document.getElementById('disconnectBtn');
   const channelId = [[${channelId}]];
   const nickname = [[${nickname}]];
   const accessToken = [[${accessToken}]]; // 서버로부터 전달된 accessToken
@@ -120,6 +124,15 @@
           'channelId': channelId,
           'Authorization': `Bearer ${accessToken}`
       }, JSON.stringify(messageDto));
+  });
+
+  // Disconnect 버튼 처리
+  disconnectBtn.addEventListener('click', () => {
+      if (stomp) {
+          stomp.disconnect(() => {
+              console.log("Disconnected from server");
+          });
+      }
   });
 </script>
 </body>

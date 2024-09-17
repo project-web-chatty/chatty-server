@@ -28,12 +28,21 @@ public class ChannelController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.CHANNEL_ACCESS_NOT_FOUND
     }, status = AUTH)
-    @GetMapping("/{channelId}")
+    @GetMapping("/unread/{channelId}")
     public ApiResponse<List<MessageDto>> getUnreadMessageInChannel(@AuthenticatedUsername String username,
                                                                    @PathVariable Long channelId,
                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10);
         return ApiResponse.onSuccess(messageService.getMessageByLastAccessTime(channelId, username, pageable));
+    }
+
+    @Operation(summary = "메세지 페이징 조회", description = "채널 내 메세지부터 조회하도록 합니다")
+    @ApiErrorCodeExample(status = AUTH)
+    @GetMapping("/{channelId}")
+    public ApiResponse<List<MessageDto>> getMessageInChannel(@PathVariable Long channelId,
+                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, 10);
+        return ApiResponse.onSuccess(messageService.getMessages(channelId, pageable));
     }
 
     @Operation(summary = "안읽은 메세지 개수", description = "사용자가 채널 내 읽지 않은 메세지의 개수를 확인합니다.")
