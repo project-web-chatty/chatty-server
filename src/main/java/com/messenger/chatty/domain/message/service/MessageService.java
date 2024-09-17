@@ -14,4 +14,8 @@ public interface MessageService {
     Long countUnreadMessage(Long channelId, String username);
 
     List<MessageDto> getMessages(Long channelId, Pageable pageable);
+
+    String getLastUnreadMessageId(Long channelId, String username);
+
+    MessageDto getLastMessageInChannel(Long channelId);
 }

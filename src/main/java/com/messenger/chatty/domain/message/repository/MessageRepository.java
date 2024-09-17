@@ -18,7 +18,7 @@ public interface MessageRepository extends MongoRepository<Message, Long> {
     @Query(value = "{'channelId': ?0, 'sendTime': {$gt: ?1}}", count = true)
     long countByChatRoomIdAndSendTimeAfter(Long channelId, long lastAccessTime);
 
-    @Query(value = "{'channelId' : ?0}")
+    @Query(value = "{'channelId' : ?0}", sort = "{'sendTime': -1}")
     Page<Message> findMessages(Long channelId, Pageable pageable);
 
     @Query(value = "{'channelId': ?0, 'sendTime': {$lt: ?1}}", sort = "{'sendTime': -1}")

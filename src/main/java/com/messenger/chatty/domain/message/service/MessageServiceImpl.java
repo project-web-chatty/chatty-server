@@ -12,6 +12,7 @@ import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class MessageServiceImpl implements MessageService{
         Page<Message> messages = messageRepository
                 .findMessagesByChatRoomIdAfterMemberDisconnectTime(
                         channelId,
-                        TimeUtil.convertTimeTypeToLong(channelAccess.getAccessTime()),
+                        TimeUtil.convertTimeTypeToLong(channelAccess.getLastModifiedDate()),
                         pageable);
         return CustomConverter.convertMessageResponse(messages);
     }
@@ -53,7 +54,7 @@ public class MessageServiceImpl implements MessageService{
 
         return messageRepository.countByChatRoomIdAndSendTimeAfter(
                 channelId,
-                TimeUtil.convertTimeTypeToLong(channelAccess.getAccessTime())
+                TimeUtil.convertTimeTypeToLong(channelAccess.getLastModifiedDate())
         );
     }
 
@@ -61,5 +62,22 @@ public class MessageServiceImpl implements MessageService{
     public List<MessageDto> getMessages(Long channelId, Pageable pageable) {
         Page<Message> messages = messageRepository.findMessages(channelId, pageable);
         return CustomConverter.convertMessageResponse(messages);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public String getLastUnreadMessageId(Long channelId, String username) {
+        ChannelAccess channelAccess = channelAccessRepository
+                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
+        return channelAccess.getLastMessageId();
+    }
+
+    @Override
+    public MessageDto getLastMessageInChannel(Long channelId) {
+        Pageable pageable = PageRequest.of(0, 1);
+        return CustomConverter.convertMessageResponse(
+                        messageRepository.findMessages(channelId, pageable)
+                ).get(0);
     }
 }
