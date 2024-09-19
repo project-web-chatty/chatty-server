@@ -2,6 +2,10 @@ package com.messenger.chatty.global.config.stomp;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.global.presentation.ErrorStatus;
+import com.messenger.chatty.global.presentation.exception.GeneralException;
+import com.messenger.chatty.global.presentation.exception.custom.MemberException;
+import com.messenger.chatty.global.presentation.exception.custom.StompMessagingException;
 import com.messenger.chatty.global.util.WebSocketUtil;
 import com.messenger.chatty.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +42,8 @@ public class ChatPreHandler implements ChannelInterceptor {
         }
 
         switch (command) {
+            case STOMP -> {
+            }
             case CONNECT -> {
                 try {
                     String accessToken = WebSocketUtil.getAccessToken(headerAccessor);
@@ -49,44 +55,73 @@ public class ChatPreHandler implements ChannelInterceptor {
                     headerAccessor.getSessionAttributes().put("channelId", channelId);
 
                     log.info("CONNECT: username={}, channelId={}", username, channelId);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.error("Failed to process CONNECT command", e);
-                    // 여기서 예외를 던져 연결을 중단할지, 그냥 로그만 남길지 결정할 수 있습니다.
-                    throw new MessageDeliveryException("Failed to process CONNECT command");
+                    throw new StompMessagingException(ErrorStatus.AUTH_INVALID_TOKEN);
                 }
             }
             case SUBSCRIBE -> {
-                try {
-                    String username = (String) headerAccessor.getSessionAttributes().get("username");
-                    Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
-
-                    if (username == null || channelId == null) {
-                        throw new MessageDeliveryException("Missing username or channelId");
-                    }
-
-                    boolean validated = channelService.validateEnterChannel(channelId, username);
-                    headerAccessor.getSessionAttributes().put("validated", validated);
-                    if (!validated) {
-                        log.info("SUBSCRIBE: Validation failed for username={}, channelId={}", username, channelId);
-                        throw new MessageDeliveryException("Validation failed for channel access");
-                    }
-
-                    log.info("SUBSCRIBE: username={}, channelId={}", username, channelId);
-                } catch (Exception e) {
-                    log.error("Failed to process SUBSCRIBE command", e);
-                    throw new MessageDeliveryException("Failed to process SUBSCRIBE command");
+                String username = (String) headerAccessor.getSessionAttributes().get("username");
+                Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+                if (username == null || channelId == null) {
+                    throw new StompMessagingException(ErrorStatus.REQUEST_PARAM_IS_NULL);
                 }
+
+                boolean validated;
+                try{
+                    validated = channelService.validateEnterChannel(channelId, username);
+                }
+                catch (GeneralException e){
+                    throw new StompMessagingException(ErrorStatus.INVALID_REQUEST_PARAM);
+                }
+
+                headerAccessor.getSessionAttributes().put("validated", validated);
+                if (!validated) {
+                    log.info("SUBSCRIBE: Validation failed for username={}, channelId={}", username, channelId);
+                    throw new StompMessagingException(ErrorStatus.CHANNEL_ACCESS_DENIAL);
+                }
+                log.info("SUBSCRIBE: username={}, channelId={}", username, channelId);
+
             }
             case DISCONNECT -> {
-                if ((Boolean) headerAccessor.getSessionAttributes().get("validated")) {
-                    String username = (String) headerAccessor.getSessionAttributes().get("username");
-                    Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
-                    if (!channelService.hasAccessTime(channelId, username)) {
-                        channelService.createAccessTime(channelId, username);
-                    }
-                    channelService.updateAccessTime(channelId,username, LocalDateTime.now());
+                try{
+                    if ((Boolean) headerAccessor.getSessionAttributes().get("validated")) {
+                        String username = (String) headerAccessor.getSessionAttributes().get("username");
+                        Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+                        if (!channelService.hasAccessTime(channelId, username)) {
+                            channelService.createAccessTime(channelId, username);
+                        }
+                        channelService.updateAccessTime(channelId,username, LocalDateTime.now());
 
+                    }
                 }
+                catch (RuntimeException e){
+                    throw new StompMessagingException(ErrorStatus.INVALID_DISCONNECT_LOGIC);
+                    // 예외 발생시 수정 요망
+                }
+
+            }
+            case UNSUBSCRIBE -> {
+            }
+            case SEND -> {
+            }
+            case ACK -> {
+            }
+            case NACK -> {
+            }
+            case BEGIN -> {
+            }
+            case COMMIT -> {
+            }
+            case ABORT -> {
+            }
+            case CONNECTED -> {
+            }
+            case RECEIPT -> {
+            }
+            case MESSAGE -> {
+            }
+            case ERROR -> {
             }
             default -> {
                 // 다른 명령어는 별도로 처리하지 않고 그대로 메시지 반환

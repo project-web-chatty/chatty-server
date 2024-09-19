@@ -48,7 +48,15 @@ public enum ErrorStatus {
     MEMBER_NOT_FOUND(BAD_REQUEST,4080,"해당 멤버는 존재하지 않습니다."),
     MEMBER_USERNAME_ALREADY_EXISTS(BAD_REQUEST,4081,"해당 USERNAME은 이미 존재합니다."),
     MEMBER_ALREADY_EXISTS_IN_WORKSPACE(BAD_REQUEST,4082,"해당 멤버는 워크스페이스에 이미 존재합니다."),
-    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 존재하지 않습니다.");
+    MEMBER_NOT_IN_WORKSPACE(BAD_REQUEST,4083,"해당 멤버는 워크스페이스에 존재하지 않습니다."),
+
+    // stomp 전용 error
+    INVALID_CONNECT_REQUEST(BAD_REQUEST,4901,"유효한 토큰을 포함하여 CONNECT 요청을 보내주세요."),
+    REQUEST_PARAM_IS_NULL(BAD_REQUEST,4902, "유저네임 또는 채널 아이디를 포함하여 요청하세요."),
+    INVALID_REQUEST_PARAM(BAD_REQUEST,4903, "유효하지 않은 유저네임 또는 채널 아이디입니다."),
+    CHANNEL_ACCESS_DENIAL(BAD_REQUEST,4904, "해당 채널에 접근할 수 없습니다."),
+    INVALID_DISCONNECT_LOGIC(INTERNAL_SERVER_ERROR,5900, "DISCONNECT 로직에서 문제가 발생하였습니다.");
+
 
 
 

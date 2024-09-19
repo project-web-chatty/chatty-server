@@ -1,11 +1,14 @@
 package com.messenger.chatty.global.presentation;
 import com.messenger.chatty.global.presentation.exception.GeneralException;
+import com.messenger.chatty.global.presentation.exception.custom.StompMessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.MessagingException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +69,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpHeaders.EMPTY,
                 request,
                 e.getMessage());
+    }
+
+    public ApiResponse handleStompMessageException(StompMessagingException msgEx){
+        return ApiResponse.onFailure(msgEx.getErrorStatus().getCode(), msgEx.getMessage(), null);
     }
 
 
