@@ -46,8 +46,9 @@ public class MessageController {
 
 
     // receiver()는 단순히 큐에 들어온 메세지를 소비만 한다. (현재는 디버그 용도)
-    @RabbitListener(queues = "message.queue")
+   /* @RabbitListener(queues = "message.queue")
     public void receive(MessageDto messageDto) {
         log.info("chatDto.getMessage() = {}", messageDto.getContent());
-    }
+    }*/
+
 }
