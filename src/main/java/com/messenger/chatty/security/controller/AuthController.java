@@ -2,7 +2,9 @@ package com.messenger.chatty.security.controller;
 
 
 import com.messenger.chatty.domain.member.dto.request.LoginRequestDto;
+import com.messenger.chatty.domain.member.dto.request.PasswordUpdateRequestDto;
 import com.messenger.chatty.domain.refresh.dto.response.TokenResponseDto;
+import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.global.presentation.ApiResponse;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.annotation.api.ApiErrorCodeExample;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @Operation(summary = "로그인",description = "리프레시 토큰과 엑세스토큰이 body에 담겨 응답됩니다.")
+    @Operation(summary = "로그인",description = "리프레시 토큰과 엑세스토큰이 body에 담겨 응답됩니다. 리프레시 토큰의 주기는 7일, 엑세스 토큰의 주기는 10분입니다.")
     @ApiErrorCodeExample({
             ErrorStatus.AUTH_FAIL_LOGIN
     })
@@ -42,7 +44,7 @@ public class AuthController {
         return ApiResponse.onSuccess(true);
     }
 
-    @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요. body에 토큰이 담겨 응답됩니다.")
+    @Operation(summary = "엑세스토큰 및 리프레시 토큰 재발급",description = "기한이 짧은 엑세스 토큰이 만료 시 헤더에 리프레시토큰을 담아 요청을 보내세요. body에 리프레시&엑세스 토큰이 담겨 응답됩니다.")
     @ApiErrorCodeExample({
             ErrorStatus.AUTH_INVALID_TOKEN,
             ErrorStatus.AUTH_OUTDATED_REFRESH_TOKEN
@@ -50,6 +52,18 @@ public class AuthController {
     @PostMapping("/reissue")
     public ApiResponse<TokenResponseDto> reissue(HttpServletRequest request) {
             return  ApiResponse.onSuccess(authService.reissueToken(request));
+    }
+
+    @Operation(summary = "비밀번호 변경",description = "oldPassword는 기존의 것, newPassword는 새 비밀번호입니다. 기존 비밀번호와 새 비밀번호의 불일치 여부 등의 검증은 프론트 단에서 진행 해주세요")
+    @ApiErrorCodeExample({
+            ErrorStatus.AUTH_FAIL_LOGIN,
+            ErrorStatus.AUTH_FAIL_PASSWORD_MATCHING
+    })
+    @PostMapping("/password")
+    public ApiResponse<Boolean> changePassword(@AuthenticatedUsername String username,
+                                               @RequestBody PasswordUpdateRequestDto passwordUpdateRequestDto) {
+        authService.changePassword(username,passwordUpdateRequestDto);
+        return  ApiResponse.onSuccess(true);
     }
 
 }

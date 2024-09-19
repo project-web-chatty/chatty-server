@@ -31,6 +31,7 @@ public enum ErrorStatus {
     AUTH_TYPE_MISMATCH_TOKEN(BAD_REQUEST,4054,"토큰의 타입이 맞지 않습니다."),
     AUTH_UNAUTHORIZED_ACCESS(FORBIDDEN,4055,"인증되었으나 해당 요청에 대한 권한이 부족합니다."),
     AUTH_FAIL_LOGIN(FORBIDDEN,4056,"아이디 또는 비밀번호를 잘못 입력하였습니다."),
+    AUTH_FAIL_PASSWORD_MATCHING(BAD_REQUEST,4057,"비밀번호가 올바르지 않습니다."),
 
     // workspace error
     WORKSPACE_NOT_FOUND(BAD_REQUEST,4060,"해당 워크스페이스가 존재하지 않습니다."),
@@ -55,9 +56,18 @@ public enum ErrorStatus {
     REQUEST_PARAM_IS_NULL(BAD_REQUEST,4902, "유저네임 또는 채널 아이디를 포함하여 요청하세요."),
     INVALID_REQUEST_PARAM(BAD_REQUEST,4903, "유효하지 않은 유저네임 또는 채널 아이디입니다."),
     CHANNEL_ACCESS_DENIAL(BAD_REQUEST,4904, "해당 채널에 접근할 수 없습니다."),
-    INVALID_DISCONNECT_LOGIC(INTERNAL_SERVER_ERROR,5900, "DISCONNECT 로직에서 문제가 발생하였습니다.");
+    INVALID_DISCONNECT_LOGIC(INTERNAL_SERVER_ERROR,5900, "DISCONNECT 로직에서 문제가 발생하였습니다."),
 
 
+
+
+    // image upload error
+    EMPTY_FILE_EXCEPTION(BAD_REQUEST,4090,"빈 파일 형식입니다."),
+    NO_FILE_EXTENSION(BAD_REQUEST,4091,"확장자를 포함하고 있지 않습니다."),
+    INVALID_FILE_EXTENSION(BAD_REQUEST,4092,"유효한 이미지 확장자가 아닙니다."),
+    INVALID_FILE_URI(BAD_REQUEST,4093,"유효하지 않은 이미지 주소 입니다."),
+    IO_EXCEPTION_ON_IMAGE_UPLOAD(INTERNAL_SERVER_ERROR,5090,"이미지 업로드 중 에러가 발생하였습니다."),
+    IO_EXCEPTION_ON_IMAGE_DELETE(INTERNAL_SERVER_ERROR,5091,"이미지 삭제 중 에러가 발생하였습니다.");
 
 
     private final HttpStatus httpStatus;

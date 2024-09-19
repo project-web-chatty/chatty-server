@@ -72,6 +72,7 @@ public class SecurityConfig {
         // authorization setting
         httpSecurity
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/auth/password").authenticated()
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
                                 "/api/member/signup", "/api/member/check", "/api/auth/**")
                         .permitAll()

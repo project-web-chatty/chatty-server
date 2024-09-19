@@ -24,8 +24,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     void deleteByUsername(String username);
 
-    @Query("SELECT wj.member FROM WorkspaceJoin wj WHERE wj.workspace.id = :workspaceId")
-    List<Member> findMembersByWorkspaceId(@Param("workspaceId") Long workspaceId);
 
 //    @Query("SELECT cj.member FROM ChannelJoin cj WHERE cj.channel.id = :channelId")
 //    List<Member> findByChannelId(@Param("channelId") Long channelId);

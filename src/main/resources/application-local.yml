@@ -42,6 +42,11 @@ spring:
 
 
 variables:
+  cloud:
+    s3:
+      bucketName: ${LOCAL_S3_BUCKET_NAME}
+      accessKey: ${LOCAL_S3_ACCESS_KEY}
+      secretKey: ${LOCAL_S3_SECRET_KEY}
   jwt:
     KEY: asdqweafsds123+K3yyy
   invitation:
@@ -52,4 +57,3 @@ variables:
 mongodb:
   client: mongodb://username:password@localhost:27017/chat?authSource=chat
   name: chat
-
