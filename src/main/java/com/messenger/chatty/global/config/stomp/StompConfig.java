@@ -30,7 +30,13 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/pub");
 
         //registry.enableSimpleBroker("/sub");
-        registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue");
+        registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
+                .setRelayPort(61613)
+                .setVirtualHost("/")
+                .setClientLogin("guest")
+                .setClientPasscode("guest")
+                .setRelayHost("rabbitmq"); // for docker internal network
+
     }
 
     @Override
