@@ -1,4 +1,5 @@
 package com.messenger.chatty.domain.workspace.controller;
+import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
@@ -31,6 +32,7 @@ import static com.messenger.chatty.global.presentation.ErrorStatus.IO_EXCEPTION_
 public class WorkspaceController {
     private final ChannelService channelService;
     private final WorkspaceService workspaceService;
+    private final MessageService messageService;
 
 
     @Operation(summary = "워크스페이스 생성하기")
@@ -69,8 +71,13 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}/channels")
-    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable Long workspaceId){
-        return ApiResponse.onSuccess(workspaceService.getChannelsOfWorkspace(workspaceId));
+    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@AuthenticatedUsername String username,
+                                                                     @PathVariable Long workspaceId){
+        List<ChannelBriefDto> channelBriefDtoList = workspaceService.getChannelsOfWorkspace(workspaceId);
+        channelBriefDtoList.forEach(dto -> dto.setUnreadCount(
+                messageService.countUnreadMessage(dto.getId(), username)
+        ));
+        return ApiResponse.onSuccess(channelBriefDtoList);
     }
 
     @Operation(summary = "워크스페이스의 멤버 리스트 가져오기")
