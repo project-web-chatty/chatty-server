@@ -1,6 +1,7 @@
 package com.messenger.chatty.domain.message.service;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -9,13 +10,13 @@ public interface MessageService {
 
     String send(MessageDto messageDto);
 
-    List<MessageDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable);
+    List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable);
 
     Long countUnreadMessage(Long channelId, String username);
 
-    List<MessageDto> getMessages(Long channelId, Pageable pageable);
+    List<MessageResponseDto> getMessages(Long channelId, Pageable pageable);
 
     String getLastReadMessageId(Long channelId, String username);
 
-    MessageDto getLastMessageInChannel(Long channelId);
+    MessageResponseDto getLastMessageInChannel(Long channelId);
 }

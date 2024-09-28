@@ -1,6 +1,6 @@
 package com.messenger.chatty.domain.message.entity;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
 import com.messenger.chatty.global.util.TimeUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

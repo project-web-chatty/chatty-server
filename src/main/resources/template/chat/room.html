@@ -113,7 +113,7 @@
       messageContent.value = ''; // 입력 필드 초기화
 
       // MessageDto 객체로 변환하여 메시지 전송
-      const messageDto = {
+      const messageResponseDto = {
           id: null,
           channelId: channelId,
           content: message
@@ -123,7 +123,7 @@
       stomp.send(`/pub/chat.message`, {
           'channelId': channelId,
           'Authorization': `Bearer ${accessToken}`
-      }, JSON.stringify(messageDto));
+      }, JSON.stringify(messageResponseDto));
   });
 
   // Disconnect 버튼 처리

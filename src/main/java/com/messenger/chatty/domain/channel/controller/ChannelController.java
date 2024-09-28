@@ -1,6 +1,6 @@
 package com.messenger.chatty.domain.channel.controller;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.global.presentation.ApiResponse;
@@ -28,8 +28,8 @@ public class ChannelController {
     @Operation(summary = "메세지 리스트 조회", description = "채널 내 메세지부터 조회하도록 합니다")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{channelId}")
-    public ApiResponse<List<MessageDto>> getMessageInChannel(@PathVariable Long channelId,
-                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponse<List<MessageResponseDto>> getMessageInChannel(@PathVariable Long channelId,
+                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10);
         return ApiResponse.onSuccess(messageService.getMessages(channelId, pageable));
     }
@@ -37,7 +37,7 @@ public class ChannelController {
     @Operation(summary = "채널 마지막 메세지", description = "채널의 마지막 메세지를 조회합니다.")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{channelId}/last")
-    public ApiResponse<MessageDto> getLastMessageInChannel(@PathVariable Long channelId){
+    public ApiResponse<MessageResponseDto> getLastMessageInChannel(@PathVariable Long channelId){
         return ApiResponse.onSuccess(messageService.getLastMessageInChannel(channelId));
     }
 

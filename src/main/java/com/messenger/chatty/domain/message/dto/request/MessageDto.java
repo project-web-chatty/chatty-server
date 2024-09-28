@@ -1,19 +1,18 @@
-package com.messenger.chatty.domain.message.dto;
+package com.messenger.chatty.domain.message.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDto {
-    private String id;
     private Long channelId;
     private String senderNickname;
     private String senderUsername;
@@ -21,5 +20,4 @@ public class MessageDto {
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate;
-
 }

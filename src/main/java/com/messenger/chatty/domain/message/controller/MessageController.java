@@ -1,10 +1,9 @@
 package com.messenger.chatty.domain.message.controller;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;

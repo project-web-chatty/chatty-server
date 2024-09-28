@@ -2,7 +2,8 @@ package com.messenger.chatty.domain.message.service;
 
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
@@ -35,7 +36,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<MessageDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
+    public List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
         ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         Page<Message> messages = messageRepository
@@ -59,7 +60,7 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public List<MessageDto> getMessages(Long channelId, Pageable pageable) {
+    public List<MessageResponseDto> getMessages(Long channelId, Pageable pageable) {
         Page<Message> messages = messageRepository.findMessages(channelId, pageable);
         return CustomConverter.convertMessageResponse(messages);
     }
@@ -74,7 +75,7 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public MessageDto getLastMessageInChannel(Long channelId) {
+    public MessageResponseDto getLastMessageInChannel(Long channelId) {
         Pageable pageable = PageRequest.of(0, 1);
         return CustomConverter.convertMessageResponse(
                         messageRepository.findMessages(channelId, pageable)
