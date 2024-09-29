@@ -19,6 +19,8 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @Component
 @RequiredArgsConstructor
@@ -71,7 +73,12 @@ public class ChatPreHandler implements ChannelInterceptor {
             }
             case DISCONNECT -> {
                 try{
-
+                    Long workspaceJoinId = (Long) headerAccessor.getSessionAttributes().get("workspaceJoinId");
+                    Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+                    if (!channelService.hasAccessTime(channelId, workspaceJoinId)) {
+                        channelService.createAccessTime(channelId, workspaceJoinId);
+                    }
+                    channelService.updateAccessTime(channelId, workspaceJoinId, LocalDateTime.now());
                 }
                 catch (RuntimeException e){
                     throw new StompMessagingException(ErrorStatus.INVALID_DISCONNECT_LOGIC);
