@@ -18,7 +18,7 @@ public class ChannelAccess extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private Long workspaceJoinId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id")

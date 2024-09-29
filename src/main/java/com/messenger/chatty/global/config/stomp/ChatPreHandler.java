@@ -4,7 +4,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.domain.channel.service.ChannelService;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.GeneralException;
-import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.StompMessagingException;
 import com.messenger.chatty.global.util.WebSocketUtil;
 import com.messenger.chatty.security.service.AuthService;
@@ -14,7 +13,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -50,9 +48,11 @@ public class ChatPreHandler implements ChannelInterceptor {
                     DecodedJWT decodedJWT = authService.decodeToken(accessToken, "access");
                     String username = decodedJWT.getSubject();
                     Long channelId = WebSocketUtil.getChannelId(headerAccessor);
+                    //TODO username & channelId -> workspaceJoinId
+                    Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
 
-                    headerAccessor.getSessionAttributes().put("username", username);
-                    headerAccessor.getSessionAttributes().put("channelId", channelId);
+                    headerAccessor.getSessionAttributes().put("workspaceJoinId", workspaceJoinId);
+
 
                     log.info("CONNECT: username={}, channelId={}", username, channelId);
                 } catch (RuntimeException e) {

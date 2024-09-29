@@ -15,6 +15,8 @@ public interface ChannelService {
 
     void deleteChannelInWorkspace(Long workspaceId, Long  channelId);
 
+    Long getWorkspaceJoinId(Long channelId, String username);
+
     boolean validateEnterChannel(Long channelId, String username);
 
     void updateAccessTime(Long channelId, String username, LocalDateTime currentTime);
