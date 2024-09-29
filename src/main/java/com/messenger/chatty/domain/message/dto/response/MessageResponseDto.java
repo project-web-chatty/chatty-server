@@ -12,4 +12,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class MessageResponseDto extends MessageDto {
     private String id;
+    private String senderProfileImg;
+    private String senderNickname;
 }

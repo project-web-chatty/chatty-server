@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MessageDto {
     private Long channelId;
-    private String senderNickname;
-    private String senderUsername;
-    private String senderProfileImg;
+    private Long workspaceJoinId;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate;
