@@ -6,6 +6,7 @@ import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
@@ -141,9 +142,16 @@ public class ChannelServiceImpl implements ChannelService{
                 .getLastMessageId();
     }
 
+    @Override
+    public MemberBriefDto getMemberInfoByWorkspace(Long workspaceJoinId) {
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findById(workspaceJoinId)
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        return CustomConverter.convertMemberToBriefDto(workspaceJoin.getMember());
+    }
+
     private ChannelAccess builderChannelAccess(String username, Long channelId) {
         return ChannelAccess.builder()
-                .username(username)
+                .workspaceJoinId(username)
                 .channel(channelRepository.findById(channelId)
                         .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND)))
                 .build();

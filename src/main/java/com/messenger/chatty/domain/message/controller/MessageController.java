@@ -34,10 +34,15 @@ public class MessageController {
 
 
     @MessageMapping("chat.message")
-    public void send(MessageDto messageDto, @Header("channelId") String channelIdStr) {
+    public void send(MessageDto messageDto,
+                     @Header("channelId") String channelIdStr,
+                     @Header("workspaceJoinId") String workspaceJoinId,
+                     @Header("nickname") String nickname,
+                     @Header("profileImg") String profileImg) {
         log.info("send");
         if(channelIdStr == null) throw new MessagingException("error");
         messageDto.setRegDate(LocalDateTime.now());
+        messageDto.of(Long.valueOf(workspaceJoinId), profileImg, nickname);
 
         messageService.send(messageDto);
         template.convertAndSend("amq.topic", "channel." + channelIdStr, messageDto);

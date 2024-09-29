@@ -2,6 +2,7 @@ package com.messenger.chatty.domain.channel.service;
 
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,5 +28,5 @@ public interface ChannelService {
 
     String getUnreadMessageId(Long channelId, String username);
 
-
+    MemberBriefDto getMemberInfoByWorkspace(Long workspaceJoinId);
 }
