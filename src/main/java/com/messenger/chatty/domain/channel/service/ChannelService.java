@@ -20,13 +20,13 @@ public interface ChannelService {
 
     boolean validateEnterChannel(Long channelId, String username);
 
-    void updateAccessTime(Long channelId, String username, LocalDateTime currentTime);
+    void updateAccessTime(Long channelId, Long workspaceJoinId, LocalDateTime currentTime);
 
-    Long createAccessTime(Long channelId, String username);
+    Long createAccessTime(Long channelId, Long workspaceJoinId);
 
-    boolean hasAccessTime(Long channelId, String username);
+    boolean hasAccessTime(Long channelId, Long workspaceJoinId);
 
-    String getUnreadMessageId(Long channelId, String username);
+    String getUnreadMessageId(Long channelId, Long workspaceJoinId);
 
     MemberBriefDto getMemberInfoByWorkspace(Long workspaceJoinId);
 }

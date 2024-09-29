@@ -113,9 +113,8 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public void updateAccessTime(Long channelId, String username, LocalDateTime currentTime) {
-        ChannelAccess channelAccess = channelAccessRepository
-                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public void updateAccessTime(Long channelId, Long workspaceJoinId, LocalDateTime currentTime) {
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         //accesstime -> lastModifiedTime으로 사용 / 마지막으로 읽은 메세지 아이디 변경
         Pageable pageable = PageRequest.of(0, 1);
@@ -126,18 +125,18 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public Long createAccessTime(Long channelId, String username) {
-        return channelAccessRepository.save(builderChannelAccess(username, channelId)).getId();
+    public Long createAccessTime(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.save(builderChannelAccess(, channelId)).getId();
     }
 
     @Override
-    public boolean hasAccessTime(Long channelId, String username) {
-        return channelAccessRepository.existsByChannelIdAndUsername(channelId, username);
+    public boolean hasAccessTime(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.existsByChannelIdAndWorkspaceJoinId(channelId, workspaceJoinId);
     }
 
     @Override
-    public String getUnreadMessageId(Long channelId, String username) {
-        return channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public String getUnreadMessageId(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND))
                 .getLastMessageId();
     }
@@ -149,9 +148,9 @@ public class ChannelServiceImpl implements ChannelService{
         return CustomConverter.convertMemberToBriefDto(workspaceJoin.getMember());
     }
 
-    private ChannelAccess builderChannelAccess(String username, Long channelId) {
+    private ChannelAccess builderChannelAccess(Long workspaceJoinId, Long channelId) {
         return ChannelAccess.builder()
-                .workspaceJoinId(username)
+                .workspaceJoinId(workspaceJoinId)
                 .channel(channelRepository.findById(channelId)
                         .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND)))
                 .build();
