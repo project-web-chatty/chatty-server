@@ -126,7 +126,7 @@ public class ChannelServiceImpl implements ChannelService{
 
     @Override
     public Long createAccessTime(Long channelId, Long workspaceJoinId) {
-        return channelAccessRepository.save(builderChannelAccess(, channelId)).getId();
+        return channelAccessRepository.save(builderChannelAccess(workspaceJoinId, channelId)).getId();
     }
 
     @Override

@@ -71,11 +71,10 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}/channels")
-    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@AuthenticatedUsername String username,
-                                                                     @PathVariable Long workspaceId){
+    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable Long workspaceId){
         List<ChannelBriefDto> channelBriefDtoList = workspaceService.getChannelsOfWorkspace(workspaceId);
         channelBriefDtoList.forEach(dto -> dto.setUnreadCount(
-                messageService.countUnreadMessage(dto.getId(), username)
+                messageService.countUnreadMessage(dto.getId(), dto.getId())
         ));
         return ApiResponse.onSuccess(channelBriefDtoList);
     }

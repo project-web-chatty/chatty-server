@@ -36,8 +36,8 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
-        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, Long workspaceJoinId, Pageable pageable) {
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         Page<Message> messages = messageRepository
                 .findMessagesByChatRoomIdAfterMemberDisconnectTime(
@@ -49,8 +49,8 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public Long countUnreadMessage(Long channelId, String username) {
-        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public Long countUnreadMessage(Long channelId, Long workspaceJoinId) {
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
 
         return messageRepository.countByChatRoomIdAndSendTimeAfter(
@@ -67,9 +67,9 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public String getLastReadMessageId(Long channelId, String username) {
+    public String getLastReadMessageId(Long channelId, Long workspaceJoinId) {
         ChannelAccess channelAccess = channelAccessRepository
-                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         return channelAccess.getLastMessageId();
     }

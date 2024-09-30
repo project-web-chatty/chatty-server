@@ -10,13 +10,13 @@ public interface MessageService {
 
     String send(MessageDto messageDto);
 
-    List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable);
+    List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, Long workspaceJoinId, Pageable pageable);
 
-    Long countUnreadMessage(Long channelId, String username);
+    Long countUnreadMessage(Long channelId, Long workspaceJoinId);
 
     List<MessageResponseDto> getMessages(Long channelId, Pageable pageable);
 
-    String getLastReadMessageId(Long channelId, String username);
+    String getLastReadMessageId(Long channelId, Long workspaceJoinId);
 
     MessageResponseDto getLastMessageInChannel(Long channelId);
 }

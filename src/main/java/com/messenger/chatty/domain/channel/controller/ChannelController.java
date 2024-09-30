@@ -1,5 +1,6 @@
 package com.messenger.chatty.domain.channel.controller;
 
+import com.messenger.chatty.domain.channel.service.ChannelService;
 import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
@@ -23,6 +24,7 @@ import static com.messenger.chatty.global.presentation.annotation.api.Predefined
 @RequestMapping("/api/chat")
 public class ChannelController {
     private final MessageService messageService;
+    private final ChannelService channelService;
 
 
     @Operation(summary = "메세지 리스트 조회", description = "채널 내 메세지부터 조회하도록 합니다")
@@ -48,7 +50,8 @@ public class ChannelController {
     @GetMapping("/{channelId}/count")
     public ApiResponse<Long> countUnreadMessageInChannel(@AuthenticatedUsername String username,
                                                          @PathVariable Long channelId) {
-        return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, username));
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, workspaceJoinId));
     }
 
     @Operation(summary = "읽은 마지막 메세지 아이디 조회", description = "사용자가 채널에서 읽은 마지막 메세지의 아이디를 조회합니다.")
@@ -58,7 +61,8 @@ public class ChannelController {
     @GetMapping("/{channelId}/read/id")
     public ApiResponse<String> getLastReadMessageId(@AuthenticatedUsername String username,
                                                     @PathVariable Long channelId) {
-        return ApiResponse.onSuccess(messageService.getLastReadMessageId(channelId, username));
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        return ApiResponse.onSuccess(messageService.getLastReadMessageId(channelId, workspaceJoinId));
     }
 
 }
