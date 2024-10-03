@@ -1,4 +1,5 @@
 package com.messenger.chatty.domain.workspace.controller;
+import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.domain.channel.dto.request.ChannelGenerateRequestDto;
@@ -78,7 +79,7 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}/members")
-    public ApiResponse<List<MemberBriefDto>> getMembersOfWorkspace(@PathVariable Long workspaceId){
+    public ApiResponse<List<MemberInWorkspaceDto>> getMembersOfWorkspace(@PathVariable Long workspaceId){
         return ApiResponse.onSuccess(workspaceService.getMembersOfWorkspace(workspaceId));
     }
 
@@ -89,10 +90,23 @@ public class WorkspaceController {
             ErrorStatus.MEMBER_NOT_IN_WORKSPACE
     })
     @GetMapping("/{workspaceId}/members/{memberId}")
-    public ApiResponse<MemberBriefDto> getMemberProfileOfWorkspace(@PathVariable Long workspaceId,
+    public ApiResponse<MemberInWorkspaceDto> getMemberProfileOfWorkspace(@PathVariable Long workspaceId,
                                                                    @PathVariable Long memberId){
         return ApiResponse.onSuccess(workspaceService.getMemberProfileOfWorkspace(workspaceId, memberId));
     }
+
+
+    @Operation(summary = "워크스페이스에서 특정 멤버를 내보내기",description = "특정 멤버를 워크스페이스에서 삭제시킵니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus.MEMBER_NOT_IN_WORKSPACE
+    })
+    @DeleteMapping("/{workspaceId}/members/{memberId}")
+    public ApiResponse<Boolean> deleteMemberFromWorkspace(@PathVariable Long workspaceId,
+                                                                   @PathVariable Long memberId){
+        workspaceService.deleteMemberFromWorkspace(workspaceId,memberId);
+        return ApiResponse.onSuccess(true);
+    }
+
 
     @Operation(summary = "워크스페이스에 채널 추가하기",description = "워크스페이스 오너 이상의 역할만 가능합니다")
     @ApiErrorCodeExample({
@@ -211,4 +225,9 @@ public class WorkspaceController {
         workspaceService.deleteProfileImage(workspaceId);
         return ApiResponse.onSuccess(true);
     }
+
+
+
+
+
 }

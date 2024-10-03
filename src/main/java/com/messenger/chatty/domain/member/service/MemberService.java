@@ -5,6 +5,7 @@ import com.messenger.chatty.domain.member.dto.request.MemberJoinRequestDto;
 import com.messenger.chatty.domain.member.dto.request.MemberUpdateRequestDto;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,7 @@ public interface MemberService {
     void deleteMeByUsername(String username);
     void deleteMeById(Long id);
 
-    List<WorkspaceBriefDto> getMyWorkspaces(String username);
+    List<MyWorkspaceDto> getMyWorkspaces(String username);
 
     void checkDuplicatedUsername(String username);
 
