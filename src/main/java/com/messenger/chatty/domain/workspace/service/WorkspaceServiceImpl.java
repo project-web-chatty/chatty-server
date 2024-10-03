@@ -3,6 +3,7 @@ import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
+import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
 import com.messenger.chatty.domain.workspace.entity.WorkspaceJoin;
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateRequestDto;
@@ -41,6 +42,7 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private final ChannelRepository channelRepository;
     private final InvitationCodeGenerator invitationCodeGenerator;
     private final WorkspaceJoinRepository workspaceJoinRepository;
+    private final MessageRepository messageRepository;
 
 
 

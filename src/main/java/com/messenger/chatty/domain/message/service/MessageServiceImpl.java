@@ -53,13 +53,13 @@ public class MessageServiceImpl implements MessageService{
     @Transactional(readOnly = true)
     @Override
     public Long countUnreadMessage(Long channelId, Long workspaceJoinId) {
-        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
-                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
-
-        return messageRepository.countByChatRoomIdAndSendTimeAfter(
-                channelId,
-                TimeUtil.convertTimeTypeToLong(channelAccess.getLastModifiedDate())
-        );
+        return channelAccessRepository
+                .findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
+                .map(access -> messageRepository.countByChatRoomIdAndSendTimeAfter(
+                        channelId,
+                        TimeUtil.convertTimeTypeToLong(access.getLastModifiedDate())
+                ))
+                .orElse(0L);
     }
 
     @Transactional(readOnly = true)
