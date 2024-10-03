@@ -92,6 +92,7 @@ public class CustomConverter {
                         .content(message.getContent())
                         .id(message.getId())
                         .channelId(message.getChannelId())
+                        .workspaceJoinId(message.getWorkspaceJoinId())
                         .build())
                 .collect(Collectors.toList());
     }

@@ -6,8 +6,10 @@ import com.messenger.chatty.domain.message.dto.request.MessageDto;
 import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
+import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.global.util.CustomConverter;
 import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.List;
 public class MessageServiceImpl implements MessageService{
     private final MessageRepository messageRepository;
     private final ChannelAccessRepository channelAccessRepository;
+    private final WorkspaceJoinRepository workspaceJoinRepository;
 
     @Override
     public String send(MessageDto messageDto) {
@@ -59,10 +62,17 @@ public class MessageServiceImpl implements MessageService{
         );
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<MessageResponseDto> getMessages(Long channelId, Pageable pageable) {
         Page<Message> messages = messageRepository.findMessages(channelId, pageable);
-        return CustomConverter.convertMessageResponse(messages);
+        List<MessageResponseDto> messageResponseDtos = CustomConverter.convertMessageResponse(messages);
+        messageResponseDtos.forEach(messageResponseDto -> messageResponseDto.fillOutMemberInfo(
+                workspaceJoinRepository.findById(
+                                messageResponseDto.getWorkspaceJoinId())
+                        .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
+                        .getMember()));
+        return messageResponseDtos;
     }
 
     @Transactional(readOnly = true)
@@ -77,8 +87,14 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public MessageResponseDto getLastMessageInChannel(Long channelId) {
         Pageable pageable = PageRequest.of(0, 1);
-        return CustomConverter.convertMessageResponse(
-                        messageRepository.findMessages(channelId, pageable)
-                ).get(0);
+        MessageResponseDto messageResponseDto = CustomConverter.convertMessageResponse(
+                messageRepository.findMessages(channelId, pageable)
+        ).get(0);
+        messageResponseDto.fillOutMemberInfo(
+                workspaceJoinRepository.findById(
+                                messageResponseDto.getWorkspaceJoinId())
+                        .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
+                        .getMember());
+        return messageResponseDto;
     }
 }
