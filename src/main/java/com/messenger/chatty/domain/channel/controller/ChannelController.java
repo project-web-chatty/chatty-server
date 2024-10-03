@@ -1,6 +1,7 @@
 package com.messenger.chatty.domain.channel.controller;
 
 import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.domain.message.dto.response.MessageListDto;
 import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
@@ -13,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.messenger.chatty.global.presentation.annotation.api.PredefinedErrorStatus.AUTH;
 
@@ -30,10 +29,16 @@ public class ChannelController {
     @Operation(summary = "메세지 리스트 조회", description = "채널 내 메세지부터 조회하도록 합니다")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{channelId}")
-    public ApiResponse<List<MessageResponseDto>> getMessageInChannel(@PathVariable Long channelId,
-                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponse<MessageListDto> getMessageInChannel(@PathVariable Long channelId,
+                                                           @AuthenticatedUsername String username,
+                                                           @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10);
-        return ApiResponse.onSuccess(messageService.getMessages(channelId, pageable));
+        MessageListDto messages = messageService.getMessages(channelId, pageable);
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        String lastReadMessageId = messageService.getLastReadMessageId(channelId, workspaceJoinId);
+        messages.setHavePoint(messages.getMessageResponseDtoList().stream()
+                .anyMatch(dto -> dto.getId().equals(lastReadMessageId)));
+        return ApiResponse.onSuccess(messages);
     }
 
     @Operation(summary = "채널 마지막 메세지", description = "채널의 마지막 메세지를 조회합니다.")

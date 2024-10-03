@@ -1,6 +1,7 @@
 package com.messenger.chatty.domain.message.service;
 
 import com.messenger.chatty.domain.message.dto.request.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageListDto;
 import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +15,7 @@ public interface MessageService {
 
     Long countUnreadMessage(Long channelId, Long workspaceJoinId);
 
-    List<MessageResponseDto> getMessages(Long channelId, Pageable pageable);
+    MessageListDto getMessages(Long channelId, Pageable pageable);
 
     String getLastReadMessageId(Long channelId, Long workspaceJoinId);
 

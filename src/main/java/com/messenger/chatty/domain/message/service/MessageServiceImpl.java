@@ -2,7 +2,9 @@ package com.messenger.chatty.domain.message.service;
 
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
+import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.message.dto.request.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageListDto;
 import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
@@ -64,15 +66,21 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<MessageResponseDto> getMessages(Long channelId, Pageable pageable) {
+    public MessageListDto getMessages(Long channelId, Pageable pageable) {
         Page<Message> messages = messageRepository.findMessages(channelId, pageable);
         List<MessageResponseDto> messageResponseDtos = CustomConverter.convertMessageResponse(messages);
-        messageResponseDtos.forEach(messageResponseDto -> messageResponseDto.fillOutMemberInfo(
-                workspaceJoinRepository.findById(
-                                messageResponseDto.getWorkspaceJoinId())
-                        .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
-                        .getMember()));
-        return messageResponseDtos;
+        messageResponseDtos.forEach(messageResponseDto -> {
+            Member member = workspaceJoinRepository.findById(
+                            messageResponseDto.getWorkspaceJoinId())
+                    .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
+                    .getMember();
+            messageResponseDto.fillOutMemberInfo(member);
+        });
+
+        return MessageListDto.builder()
+                .messageResponseDtoList(messageResponseDtos)
+                .isLast(messages.isLast())
+                .build();
     }
 
     @Transactional(readOnly = true)
