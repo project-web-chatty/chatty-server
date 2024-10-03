@@ -1,17 +1,22 @@
 package com.messenger.chatty.global.util;
 
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
+import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
-import com.messenger.chatty.domain.channel.entity.Channel;
-import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+import org.springframework.data.domain.Page;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class CustomConverter {
@@ -110,7 +115,18 @@ public class CustomConverter {
     }
 */
 
-
-
+    public static List<MessageDto> convertMessageResponse(Page<Message> messages) {
+         return messages.getContent().stream()
+                .map(message -> MessageDto.builder()
+                        .senderProfileImg(message.getId())
+                        .senderUsername(message.getSenderUsername())
+                        .senderNickname(message.getSenderNickname())
+                        .regDate(TimeUtil.convertTimeTypeToLocalDateTime(message.getSendTime()))
+                        .content(message.getContent())
+                        .id(message.getId())
+                        .channelId(message.getChannelId())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
 }

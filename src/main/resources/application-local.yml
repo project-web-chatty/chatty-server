@@ -2,10 +2,15 @@
 spring:
   config:
     import: optional:file:.env[.properties]
-  datasource:
-    url: ${LOCAL_MYSQL_URL}
-    username: ${LOCAL_MYSQL_USERNAME}
-    password: ${LOCAL_MYSQL_PASSWORD}
+  #datasource:
+  #  url: jdbc:mysql://localhost:3306/chatty_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+  #  username: root
+  #  password: 0000
+
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    enabled: true
 
   jpa:
     hibernate:
@@ -13,13 +18,13 @@ spring:
 
   data:
     mongodb:
-      uri: ${LOCAL_MONGODB_URL}
+      uri: mongodb://localhost:27017/chatty_db
 
   rabbitmq:
-    host: ${LOCAL_RABBITMQ_HOST}
-    port: ${LOCAL_RABBITMQ_PORT}
-    username: ${LOCAL_RABBITMQ_USERNAME}
-    password: ${LOCAL_RABBITMQ_PASSWORD}
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 
   security:
@@ -43,10 +48,12 @@ variables:
       accessKey: ${LOCAL_S3_ACCESS_KEY}
       secretKey: ${LOCAL_S3_SECRET_KEY}
   jwt:
-    KEY: ${LOCAL_JWT_SECRET_KEY}
+    KEY: asdqweafsds123+K3yyy
   invitation:
-    KEY: ${LOCAL_INVITATION_SECRET_KEY}
+    KEY: dsfasggfdsfsd222
   password:
-    KEY: ${LOCAL_PASSWORD_SECRET_KEY}
+    KEY: fedklagnelkf1223
 
-
+mongodb:
+  client: mongodb://username:password@localhost:27017/chat?authSource=chat
+  name: chat

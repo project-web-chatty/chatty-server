@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+  <style>
+    .chats {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .mine {
+        background: #e9e9e9;
+        border-radius: 5px;
+    }
+    .yours {
+        background: #efef87;
+        border-radius: 5px;
+    }
+    .nickname {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .message {
+        font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>CHAT ROOM</h1>
+<h2 th:text="'Room No. ' + ${channelId}"></h2>
+<h2 th:text="'AccessToken = ' + ${accessToken}"></h2>
+
+<!-- 메시지 입력 폼 -->
+<form id="messageForm">
+  <input type="text" id="message" placeholder="Enter your message here">
+  <input type="submit" value="Send" class="btn-send">
+</form>
+
+<!-- Disconnect 버튼 추가 -->
+<button id="disconnectBtn">Disconnect</button>
+
+<div class="chats">
+  <!-- 서버에서 받은 메시지를 표시할 영역 -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:inline="javascript">
+  // 서버로부터 전달받은 파라미터
+  const chats = document.querySelector('.chats');
+  const messageContent = document.querySelector('#message');
+  const btnSend = document.querySelector('.btn-send');
+  const disconnectBtn = document.getElementById('disconnectBtn');
+  const channelId = [[${channelId}]];
+  const nickname = [[${nickname}]];
+  const accessToken = [[${accessToken}]]; // 서버로부터 전달된 accessToken
+  const senderUsername = [[${username}]]; // 서버로부터 전달된 사용자 이름
+  const senderProfileImg = ""; // 필요한 경우, 프로필 이미지 URL을 추가
+
+  const sockJS = new SockJS("/stomp/chat");
+  const stomp = Stomp.over(sockJS);
+
+  // heartbeat 설정
+  stomp.heartbeat.outgoing = 0;
+  stomp.heartbeat.incoming = 0;
+
+  function onError(e) {
+      console.log("STOMP ERROR", e);
+  }
+
+  function onDebug(m) {
+      console.log("STOMP DEBUG", m);
+  }
+
+  stomp.debug = onDebug;
+
+  stomp.connect({
+      'channelId': channelId,
+      'Authorization': `Bearer ${accessToken}`
+  }, function (frame) {
+      console.log('STOMP Connected');
+
+      // 채널 구독
+      stomp.subscribe(`/topic/channel.${channelId}`, function (content) {
+          const payload = JSON.parse(content.body);
+
+          let className = payload.senderNickname === nickname ? 'mine' : 'yours';
+
+          const html = `<div class="${className}">
+                          <div class="nickname">${payload.senderNickname}</div>
+                          <div class="message">${payload.content}</div>
+                      </div>`;
+
+          chats.insertAdjacentHTML('beforeend', html);
+      }, { 'auto-delete': true, 'durable': false, 'exclusive': false });
+
+      // 연결이 성공하면 입장 메시지를 전송
+      stomp.send(`/pub/chat.enter.${channelId}`, {}, JSON.stringify({
+          id: null, // 메시지 ID는 서버에서 생성
+          channelId: channelId,
+          content: `${nickname}님이 입장하셨습니다.`
+      }));
+
+  }, onError);
+
+  // 메시지 전송 폼 처리
+  document.getElementById('messageForm').addEventListener('submit', (e) => {
+      e.preventDefault(); // 폼 제출 기본 동작 방지
+
+      const message = messageContent.value;
+      messageContent.value = ''; // 입력 필드 초기화
+
+      // MessageDto 객체로 변환하여 메시지 전송
+      const messageDto = {
+          id: null,
+          channelId: channelId,
+          content: message
+      };
+
+      // 메시지 전송
+      stomp.send(`/pub/chat.message`, {
+          'channelId': channelId,
+          'Authorization': `Bearer ${accessToken}`
+      }, JSON.stringify(messageDto));
+  });
+
+  // Disconnect 버튼 처리
+  disconnectBtn.addEventListener('click', () => {
+      if (stomp) {
+          stomp.disconnect(() => {
+              console.log("Disconnected from server");
+          });
+      }
+  });
+</script>
+</body>
+</html>

@@ -29,6 +29,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
 import java.util.Collections;
+import java.util.List;
 
 
 @Configuration
@@ -73,11 +74,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/auth/password").authenticated()
                         .requestMatchers("/v3/**", "/swagger-ui/**", "/api/isHealthy",
-                                "/api/member/signup","/api/member/check","/api/auth/**")
+                                "/api/member/signup", "/api/member/check", "/api/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/workspace/join/**","/api/workspace").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER","WORKSPACE_MEMBER")
-                        .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN","WORKSPACE_OWNER")
+                        .requestMatchers("/api/workspace/join/**", "/api/workspace").authenticated()
+                        .requestMatchers("/chat/**", "/stomp/chat/**", "/pub/chat/**",
+                                "/message/**", "/queue/**", "/topic/**", "/socket.io/**",
+                                "/exchange/**", "/amq/queue/**").permitAll()    //임시
+                        .requestMatchers(HttpMethod.GET, "/api/workspace/**").hasAnyRole("ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER")
+                        .requestMatchers("/api/workspace/**").hasAnyRole("ADMIN", "WORKSPACE_OWNER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
@@ -92,7 +96,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://apic.app"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
