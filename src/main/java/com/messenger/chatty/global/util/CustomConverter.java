@@ -88,9 +88,6 @@ public class CustomConverter {
     public static List<MessageResponseDto> convertMessageResponse(Page<Message> messages) {
          return messages.getContent().stream()
                 .map(message -> MessageResponseDto.builder()
-                        .senderProfileImg(message.getSenderProfileImg())
-                        .senderUsername(message.getSenderUsername())
-                        .senderNickname(message.getSenderNickname())
                         .regDate(TimeUtil.convertTimeTypeToLocalDateTime(message.getSendTime()))
                         .content(message.getContent())
                         .id(message.getId())

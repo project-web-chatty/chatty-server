@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MessageRepository extends MongoRepository<Message, Long> {
 
     @Query(value = "{'channelId': ?0, 'sendTime': {$gt: ?1}}", sort = "{'sendTime': -1}")

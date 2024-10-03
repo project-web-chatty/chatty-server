@@ -48,14 +48,11 @@ public class ChatPreHandler implements ChannelInterceptor {
                     DecodedJWT decodedJWT = authService.decodeToken(accessToken, "access");
                     String username = decodedJWT.getSubject();
                     Long channelId = WebSocketUtil.getChannelId(headerAccessor);
-                    //TODO username & channelId -> workspaceJoinId
                     Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
 
                     headerAccessor.getSessionAttributes().put("workspaceJoinId", workspaceJoinId);
                     headerAccessor.getSessionAttributes().put("channelId", channelId);
 
-
-                    log.info("CONNECT: username={}, channelId={}", username, channelId);
                 } catch (RuntimeException e) {
                     log.error("Failed to process CONNECT command", e);
                     throw new StompMessagingException(ErrorStatus.AUTH_INVALID_TOKEN);
@@ -68,8 +65,9 @@ public class ChatPreHandler implements ChannelInterceptor {
                 }
                 MemberBriefDto memberBriefDto = channelService.getMemberInfoByWorkspace(workspaceJoinId);
                 headerAccessor.getSessionAttributes().put("nickname", memberBriefDto.getNickname());
-                headerAccessor.getSessionAttributes().put("profileImg", memberBriefDto.getProfileImg());
-
+                if (memberBriefDto.getProfileImg() != null) {
+                    headerAccessor.getSessionAttributes().put("profileImg", memberBriefDto.getProfileImg());
+                }
             }
             case DISCONNECT -> {
                 try{
@@ -89,6 +87,7 @@ public class ChatPreHandler implements ChannelInterceptor {
             case UNSUBSCRIBE -> {
             }
             case SEND -> {
+
             }
             case ACK -> {
             }

@@ -1,0 +1,58 @@
+# environment variables must be in .env file of root directory
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    enabled: true
+  datasource:
+    url: ${LOCAL_MYSQL_URL}
+    username: ${LOCAL_MYSQL_USERNAME}
+    password: ${LOCAL_MYSQL_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update # according to our dev environment
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/chatty_db
+
+  rabbitmq:
+    host: ${LOCAL_RABBITMQ_HOST}
+    port: ${LOCAL_RABBITMQ_PORT}
+    username: ${LOCAL_RABBITMQ_USERNAME}
+    password: ${LOCAL_RABBITMQ_PASSWORD}
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${LOCAL_GOOGLE_CLIENT_ID}
+            client-secret: ${LOCAL_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${LOCAL_GITHUB_CLIENT_ID}
+            client-secret: ${LOCAL_GITHUB_CLIENT_SECRET}
+            redirect-uri: ${LOCAL_GITHUB_REDIRECT_URI}
+
+
+variables:
+  cloud:
+    s3:
+      bucketName: ${LOCAL_S3_BUCKET_NAME}
+      accessKey: ${LOCAL_S3_ACCESS_KEY}
+      secretKey: ${LOCAL_S3_SECRET_KEY}
+  jwt:
+    KEY: ${LOCAL_JWT_SECRET_KEY}
+  invitation:
+    KEY: ${LOCAL_INVITATION_SECRET_KEY}
+  password:
+    KEY: ${LOCAL_PASSWORD_SECRET_KEY}
+
+mongodb:
+  client: mongodb://localhost:27017
+  name: chat_db

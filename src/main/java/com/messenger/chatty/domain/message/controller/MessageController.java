@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -34,18 +35,21 @@ public class MessageController {
 
 
     @MessageMapping("chat.message")
-    public void send(MessageDto messageDto,
-                     @Header("channelId") String channelIdStr,
-                     @Header("workspaceJoinId") String workspaceJoinId,
-                     @Header("nickname") String nickname,
-                     @Header("profileImg") String profileImg) {
-        log.info("send");
-        if(channelIdStr == null) throw new MessagingException("error");
+    public void send(MessageDto messageDto, SimpMessageHeaderAccessor headerAccessor) {
+        log.info("Received Headers: {}", headerAccessor.getSessionAttributes()); // 전체 헤더 로그 출력
+
+        // SimpMessageHeaderAccessor를 사용하여 세션에서 속성 값 가져오기
+        String nickname = (String) headerAccessor.getSessionAttributes().get("nickname");
+        String profileImg = (String) headerAccessor.getSessionAttributes().get("profileImg");
+        Long workspaceJoinId = (Long) headerAccessor.getSessionAttributes().get("workspaceJoinId");
+        Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+
+        log.info("channelId : {}, workspaceJoinId : {}, nickname : {}, profileImg : {}", channelId, workspaceJoinId, nickname, profileImg);
         messageDto.setRegDate(LocalDateTime.now());
-        messageDto.of(Long.valueOf(workspaceJoinId), profileImg, nickname);
+        messageDto.of(workspaceJoinId, profileImg, nickname);
 
         messageService.send(messageDto);
-        template.convertAndSend("amq.topic", "channel." + channelIdStr, messageDto);
+        template.convertAndSend("amq.topic", "channel." + channelId, messageDto);
     }
 
 
