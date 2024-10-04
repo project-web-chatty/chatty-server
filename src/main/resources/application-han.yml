@@ -3,7 +3,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
   thymeleaf:
-    prefix: classpath:/template/
+    prefix: classpath:/templates/
     suffix: .html
     enabled: true
   datasource:

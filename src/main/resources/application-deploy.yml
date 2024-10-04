@@ -45,6 +45,7 @@ variables:
 
 
   thymeleaf:
-    prefix: classpath:/template/
+    prefix: classpath:/templates/
     suffix: .html
     enabled: true
+    cache: false

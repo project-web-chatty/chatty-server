@@ -8,7 +8,7 @@ spring:
     password: 0000
 
   thymeleaf:
-    prefix: classpath:/template/
+    prefix: classpath:/templates/
     suffix: .html
     enabled: true
 
