@@ -1,3 +1,4 @@
+#  local execution (for frontend developer)
 services:
   springboot:
     image: sh020119/websocket_test:latest

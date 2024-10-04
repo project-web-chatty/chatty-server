@@ -1,3 +1,4 @@
+# for ec2 deploy (exclude DB container)
 services:
   springboot:
     image: sh020119/project_backend:latest
