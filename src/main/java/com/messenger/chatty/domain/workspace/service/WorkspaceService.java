@@ -1,5 +1,6 @@
 package com.messenger.chatty.domain.workspace.service;
 
+import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceGenerateRequestDto;
 import com.messenger.chatty.domain.workspace.dto.request.WorkspaceUpdateRequestDto;
 import com.messenger.chatty.domain.channel.dto.response.ChannelBriefDto;
@@ -23,9 +24,9 @@ public interface WorkspaceService {
 
     WorkspaceBriefDto  getWorkspaceBriefProfile(Long workspaceId);
 
-    List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId);
+    List<MemberInWorkspaceDto> getMembersOfWorkspace(Long workspaceId);
 
-    MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId);
+    MemberInWorkspaceDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId);
 
     List<ChannelBriefDto> getChannelsOfWorkspace(Long workspaceId);
 
@@ -39,4 +40,8 @@ public interface WorkspaceService {
 
     String uploadProfileImage(Long workspaceId, MultipartFile file);
     void deleteProfileImage(Long workspaceId);
+
+    void leaveWorkspace(String username,Long workspaceId);
+
+    void deleteMemberFromWorkspace(Long workspaceId, Long memberId);
 }

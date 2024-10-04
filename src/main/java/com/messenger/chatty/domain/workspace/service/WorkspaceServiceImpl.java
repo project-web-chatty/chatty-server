@@ -1,6 +1,7 @@
 package com.messenger.chatty.domain.workspace.service;
 import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
+import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
@@ -66,26 +67,25 @@ public class WorkspaceServiceImpl implements WorkspaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<MemberBriefDto> getMembersOfWorkspace(Long workspaceId) {
+    public List<MemberInWorkspaceDto> getMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
 
-        //TODO workspace용 멤버 response dto return(해당 멤버의 워크스페이스 내 역할 표시)
         List<Member> members = workspaceJoinRepository.findMembersByWorkspaceId(workspace.getId());
-        members.forEach(member -> {
+
+        return members.stream().map(member -> {
             WorkspaceJoin workspaceJoin = workspaceJoinRepository.
                     findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
                     .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
-            member.changeRole(workspaceJoin.getRole());
-        });
-
-        return members.stream().map(CustomConverter::convertMemberToBriefDto).toList();
+            return CustomConverter.convertToMemberInWorkspaceDto(member,workspaceJoin.getRole(),workspaceJoin.getCreatedDate() );
+        }
+        ).toList();
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public MemberBriefDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId) {
+    public MemberInWorkspaceDto getMemberProfileOfWorkspace(Long workspaceId, Long memberId) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -93,9 +93,9 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         WorkspaceJoin workspaceJoin = workspaceJoinRepository.
                 findByWorkspaceIdAndMemberUsername(workspaceId, member.getUsername())
                 .orElseThrow(()->new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
-        member.changeRole(workspaceJoin.getRole());
 
-        return CustomConverter.convertMemberToBriefDto(member);
+
+        return CustomConverter.convertToMemberInWorkspaceDto(member,workspaceJoin.getRole(),workspaceJoin.getCreatedDate());
     }
 
     @Override
@@ -245,5 +245,22 @@ public class WorkspaceServiceImpl implements WorkspaceService{
         if(profileImgURI ==null) return;
         s3Service.deleteImage(profileImgURI);
         workspace.changeProfile_img(null);
+    }
+
+    @Override
+    public void leaveWorkspace(String username, Long workspaceId) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, member.getId())
+                .orElseThrow(()-> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+
+        workspaceJoinRepository.delete(workspaceJoin);
+    }
+
+    @Override
+    public void deleteMemberFromWorkspace(Long workspaceId, Long memberId) {
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findByWorkspaceIdAndMemberId(workspaceId, memberId)
+                .orElseThrow(()-> new MemberException(ErrorStatus.MEMBER_NOT_IN_WORKSPACE));
+        workspaceJoinRepository.delete(workspaceJoin);
     }
 }
