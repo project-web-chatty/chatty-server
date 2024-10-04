@@ -1,4 +1,5 @@
 package com.messenger.chatty.domain.workspace.controller;
+import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import java.util.List;
 import static com.messenger.chatty.global.presentation.ErrorStatus.*;
 import static com.messenger.chatty.global.presentation.ErrorStatus.IO_EXCEPTION_ON_IMAGE_DELETE;
 
+@Slf4j
 @Tag(name = "WORKSPACE API", description = "워크스페이스와 관련된 핵심적인 API 들입니다.")
 @RequestMapping("/api/workspace")
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ import static com.messenger.chatty.global.presentation.ErrorStatus.IO_EXCEPTION_
 public class WorkspaceController {
     private final ChannelService channelService;
     private final WorkspaceService workspaceService;
+    private final MessageService messageService;
 
 
     @Operation(summary = "워크스페이스 생성하기")
@@ -70,8 +74,15 @@ public class WorkspaceController {
             ErrorStatus.WORKSPACE_NOT_FOUND
     })
     @GetMapping("/{workspaceId}/channels")
-    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@PathVariable Long workspaceId){
-        return ApiResponse.onSuccess(workspaceService.getChannelsOfWorkspace(workspaceId));
+    public ApiResponse<List<ChannelBriefDto>> getChannelsOfWorkspace(@AuthenticatedUsername String username,
+                                                                     @PathVariable Long workspaceId){
+        List<ChannelBriefDto> channelBriefDtoList = workspaceService.getChannelsOfWorkspace(workspaceId);
+        channelBriefDtoList.forEach(dto ->
+            dto.setUnreadCount(
+                    messageService.countUnreadMessage(dto.getId(), channelService.getWorkspaceJoinId(dto.getId(), username))
+            )
+        );
+        return ApiResponse.onSuccess(channelBriefDtoList);
     }
 
     @Operation(summary = "워크스페이스의 멤버 리스트 가져오기")

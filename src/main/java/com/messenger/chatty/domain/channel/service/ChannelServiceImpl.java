@@ -6,10 +6,13 @@ import com.messenger.chatty.domain.channel.entity.Channel;
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
 import com.messenger.chatty.domain.channel.repository.ChannelRepository;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.entity.Member;
 import com.messenger.chatty.domain.member.repository.MemberRepository;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
 import com.messenger.chatty.domain.workspace.entity.Workspace;
+import com.messenger.chatty.domain.workspace.entity.WorkspaceJoin;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.domain.workspace.repository.WorkspaceRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
@@ -32,6 +35,7 @@ import java.util.List;
 public class ChannelServiceImpl implements ChannelService{
     private final ChannelRepository channelRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceJoinRepository workspaceJoinRepository;
     private final MemberRepository memberRepository;
     private final MessageRepository messageRepository;
     private final ChannelAccessRepository channelAccessRepository;
@@ -86,6 +90,18 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
+    public Long getWorkspaceJoinId(Long channelId, String username) {
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND));
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository
+                .findByWorkspaceIdAndMemberId(channel.getWorkspace().getId(), member.getId())
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        return workspaceJoin.getId();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public boolean validateEnterChannel(Long channelId, String username) {
         Member member = memberRepository.findByUsername(username)
@@ -97,9 +113,8 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public void updateAccessTime(Long channelId, String username, LocalDateTime currentTime) {
-        ChannelAccess channelAccess = channelAccessRepository
-                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public void updateAccessTime(Long channelId, Long workspaceJoinId, LocalDateTime currentTime) {
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         //accesstime -> lastModifiedTime으로 사용 / 마지막으로 읽은 메세지 아이디 변경
         Pageable pageable = PageRequest.of(0, 1);
@@ -110,25 +125,32 @@ public class ChannelServiceImpl implements ChannelService{
     }
 
     @Override
-    public Long createAccessTime(Long channelId, String username) {
-        return channelAccessRepository.save(builderChannelAccess(username, channelId)).getId();
+    public Long createAccessTime(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.save(builderChannelAccess(workspaceJoinId, channelId)).getId();
     }
 
     @Override
-    public boolean hasAccessTime(Long channelId, String username) {
-        return channelAccessRepository.existsByChannelIdAndUsername(channelId, username);
+    public boolean hasAccessTime(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.existsByChannelIdAndWorkspaceJoinId(channelId, workspaceJoinId);
     }
 
     @Override
-    public String getUnreadMessageId(Long channelId, String username) {
-        return channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public String getUnreadMessageId(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND))
                 .getLastMessageId();
     }
 
-    private ChannelAccess builderChannelAccess(String username, Long channelId) {
+    @Override
+    public MemberBriefDto getMemberInfoByWorkspace(Long workspaceJoinId) {
+        WorkspaceJoin workspaceJoin = workspaceJoinRepository.findById(workspaceJoinId)
+                .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND));
+        return CustomConverter.convertMemberToBriefDto(workspaceJoin.getMember());
+    }
+
+    private ChannelAccess builderChannelAccess(Long workspaceJoinId, Long channelId) {
         return ChannelAccess.builder()
-                .username(username)
+                .workspaceJoinId(workspaceJoinId)
                 .channel(channelRepository.findById(channelId)
                         .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_NOT_FOUND)))
                 .build();

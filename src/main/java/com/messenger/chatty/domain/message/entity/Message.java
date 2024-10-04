@@ -1,6 +1,6 @@
 package com.messenger.chatty.domain.message.entity;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
 import com.messenger.chatty.global.util.TimeUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,11 +25,7 @@ public class Message {
     private String content;
 
     @NotBlank
-    private String senderNickname;
-    @NotBlank
-    private String senderUsername;
-    @NotBlank
-    private String senderProfileImg;
+    private Long workspaceJoinId;
 
     @NotNull
     private Long sendTime;
@@ -37,10 +33,8 @@ public class Message {
     public static Message of(MessageDto messageDto) {
         return Message.builder()
                 .channelId(messageDto.getChannelId())
+                .workspaceJoinId(messageDto.getWorkspaceJoinId())
                 .content(messageDto.getContent())
-                .senderNickname(messageDto.getSenderNickname())
-                .senderUsername(messageDto.getSenderUsername())
-                .senderProfileImg(messageDto.getSenderProfileImg())
                 .sendTime(TimeUtil.convertTimeTypeToLong(messageDto.getRegDate()))
                 .build();
     }

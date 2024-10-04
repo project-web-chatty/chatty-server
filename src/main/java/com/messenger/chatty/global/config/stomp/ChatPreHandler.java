@@ -2,9 +2,8 @@ package com.messenger.chatty.global.config.stomp;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.global.presentation.ErrorStatus;
-import com.messenger.chatty.global.presentation.exception.GeneralException;
-import com.messenger.chatty.global.presentation.exception.custom.MemberException;
 import com.messenger.chatty.global.presentation.exception.custom.StompMessagingException;
 import com.messenger.chatty.global.util.WebSocketUtil;
 import com.messenger.chatty.security.service.AuthService;
@@ -14,7 +13,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -50,50 +48,35 @@ public class ChatPreHandler implements ChannelInterceptor {
                     DecodedJWT decodedJWT = authService.decodeToken(accessToken, "access");
                     String username = decodedJWT.getSubject();
                     Long channelId = WebSocketUtil.getChannelId(headerAccessor);
+                    Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
 
-                    headerAccessor.getSessionAttributes().put("username", username);
+                    headerAccessor.getSessionAttributes().put("workspaceJoinId", workspaceJoinId);
                     headerAccessor.getSessionAttributes().put("channelId", channelId);
 
-                    log.info("CONNECT: username={}, channelId={}", username, channelId);
                 } catch (RuntimeException e) {
                     log.error("Failed to process CONNECT command", e);
                     throw new StompMessagingException(ErrorStatus.AUTH_INVALID_TOKEN);
                 }
             }
             case SUBSCRIBE -> {
-                String username = (String) headerAccessor.getSessionAttributes().get("username");
-                Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
-                if (username == null || channelId == null) {
+                Long workspaceJoinId = (Long) headerAccessor.getSessionAttributes().get("workspaceJoinId");
+                if (workspaceJoinId == null) {
                     throw new StompMessagingException(ErrorStatus.REQUEST_PARAM_IS_NULL);
                 }
-
-                boolean validated;
-                try{
-                    validated = channelService.validateEnterChannel(channelId, username);
+                MemberBriefDto memberBriefDto = channelService.getMemberInfoByWorkspace(workspaceJoinId);
+                headerAccessor.getSessionAttributes().put("nickname", memberBriefDto.getNickname());
+                if (memberBriefDto.getProfileImg() != null) {
+                    headerAccessor.getSessionAttributes().put("profileImg", memberBriefDto.getProfileImg());
                 }
-                catch (GeneralException e){
-                    throw new StompMessagingException(ErrorStatus.INVALID_REQUEST_PARAM);
-                }
-
-                headerAccessor.getSessionAttributes().put("validated", validated);
-                if (!validated) {
-                    log.info("SUBSCRIBE: Validation failed for username={}, channelId={}", username, channelId);
-                    throw new StompMessagingException(ErrorStatus.CHANNEL_ACCESS_DENIAL);
-                }
-                log.info("SUBSCRIBE: username={}, channelId={}", username, channelId);
-
             }
             case DISCONNECT -> {
                 try{
-                    if ((Boolean) headerAccessor.getSessionAttributes().get("validated")) {
-                        String username = (String) headerAccessor.getSessionAttributes().get("username");
-                        Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
-                        if (!channelService.hasAccessTime(channelId, username)) {
-                            channelService.createAccessTime(channelId, username);
-                        }
-                        channelService.updateAccessTime(channelId,username, LocalDateTime.now());
-
+                    Long workspaceJoinId = (Long) headerAccessor.getSessionAttributes().get("workspaceJoinId");
+                    Long channelId = (Long) headerAccessor.getSessionAttributes().get("channelId");
+                    if (!channelService.hasAccessTime(channelId, workspaceJoinId)) {
+                        channelService.createAccessTime(channelId, workspaceJoinId);
                     }
+                    channelService.updateAccessTime(channelId, workspaceJoinId, LocalDateTime.now());
                 }
                 catch (RuntimeException e){
                     throw new StompMessagingException(ErrorStatus.INVALID_DISCONNECT_LOGIC);
@@ -104,6 +87,7 @@ public class ChatPreHandler implements ChannelInterceptor {
             case UNSUBSCRIBE -> {
             }
             case SEND -> {
+
             }
             case ACK -> {
             }

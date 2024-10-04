@@ -2,11 +2,16 @@ package com.messenger.chatty.domain.message.service;
 
 import com.messenger.chatty.domain.channel.entity.ChannelAccess;
 import com.messenger.chatty.domain.channel.repository.ChannelAccessRepository;
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.member.entity.Member;
+import com.messenger.chatty.domain.message.dto.request.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageListDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.message.repository.MessageRepository;
+import com.messenger.chatty.domain.workspace.repository.WorkspaceJoinRepository;
 import com.messenger.chatty.global.presentation.ErrorStatus;
 import com.messenger.chatty.global.presentation.exception.custom.ChannelException;
+import com.messenger.chatty.global.presentation.exception.custom.WorkspaceException;
 import com.messenger.chatty.global.util.CustomConverter;
 import com.messenger.chatty.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +30,7 @@ import java.util.List;
 public class MessageServiceImpl implements MessageService{
     private final MessageRepository messageRepository;
     private final ChannelAccessRepository channelAccessRepository;
+    private final WorkspaceJoinRepository workspaceJoinRepository;
 
     @Override
     public String send(MessageDto messageDto) {
@@ -35,8 +41,8 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<MessageDto> getMessageByLastAccessTime(Long channelId, String username, Pageable pageable) {
-        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
+    public List<MessageResponseDto> getMessageByLastAccessTime(Long channelId, Long workspaceJoinId, Pageable pageable) {
+        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         Page<Message> messages = messageRepository
                 .findMessagesByChatRoomIdAfterMemberDisconnectTime(
@@ -48,36 +54,55 @@ public class MessageServiceImpl implements MessageService{
 
     @Transactional(readOnly = true)
     @Override
-    public Long countUnreadMessage(Long channelId, String username) {
-        ChannelAccess channelAccess = channelAccessRepository.findChannelAccessByChannel_IdAndUsername(channelId, username)
-                .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
-
-        return messageRepository.countByChatRoomIdAndSendTimeAfter(
-                channelId,
-                TimeUtil.convertTimeTypeToLong(channelAccess.getLastModifiedDate())
-        );
-    }
-
-    @Override
-    public List<MessageDto> getMessages(Long channelId, Pageable pageable) {
-        Page<Message> messages = messageRepository.findMessages(channelId, pageable);
-        return CustomConverter.convertMessageResponse(messages);
+    public Long countUnreadMessage(Long channelId, Long workspaceJoinId) {
+        return channelAccessRepository
+                .findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
+                .map(access -> messageRepository.countByChatRoomIdAndSendTimeAfter(
+                        channelId,
+                        TimeUtil.convertTimeTypeToLong(access.getLastModifiedDate())
+                ))
+                .orElse(0L);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public String getLastReadMessageId(Long channelId, String username) {
+    public MessageListDto getMessages(Long channelId, Pageable pageable) {
+        Page<Message> messages = messageRepository.findMessages(channelId, pageable);
+        List<MessageResponseDto> messageResponseDtos = CustomConverter.convertMessageResponse(messages);
+        messageResponseDtos.forEach(messageResponseDto -> {
+            Member member = workspaceJoinRepository.findById(
+                            messageResponseDto.getWorkspaceJoinId())
+                    .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
+                    .getMember();
+            messageResponseDto.fillOutMemberInfo(member);
+        });
+
+        return MessageListDto.builder()
+                .messageResponseDtoList(messageResponseDtos)
+                .isLast(messages.isLast())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public String getLastReadMessageId(Long channelId, Long workspaceJoinId) {
         ChannelAccess channelAccess = channelAccessRepository
-                .findChannelAccessByChannel_IdAndUsername(channelId, username)
+                .findChannelAccessByChannel_IdAndWorkspaceJoinId(channelId, workspaceJoinId)
                 .orElseThrow(() -> new ChannelException(ErrorStatus.CHANNEL_ACCESS_NOT_FOUND));
         return channelAccess.getLastMessageId();
     }
 
     @Override
-    public MessageDto getLastMessageInChannel(Long channelId) {
+    public MessageResponseDto getLastMessageInChannel(Long channelId) {
         Pageable pageable = PageRequest.of(0, 1);
-        return CustomConverter.convertMessageResponse(
-                        messageRepository.findMessages(channelId, pageable)
-                ).get(0);
+        MessageResponseDto messageResponseDto = CustomConverter.convertMessageResponse(
+                messageRepository.findMessages(channelId, pageable)
+        ).get(0);
+        messageResponseDto.fillOutMemberInfo(
+                workspaceJoinRepository.findById(
+                                messageResponseDto.getWorkspaceJoinId())
+                        .orElseThrow(() -> new WorkspaceException(ErrorStatus.WORKSPACE_NOT_FOUND))
+                        .getMember());
+        return messageResponseDto;
     }
 }

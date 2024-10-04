@@ -6,7 +6,7 @@ import com.messenger.chatty.domain.member.dto.response.MemberBriefDto;
 import com.messenger.chatty.domain.member.dto.response.MemberInWorkspaceDto;
 import com.messenger.chatty.domain.member.dto.response.MyProfileDto;
 import com.messenger.chatty.domain.member.entity.Member;
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.entity.Message;
 import com.messenger.chatty.domain.workspace.dto.response.MyWorkspaceDto;
 import com.messenger.chatty.domain.workspace.dto.response.WorkspaceBriefDto;
@@ -115,16 +115,14 @@ public class CustomConverter {
     }
 */
 
-    public static List<MessageDto> convertMessageResponse(Page<Message> messages) {
+    public static List<MessageResponseDto> convertMessageResponse(Page<Message> messages) {
          return messages.getContent().stream()
-                .map(message -> MessageDto.builder()
-                        .senderProfileImg(message.getId())
-                        .senderUsername(message.getSenderUsername())
-                        .senderNickname(message.getSenderNickname())
+                .map(message -> MessageResponseDto.builder()
                         .regDate(TimeUtil.convertTimeTypeToLocalDateTime(message.getSendTime()))
                         .content(message.getContent())
                         .id(message.getId())
                         .channelId(message.getChannelId())
+                        .workspaceJoinId(message.getWorkspaceJoinId())
                         .build())
                 .collect(Collectors.toList());
     }

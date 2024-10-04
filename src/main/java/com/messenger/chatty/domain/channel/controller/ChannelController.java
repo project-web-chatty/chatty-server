@@ -1,6 +1,8 @@
 package com.messenger.chatty.domain.channel.controller;
 
-import com.messenger.chatty.domain.message.dto.MessageDto;
+import com.messenger.chatty.domain.channel.service.ChannelService;
+import com.messenger.chatty.domain.message.dto.response.MessageListDto;
+import com.messenger.chatty.domain.message.dto.response.MessageResponseDto;
 import com.messenger.chatty.domain.message.service.MessageService;
 import com.messenger.chatty.global.config.web.AuthenticatedUsername;
 import com.messenger.chatty.global.presentation.ApiResponse;
@@ -13,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.messenger.chatty.global.presentation.annotation.api.PredefinedErrorStatus.AUTH;
 
 @Tag(name = "CHANNEL API", description = "채널과 관련된 핵심적인 API 들입니다.")
@@ -23,21 +23,28 @@ import static com.messenger.chatty.global.presentation.annotation.api.Predefined
 @RequestMapping("/api/chat")
 public class ChannelController {
     private final MessageService messageService;
+    private final ChannelService channelService;
 
 
     @Operation(summary = "메세지 리스트 조회", description = "채널 내 메세지부터 조회하도록 합니다")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{channelId}")
-    public ApiResponse<List<MessageDto>> getMessageInChannel(@PathVariable Long channelId,
-                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponse<MessageListDto> getMessageInChannel(@PathVariable Long channelId,
+                                                           @AuthenticatedUsername String username,
+                                                           @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10);
-        return ApiResponse.onSuccess(messageService.getMessages(channelId, pageable));
+        MessageListDto messages = messageService.getMessages(channelId, pageable);
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        String lastReadMessageId = messageService.getLastReadMessageId(channelId, workspaceJoinId);
+        messages.setHavePoint(messages.getMessageResponseDtoList().stream()
+                .anyMatch(dto -> dto.getId().equals(lastReadMessageId)));
+        return ApiResponse.onSuccess(messages);
     }
 
     @Operation(summary = "채널 마지막 메세지", description = "채널의 마지막 메세지를 조회합니다.")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{channelId}/last")
-    public ApiResponse<MessageDto> getLastMessageInChannel(@PathVariable Long channelId){
+    public ApiResponse<MessageResponseDto> getLastMessageInChannel(@PathVariable Long channelId){
         return ApiResponse.onSuccess(messageService.getLastMessageInChannel(channelId));
     }
 
@@ -48,7 +55,8 @@ public class ChannelController {
     @GetMapping("/{channelId}/count")
     public ApiResponse<Long> countUnreadMessageInChannel(@AuthenticatedUsername String username,
                                                          @PathVariable Long channelId) {
-        return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, username));
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        return ApiResponse.onSuccess(messageService.countUnreadMessage(channelId, workspaceJoinId));
     }
 
     @Operation(summary = "읽은 마지막 메세지 아이디 조회", description = "사용자가 채널에서 읽은 마지막 메세지의 아이디를 조회합니다.")
@@ -58,7 +66,8 @@ public class ChannelController {
     @GetMapping("/{channelId}/read/id")
     public ApiResponse<String> getLastReadMessageId(@AuthenticatedUsername String username,
                                                     @PathVariable Long channelId) {
-        return ApiResponse.onSuccess(messageService.getLastReadMessageId(channelId, username));
+        Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        return ApiResponse.onSuccess(messageService.getLastReadMessageId(channelId, workspaceJoinId));
     }
 
 }

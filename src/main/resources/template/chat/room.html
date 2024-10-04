@@ -54,10 +54,10 @@
   const btnSend = document.querySelector('.btn-send');
   const disconnectBtn = document.getElementById('disconnectBtn');
   const channelId = [[${channelId}]];
-  const nickname = [[${nickname}]];
+  const workspaceJoinId = [[${workspaceJoinId}]];
   const accessToken = [[${accessToken}]]; // 서버로부터 전달된 accessToken
-  const senderUsername = [[${username}]]; // 서버로부터 전달된 사용자 이름
-  const senderProfileImg = ""; // 필요한 경우, 프로필 이미지 URL을 추가
+  const nickname = [[${nickname}]]; // 서버로부터 전달된 사용자 이름
+  const profileImg = [[${profileImg}]]; // 필요한 경우, 프로필 이미지 URL을 추가
 
   const sockJS = new SockJS("/stomp/chat");
   const stomp = Stomp.over(sockJS);
@@ -78,6 +78,7 @@
 
   stomp.connect({
       'channelId': channelId,
+      'workspaceJoinId': workspaceJoinId,
       'Authorization': `Bearer ${accessToken}`
   }, function (frame) {
       console.log('STOMP Connected');
@@ -96,13 +97,6 @@
           chats.insertAdjacentHTML('beforeend', html);
       }, { 'auto-delete': true, 'durable': false, 'exclusive': false });
 
-      // 연결이 성공하면 입장 메시지를 전송
-      stomp.send(`/pub/chat.enter.${channelId}`, {}, JSON.stringify({
-          id: null, // 메시지 ID는 서버에서 생성
-          channelId: channelId,
-          content: `${nickname}님이 입장하셨습니다.`
-      }));
-
   }, onError);
 
   // 메시지 전송 폼 처리
@@ -114,14 +108,19 @@
 
       // MessageDto 객체로 변환하여 메시지 전송
       const messageDto = {
-          id: null,
           channelId: channelId,
+          workspaceJoinId: workspaceJoinId,
+          senderProfileImg: profileImg,
+          senderNickname: nickname,
           content: message
       };
 
       // 메시지 전송
       stomp.send(`/pub/chat.message`, {
-          'channelId': channelId,
+          'channelId': channelId.toString(),         // 문자열로 변환하여 전송
+          'workspaceJoinId': workspaceJoinId?.toString(), // workspaceJoinId가 null이면 undefined 방지
+          'nickname': nickname,
+          'profileImg': profileImg,
           'Authorization': `Bearer ${accessToken}`
       }, JSON.stringify(messageDto));
   });
