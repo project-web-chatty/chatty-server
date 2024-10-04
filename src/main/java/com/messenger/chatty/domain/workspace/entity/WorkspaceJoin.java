@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "workspace_joins")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WorkspaceJoin extends BaseEntity {
+public class  WorkspaceJoin extends BaseEntity {
 
     @Id
     @Column(name = "workspace_join_id")

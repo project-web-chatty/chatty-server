@@ -42,3 +42,9 @@ variables:
     KEY: ${DEPLOY_INVITATION_SECRET_KEY}
   password:
     KEY: ${DEPLOY_PASSWORD_SECRET_KEY}
+
+
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    enabled: true

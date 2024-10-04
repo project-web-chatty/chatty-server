@@ -1,7 +1,7 @@
 # common setting
 spring:
   profiles:
-    active: deploy
+    active: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
