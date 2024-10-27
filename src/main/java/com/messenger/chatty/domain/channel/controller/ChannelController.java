@@ -35,6 +35,9 @@ public class ChannelController {
         Pageable pageable = PageRequest.of(currentPage, 10);
         MessageListDto messages = messageService.getMessages(channelId, pageable);
         Long workspaceJoinId = channelService.getWorkspaceJoinId(channelId, username);
+        if (!channelService.hasAccessTime(channelId, workspaceJoinId)) {
+            channelService.createAccessTime(channelId, workspaceJoinId);
+        }
         String lastReadMessageId = messageService.getLastReadMessageId(channelId, workspaceJoinId);
         messages.setHavePoint(messages.getMessageResponseDtoList().stream()
                 .anyMatch(dto -> dto.getId().equals(lastReadMessageId)));
