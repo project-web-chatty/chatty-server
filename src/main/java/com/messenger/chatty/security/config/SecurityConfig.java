@@ -28,6 +28,8 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -90,21 +92,24 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(authService), AnonymousAuthenticationFilter.class)
                 .addFilterAfter(new SearchWorkspaceRoleFilter(new PathPatternParser(), workspaceJoinRepository), JWTFilter.class);
 
-        // cors setting
+        // CORS 설정
         httpSecurity
-                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://apic.app"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowedOrigins(List.of(
+                                "http://ec2-3-34-211-45.ap-northeast-2.compute.amazonaws.com:3000"
+                        ));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
                         return configuration;
                     }
-                })));
+                }));
+
 
 
         // oauth2 setting
